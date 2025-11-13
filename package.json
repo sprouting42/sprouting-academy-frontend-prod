@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "subtree:pull:release": "git subtree pull --prefix app https://github.com/ploywutt/sprouting-academy-front.git release --squash -m \"sync: pull from dev release\"",
+    "deploy": "git push origin main"
+  }
+}
