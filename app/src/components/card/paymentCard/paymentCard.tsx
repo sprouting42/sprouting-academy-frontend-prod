@@ -1,0 +1,115 @@
+"use client";
+
+import React, { useState } from "react";
+import { FaCreditCard } from "react-icons/fa";
+
+import { Button } from "@/components/common/button";
+import { Card } from "@/components/common/card";
+import { Label } from "@/components/common/label";
+import { Dropdown } from "@/components/dropdown/dropdown";
+
+import { CardPayment } from "./cardPayment";
+import { CourseSummary } from "./courseSummary";
+import { DirectPayment } from "./directPayment";
+import { DiscountPart } from "./discountPart";
+import { PropmtPayment } from "./promt-payment";
+import { PaymentCardProps } from "./types";
+
+export const PaymentCard = ({
+  cardTitle,
+  titleText,
+  titleIcon,
+  dropdownOptions,
+  courses,
+  price,
+  directPayment,
+  promptPayment,
+  notationText,
+  notationClassName,
+  paymentMethodLabels,
+  discountTitleText,
+  discountPlaceholder,
+  discountButtonText,
+  onApplyDiscount,
+}: PaymentCardProps) => {
+  const [selectedValue, setSelectedValue] = useState<string>("");
+  const [couponCode, setCouponCode] = useState<string>("");
+
+  const handleApplyDiscount = (value: string) => {
+    onApplyDiscount?.(value);
+  };
+
+  return (
+    <Card
+      variant="gradientDarkToLight"
+      contentClassName="px-2 py-4 w-[592px] flex flex-col bg-linear-to-b from-background to-background-light
+      rounded-2xl gap-6"
+      className="w-fit"
+      cardContent={
+        <>
+          <Label text={cardTitle} />
+
+          <CourseSummary
+            titleText={titleText}
+            titleIcon={titleIcon}
+            courses={courses}
+            price={price}
+          />
+
+          <DiscountPart
+            discountTitleText={discountTitleText}
+            value={couponCode}
+            onChange={(value: string) => setCouponCode(value)}
+            onApply={handleApplyDiscount}
+            placeholder={discountPlaceholder}
+            buttonText={discountButtonText}
+          />
+
+          <Dropdown
+            icon={<FaCreditCard />}
+            title="วิธีการชำระเงิน"
+            required={false}
+            options={dropdownOptions}
+            placeholder="เลือกช่องทางการชำระเงิน"
+            value={selectedValue}
+            onChange={(value: string) => setSelectedValue(value)}
+            className="flex flex-col gap-2 rounded-3xl"
+            variant="primary"
+          />
+
+          {selectedValue === paymentMethodLabels.directTransfer && (
+            <DirectPayment
+              directPayment={directPayment}
+              notationText={notationText}
+              notationClassName={notationClassName}
+            />
+          )}
+          {selectedValue === paymentMethodLabels.card && (
+            <CardPayment
+              notationText={notationText}
+              notationClassName={notationClassName}
+            />
+          )}
+          {selectedValue === paymentMethodLabels.promptPay && (
+            <PropmtPayment
+              promptPayment={promptPayment}
+              notationText={notationText}
+              notationClassName={notationClassName}
+            />
+          )}
+
+          {selectedValue !== "" && (
+            <div className="[&>div]:w-full w-full">
+              <Button
+                text="ยืนยันการชำระเงิน"
+                variant="primaryGradientBorder"
+                size="sm"
+                shape="rounded"
+              />
+            </div>
+          )}
+        </>
+      }
+    />
+  );
+};
