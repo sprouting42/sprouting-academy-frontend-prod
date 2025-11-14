@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 export interface CourseCardProps {
   src: string;
@@ -26,41 +26,9 @@ export interface CourseData extends CourseCardProps, CourseDetailProps {
 }
 
 export const courses: CourseData[] = [
-  // {
-  //   id: "basic-ai-automation",
-  //   src: "/courses/basic-ai-automation.png",
-  //   alt: "Basic AI Automation Course",
-  //   title: "Basic Course",
-  //   description:
-  //     "ทำความรู้จักกับ AI Automation และสร้าง Workshop ครั้งแรกของคุณ",
-  //   bulletPoints: [
-  //     "ทำความรู้จัก AI Automation",
-  //     "ตัวอย่าง (Case Studies)",
-  //     "คำศัพท์เทคนิคที่ควรรู้",
-  //     "ใช้งาน Make.com เครื่องมือ AI Automation ที่พึ่งพาโค้ดน้อยที่สุด",
-  //     "ตัวการสร้าง Automation เพื่อส่งข้อมูลข้ามซอฟต์แวร์/โปรแกรม โดยอัตโนมัติ",
-  //   ],
-  //   price: "1,000 บาท",
-  //   dateBadgeText: "เรียนวันที่ 27, 29 และ 31 ต.ค.",
-  //   imageBadgeText: "รับเพียง 10 ที่นั่ง",
-  //   courseOutcome:
-  //     "เข้าใจหลักการทำงานของ AI Automation อย่างถ่องแท้, สามารถเชื่อมต่อ 2-3 แอปพลิเคชันพื้นฐานได้เอง, สร้าง Flow การทำงานอัตโนมัติง่ายๆ สำหรับงานส่วนตัวได้",
-  //   courseTopics: [
-  //     "เน้นโมดูลพื้นฐานของเครื่องมือ (เช่น Make/Zapier)",
-  //     "การทำความเข้าใจ Logic",
-  //     "ตัวอย่าง Automation ทั่วไป (เช่น Google Sheet → Email)",
-  //   ],
-  //   caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
-  //   classType:
-  //     "Online, Live/Recorded, การเข้าถึงเนื้อหาย้อนหลัง, Group Support",
-  //   instructorImage: "/KP.jpg",
-  //   instructorName: "รศ. พ.ท. ดร. ปอม ปอม",
-  //   instructorInformation:
-  //     "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
-  // },
   {
     id: "ai-for-sale",
-    src: "/courses/ai-for-sale.png",
+    src: "/courses/ai-for-sale.jpg",
     alt: "AI for Sale Course",
     title: "AI for Sale",
     description:
@@ -86,14 +54,14 @@ export const courses: CourseData[] = [
     ],
     caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
     classType: "Online, Live/Recorded",
-    instructorImage: "/KP.jpg",
+    // instructorImage: "/KP.jpg",
     instructorName: "คุณ กษิดิ์พิชญ์ วีระกุล",
     instructorInformation:
       "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
   },
   {
     id: "ai-for-marketing",
-    src: "/courses/ai-for-marketing.png",
+    src: "/courses/ai-for-marketing.jpg",
     alt: "AI for Marketing Course",
     title: "AI for Marketing",
     description:
@@ -119,14 +87,14 @@ export const courses: CourseData[] = [
     ],
     caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
     classType: "Online, Live/Recorded",
-    instructorImage: "/KP.jpg",
+    // instructorImage: "/KP.jpg",
     instructorName: "คุณ กษิดิ์พิชญ์ วีระกุล",
     instructorInformation:
       "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
   },
   {
     id: "ai-for-hr",
-    src: "/courses/ai-for-hr.png",
+    src: "/courses/ai-for-hr.jpg",
     alt: "AI for HR Course",
     title: "AI for HR",
     description:
@@ -152,14 +120,14 @@ export const courses: CourseData[] = [
     ],
     caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
     classType: "Online, Live/Recorded",
-    instructorImage: "/KP.jpg",
+    // instructorImage: "/KP.jpg",
     instructorName: "คุณ กษิดิ์พิชญ์ วีระกุล",
     instructorInformation:
       "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
   },
   {
     id: "n8n-ai-automation-1",
-    src: "/courses/ai-for-hr.png",
+    src: "/courses/basic-ai-automation.jpg",
     alt: "n8n AI Automation Course",
     title: "n8n AI Automation",
     description:
@@ -168,59 +136,55 @@ export const courses: CourseData[] = [
       "ทำความรู้จัก AI Automation",
       "ตัวอย่าง (Case Studies)",
       "คำศัพท์เทคนิคที่ควรรู้",
-      "ใช้งาน Make.com เครื่องมือ AI Automation ที่พึ่งพาโค้ดน้อยที่สุด",
-      "ตัวการสร้าง Automation เพื่อส่งข้อมูลข้ามซอฟต์แวร์/โปรแกรม โดยอัตโนมัติ",
-      "สแกนผู้สมัคร คัดกรองใบสมัครจาก 200 คนให้เหลือเฉพาะผู้เข้าเกณฑ์และควรเรียกสัมภาษณ์",
-      "นัดสัมภาษณ์อัตโนมัติด้วยระบบอัตโนมัติ พร้อมเตรียมคำถามให้คุณจาก CV ของผู้สมัคร",
+      "ออกแบบและสร้าง Workflow Marketing ได้ด้วยตัวเอง",
+      "สร้าง Flow จริงที่ใช้งานได้ เช่น Content Calendar Automation, AI Caption Generator, และ Lead Tracker",
     ],
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 14 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
     courseOutcome:
-      "ลดเวลางาน Manual ของ HR (เช่น การคัดกรอง Resume) ได้ 50% ขึ้นไป, สร้างระบบ Onboarding/Training อัตโนมัติ, ปรับปรุงประสบการณ์พนักงานด้วย Chatbot HR",
+      "ให้ n8n ช่วยทำงานด้าน Content Marketing เช่น การคิดแคปชั่น ตั้งเวลาโพสต์",
     courseTopics: [
-      "เน้นการเชื่อมต่อ ATS (Applicant Tracking System)",
-      "การใช้ AI สรุป/คัดกรอง Resume",
-      "การสร้าง Flow การแจ้งเตือน/ติดตามงานเอกสาร HR",
+      "พื้นฐานการทำ Automation ด้วย n8n",
+      "ออกแบบและสร้าง Workflow Marketing ได้ด้วยตัวเอง",
+      "สร้าง Flow จริงที่ใช้งานได้ เช่น Content Calendar Automation, AI Caption Generator, และ Lead Tracke",
     ],
     caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
     classType: "Online, Live/Recorded",
     // instructorImage: "/KP.jpg",
     instructorName: "คุณ พิณทร์วรันญ์ มิลินทจินดา",
-    instructorInformation:
-      "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
+    // instructorInformation:
+    //   "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
   },
   {
     id: "n8n-ai-automation-2",
-    src: "/courses/ai-for-hr.png",
+    src: "/courses/basic-ai-automation.jpg",
     alt: "n8n AI Automation Course",
     title: "n8n AI Automation",
     description:
-      "ลดงานเอกสาร 80% สร้างระบบ HR อัจฉริยะ ตั้งแต่รับสมัครจรถึงทำสัญญาจ้างด้วย Make.com",
+      "ใช้งาน n8n สร้าง Flow ได้ เข้าใจ Workflow Automation สร้าง Flow ง่ายๆ พร้อมต่อยอดไปสู่ Flow ขั้นสูงหรือเชื่อมต่อ AI ได้ในอนาคต",
     bulletPoints: [
       "ทำความรู้จัก AI Automation",
       "ตัวอย่าง (Case Studies)",
       "คำศัพท์เทคนิคที่ควรรู้",
-      "ใช้งาน Make.com เครื่องมือ AI Automation ที่พึ่งพาโค้ดน้อยที่สุด",
-      "ตัวการสร้าง Automation เพื่อส่งข้อมูลข้ามซอฟต์แวร์/โปรแกรม โดยอัตโนมัติ",
-      "สแกนผู้สมัคร คัดกรองใบสมัครจาก 200 คนให้เหลือเฉพาะผู้เข้าเกณฑ์และควรเรียกสัมภาษณ์",
-      "นัดสัมภาษณ์อัตโนมัติด้วยระบบอัตโนมัติ พร้อมเตรียมคำถามให้คุณจาก CV ของผู้สมัคร",
+      "ออกแบบและสร้าง Workflow Marketing ได้ด้วยตัวเอง",
+      "สร้าง Flow จริงที่ใช้งานได้ เช่น Content Calendar Automation, AI Caption Generator, และ Lead Tracker",
     ],
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 15 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
     courseOutcome:
-      "ลดเวลางาน Manual ของ HR (เช่น การคัดกรอง Resume) ได้ 50% ขึ้นไป, สร้างระบบ Onboarding/Training อัตโนมัติ, ปรับปรุงประสบการณ์พนักงานด้วย Chatbot HR",
+      "ให้ n8n ช่วยทำงานด้าน Content Marketing เช่น การคิดแคปชั่น ตั้งเวลาโพสต์",
     courseTopics: [
-      "เน้นการเชื่อมต่อ ATS (Applicant Tracking System)",
-      "การใช้ AI สรุป/คัดกรอง Resume",
-      "การสร้าง Flow การแจ้งเตือน/ติดตามงานเอกสาร HR",
+      "พื้นฐานการทำ Automation ด้วย n8n",
+      "ออกแบบและสร้าง Workflow Marketing ได้ด้วยตัวเอง",
+      "สร้าง Flow จริงที่ใช้งานได้ เช่น Content Calendar Automation, AI Caption Generator, และ Lead Tracke",
     ],
     caseStudies: ["Workshop: สร้าง Chatbot ตอบลูกค้าอัตโนมัติ 24 ชม."],
     classType: "Online, Live/Recorded",
     // instructorImage: "/KP.jpg",
     instructorName: "คุณ พิณทร์วรันญ์ มิลินทจินดา",
-    instructorInformation:
-      "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
+    // instructorInformation:
+    //   "ได้รับ Certificate จาก Make.com มีประสบการณ์ทำงานในหลายด้าน ทำให้เข้าใจถึง pain point ในงานต่าง ๆ ที่สามารถนำ AI automation มาช่วยให้การลดส่วนของงานที่ต้องทำซ้ำซ้อน ใช้ Make.com ในการสร้าง Flow สำหรับส่งอีเมลแจ้งเตือน, อัปเดตฐานข้อมูลลูกค้า และสร้างรายงานประจำสัปดาห์อัตโนมัติ",
   },
 ];
