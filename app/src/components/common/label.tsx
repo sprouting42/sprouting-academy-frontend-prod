@@ -1,0 +1,33 @@
+import React from "react";
+
+import { cn } from "@/utils/cn";
+
+interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  text: string;
+  icon?: React.ReactNode;
+  required?: boolean;
+}
+
+export const Label = ({
+  text,
+  className,
+  icon,
+  required,
+  ...props
+}: LabelProps) => {
+  return (
+    <label
+      {...props}
+      className={cn(
+        "flex items-center justify-start gap-2 lg:text-[18px] font-prompt text-base",
+        className,
+      )}
+    >
+      {icon && <span className={cn("w-6 h-6 flex items-center")}>{icon}</span>}
+      <span className="flex gap-1 items-center">
+        {text}
+        {required && <span className="text-foreground">*</span>}
+      </span>
+    </label>
+  );
+};
