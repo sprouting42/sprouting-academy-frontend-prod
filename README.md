@@ -1,1 +1,0 @@
-# sprouting-academy-frontend-prod
