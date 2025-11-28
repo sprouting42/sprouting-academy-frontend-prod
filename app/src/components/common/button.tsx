@@ -1,8 +1,8 @@
-import React from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/utils/cn";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
   variant?:
     | "primary"
@@ -12,12 +12,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     | "circleButton"
     | "tertiaryGradientBorder"
     | "iconOnly"
-    | "linkButton";
+    | "errorButton"
+    | "profileButton"
+    | "textButton"
+    | "menuItemDanger";
   size?: "sm" | "md" | "lg";
   shape?: "square" | "rounded" | "circle";
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   loading?: boolean;
   className?: string;
+  children?: ReactNode;
 }
 
 export const Button = ({
@@ -29,11 +33,14 @@ export const Button = ({
   loading = false,
   className,
   disabled,
+  children,
   ...props
 }: ButtonProps) => {
   const isDisabled = disabled || loading;
   const isIconOnly = variant === "iconOnly";
-  const isLinkButton = variant === "linkButton";
+  const isTextButton = variant === "textButton";
+  const isMenuItemDanger = variant === "menuItemDanger";
+  const isProfileButton = variant === "profileButton";
 
   const baseButtonClasses =
     "font-prompt flex items-center justify-center gap-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -49,19 +56,16 @@ export const Button = ({
     }
   > = {
     primary: {
-      inner: cn("bg-primary text-foreground font-medium", interactiveStates),
+      inner: cn("bg-primary text-white font-medium", interactiveStates),
     },
     primaryGradientBorder: {
-      inner: cn(
-        "bg-primary text-foreground font-medium w-full",
-        interactiveStates,
-      ),
+      inner: cn("bg-primary text-white font-medium w-full", interactiveStates),
       wrapper:
         "inline-block rounded-full bg-linear-to-br from-primary via-secondary to-primary p-0.5",
     },
     secondaryGradientBorder: {
       inner: cn(
-        "bg-secondary text-foreground font-medium w-full",
+        "bg-secondary text-white font-medium w-full",
         interactiveStates,
       ),
       wrapper:
@@ -69,30 +73,45 @@ export const Button = ({
     },
     tertiaryGradientBorder: {
       inner: cn(
-        "bg-gradient-to-b from-background-light to-background text-foreground font-medium w-full",
+        "bg-[rgba(51,51,51,0.02)] [html[data-theme='dark']_&]:bg-gradient-to-b [html[data-theme='dark']_&]:from-background-light [html[data-theme='dark']_&]:to-background text-foreground font-medium w-full",
         interactiveStates,
       ),
       wrapper:
-        "inline-block rounded-full p-px bg-linear-to-t from-foreground/50 to-background-light [&_svg]:h-6 [&_svg]:w-6",
+        "inline-block rounded-full p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light [&_svg]:h-6 [&_svg]:w-6",
     },
     squareButton: {
       inner: cn(
-        "bg-gradient-to-b from-primary to-secondary text-foreground font-medium w-full",
+        "bg-gradient-to-b from-primary to-secondary text-white font-medium w-full",
         interactiveStates,
       ),
     },
     circleButton: {
-      inner: cn("bg-foreground text-primary font-medium", interactiveStates),
+      inner: cn("bg-white text-primary font-medium", interactiveStates),
     },
     iconOnly: {
       inner:
         "bg-transparent enabled:hover:opacity-80 enabled:active:opacity-60 enabled:active:scale-95",
     },
-    linkButton: {
+    errorButton: {
+      inner: cn("bg-error text-white font-medium w-full", interactiveStates),
+    },
+    textButton: {
       inner: cn(
         "bg-transparent text-foreground/50 font-normal",
         "enabled:hover:text-primary transition-colors duration-200",
+        "flex items-center gap-2",
       ),
+    },
+    menuItemDanger: {
+      inner: cn(
+        "w-full px-4 py-3 text-left text-base font-prompt transition-colors",
+        "bg-transparent text-error font-normal",
+        "enabled:hover:bg-error/10",
+      ),
+    },
+    profileButton: {
+      inner:
+        "bg-background-light flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 hover:opacity-80 active:opacity-60 active:scale-95 shrink-0 overflow-hidden aspect-square relative",
     },
   };
 
@@ -102,7 +121,7 @@ export const Button = ({
     lg: "w-10 h-10 text-lg font-black",
   };
 
-  const linkButtonSizeClasses = {
+  const textButtonSizeClasses = {
     sm: "text-sm leading-5 lg:leading-6 lg:text-base",
     md: "text-base leading-5 lg:leading-6 lg:text-base",
     lg: "text-lg leading-6 lg:leading-7 lg:text-lg",
@@ -128,18 +147,39 @@ export const Button = ({
   );
 
   const { wrapper, inner } = variantStyles[variant];
+  const hasGradientBorderWrapper =
+    wrapper &&
+    (variant === "primaryGradientBorder" ||
+      variant === "secondaryGradientBorder" ||
+      variant === "tertiaryGradientBorder");
+
+  const getWrapperClassName = () => {
+    if (!wrapper) return "";
+    if (hasGradientBorderWrapper && shape === "square") {
+      return wrapper.replace("rounded-full", "rounded-xl");
+    }
+    return wrapper;
+  };
 
   const buttonElement = (
     <button
       className={cn(
-        baseButtonClasses,
+        !isProfileButton &&
+          !isTextButton &&
+          !isMenuItemDanger &&
+          baseButtonClasses,
         inner,
-        !isLinkButton && shapeClasses[shape],
+        !isProfileButton &&
+          !isTextButton &&
+          !isMenuItemDanger &&
+          shapeClasses[shape],
         isIconOnly
           ? iconSizeClasses[size]
-          : isLinkButton
-            ? linkButtonSizeClasses[size]
-            : sizeClasses[size],
+          : isTextButton
+            ? textButtonSizeClasses[size]
+            : !isProfileButton && !isMenuItemDanger
+              ? sizeClasses[size]
+              : "",
         isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
         className,
       )}
@@ -148,19 +188,22 @@ export const Button = ({
     >
       {loading ? (
         loadingIndicator
+      ) : isProfileButton ? (
+        children
       ) : (
         <>
-          {isLinkButton && icon}
-          {text}
-          {!isLinkButton && icon}
+          {icon}
+          {text || children}
         </>
       )}
     </button>
   );
 
-  if (!wrapper || isLinkButton) {
+  if (!wrapper || isProfileButton || isTextButton || isMenuItemDanger) {
     return buttonElement;
   }
 
-  return <div className={cn(wrapper, className)}>{buttonElement}</div>;
+  return (
+    <div className={cn(getWrapperClassName(), className)}>{buttonElement}</div>
+  );
 };

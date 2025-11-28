@@ -18,7 +18,7 @@ export const Testimonial = ({
   testimonialRating,
 }: TestimonialProps) => {
   return (
-    <div className="bg-linear-to-b border border-foreground/25 flex flex-col from-background-light gap-4 h-[300px] p-4 rounded-xl to-background w-[384px]">
+    <div className="[html[data-theme='dark']_&]:border-foreground/25 [html[data-theme='dark']_&]:shadow-none bg-linear-to-b border border-background flex flex-col from-background-light gap-4 h-[300px] p-4 rounded-xl shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] to-background w-[384px]">
       <div className="flex flex-row gap-2 items-center justify-between">
         <div className="flex flex-row gap-3 items-center">
           <div className="bg-secondary/10 border-2 border-secondary flex h-12 items-center justify-center rounded-full w-12">
@@ -44,9 +44,9 @@ export const Testimonial = ({
       </div>
       <div className="flex flex-row gap-1 items-center">
         {Array.from({ length: Math.max(0, Math.round(testimonialRating)) }).map(
-          () => (
+          (_, index) => (
             <FaStar
-              key={testimonialRating}
+              key={`testimonial-rating-${index}`}
               size={20}
               className="text-secondary"
             />

@@ -1,4 +1,6 @@
-import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+"use client";
+import { CaretLeftIcon } from "@phosphor-icons/react/dist/csr/CaretLeft";
+import { CaretRightIcon } from "@phosphor-icons/react/dist/csr/CaretRight";
 import Image from "next/image";
 
 import { Button } from "@/components/common/button";
@@ -24,7 +26,7 @@ export const InstructorDetail = ({
 
   return (
     <Card
-      variant="gradientDarkToLight"
+      variant="gradientLightToDark"
       cardContent={
         <div className="bg-linear-to-b flex flex-col from-background-light gap-6 md:flex-row md:items-stretch min-h-[312px] p-6 rounded-2xl to-background w-full">
           <div className="md:w-[420px] relative w-full">
@@ -41,9 +43,9 @@ export const InstructorDetail = ({
 
           <div className="flex flex-1 flex-col gap-6 justify-between">
             <div className="space-y-3">
-              <h1 className="font-semibold text-2xl text-secondary">
+              <h3 className="[html[data-theme='dark']_&]:text-secondary font-semibold text-2xl text-primary">
                 {instructorName}
-              </h1>
+              </h3>
               <p className="leading-relaxed md:text-base text-foreground/80 text-sm">
                 {instructorDescription}
               </p>

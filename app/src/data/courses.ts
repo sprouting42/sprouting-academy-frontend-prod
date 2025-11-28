@@ -1,4 +1,4 @@
-import type React from "react";
+import type { ReactNode } from "react";
 
 export interface CourseCardProps {
   src: string;
@@ -13,9 +13,9 @@ export interface CourseCardProps {
 }
 
 export interface CourseDetailProps {
-  courseOutcome?: string;
-  courseTopics?: React.ReactNode[];
-  caseStudies?: React.ReactNode[];
+  courseBenefit?: string;
+  courseTopics?: ReactNode[];
+  caseStudies?: ReactNode[];
   classType?: string;
   totalTime?: string;
   startDate?: string;
@@ -48,7 +48,7 @@ export const courses: CourseData[] = [
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 8 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
-    courseOutcome:
+    courseBenefit:
       "สร้างระบบติดตามและแจ้งเตือน Lead อัตโนมัติ, ใช้ AI ช่วยเขียน Email/Proposal ที่เข้าถึงลูกค้าเฉพาะราย, เพิ่มอัตรา Conversion ใน Sales Funnel",
     courseTopics: [
       "เน้นการเชื่อมต่อ CRM (เช่น Salesforce/HubSpot) กับ AI",
@@ -81,7 +81,7 @@ export const courses: CourseData[] = [
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 10 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
-    courseOutcome:
+    courseBenefit:
       "สร้างแคมเปญการตลาดอัตโนมัติครบวงจร, ใช้ AI ช่วยสร้าง Content (Text/Image) จำนวนมากอย่างรวดเร็ว, วิเคราะห์ผลลัพธ์แคมเปญและปรับปรุงอัตโนมัติ",
     courseTopics: [
       "เน้นการเชื่อมต่อเครื่องมือ MarTech (เช่น Meta Ads, Mailchimp) กับ AI",
@@ -114,7 +114,7 @@ export const courses: CourseData[] = [
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 12 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
-    courseOutcome:
+    courseBenefit:
       "ลดเวลางาน Manual ของ HR (เช่น การคัดกรอง Resume) ได้ 50% ขึ้นไป, สร้างระบบ Onboarding/Training อัตโนมัติ, ปรับปรุงประสบการณ์พนักงานด้วย Chatbot HR",
     courseTopics: [
       "เน้นการเชื่อมต่อ ATS (Applicant Tracking System)",
@@ -145,7 +145,7 @@ export const courses: CourseData[] = [
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 14 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
-    courseOutcome:
+    courseBenefit:
       "ให้ n8n ช่วยทำงานด้าน Content Marketing เช่น การคิดแคปชั่น ตั้งเวลาโพสต์",
     courseTopics: [
       "พื้นฐานการทำ Automation ด้วย n8n",
@@ -176,7 +176,7 @@ export const courses: CourseData[] = [
     price: "1,000 บาท",
     dateBadgeText: "เรียนวันที่ 15 ธันวาคม 2568",
     imageBadgeText: "รับเพียง 10 ที่นั่ง",
-    courseOutcome:
+    courseBenefit:
       "ให้ n8n ช่วยทำงานด้าน Content Marketing เช่น การคิดแคปชั่น ตั้งเวลาโพสต์",
     courseTopics: [
       "พื้นฐานการทำ Automation ด้วย n8n",

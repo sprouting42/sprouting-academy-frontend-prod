@@ -1,11 +1,11 @@
-import React, { useCallback, useRef, useState } from "react";
+import { type ReactNode, useCallback, useRef, useState } from "react";
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { cn } from "@/utils/cn";
 
 interface DropdownProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   required: boolean;
   options: string[];

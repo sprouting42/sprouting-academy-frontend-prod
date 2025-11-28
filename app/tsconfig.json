@@ -11,14 +11,19 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
+    "allowImportingTsExtensions": true,
+
+    "baseUrl": ".",
+
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
+      "@payload-config": ["src/payload/payload.config.ts"],
       "@/*": ["./src/*"],
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/components/*"],
@@ -26,7 +31,8 @@
       "@lib/*": ["./src/lib/*"],
       "@shared/*": ["./src/shared/*"],
       "@utils/*": ["./src/utils/*"],
-      "@apis/*": ["./src/apis/*"]
+      "@apis/*": ["./src/apis/*"],
+      "@collections/*": ["src/payload/collections/*"]
     },
     "types": ["next", "next/types/global"]
   },
@@ -37,7 +43,9 @@
     ".next/types/**/*.ts",
     "**/*.mts",
     "global.d.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next\\dev/types/**/*.ts",
+    ".next\\dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", ".next/dev/types"]
 }

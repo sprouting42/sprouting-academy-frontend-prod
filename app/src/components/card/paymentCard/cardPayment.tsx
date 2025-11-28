@@ -1,4 +1,4 @@
-import { CalendarIcon } from "@phosphor-icons/react";
+import { CalendarIcon } from "@phosphor-icons/react/dist/csr/Calendar";
 import { CiCreditCard1, CiCreditCard2 } from "react-icons/ci";
 
 import { Input } from "@/components/common/input";

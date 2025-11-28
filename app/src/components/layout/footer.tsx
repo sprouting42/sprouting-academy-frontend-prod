@@ -1,9 +1,10 @@
 "use client";
-import { SparkleIcon } from "@phosphor-icons/react";
+import { SparkleIcon } from "@phosphor-icons/react/dist/csr/Sparkle";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FaArrowRight, FaFacebookF } from "react-icons/fa6";
+import { usePathname, useRouter } from "next/navigation";
+import { type ReactNode } from "react";
+import { FaFacebookF } from "react-icons/fa6";
 import { PiYoutubeLogoFill } from "react-icons/pi";
 import { TbBrandTwitterFilled } from "react-icons/tb";
 import { TfiLinkedin } from "react-icons/tfi";
@@ -16,7 +17,7 @@ import { Badge } from "../common/badge";
 interface SocialLink {
   href: string;
   ariaLabel: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 interface FooterLink {
@@ -30,17 +31,17 @@ interface FooterSection {
 }
 
 const CTA_TITLE_CLASSES =
-  "text-[22px] leading-8.25 lg:text-[32px] lg:leading-15 font-bold lg:font-medium text-center text-foreground";
+  "text-[22px] leading-8.25 lg:text-[32px] lg:leading-15 font-bold lg:font-medium text-center text-foreground [html[data-theme='dark']_&]:text-[rgb(229,232,232)]";
 const FOOTER_SECTION_LINK_CLASSES =
-  "text-sm leading-5.25 font-normal text-foreground hover:text-primary transition-colors";
+  "text-sm leading-5.25 font-normal text-[rgb(229,232,232)] hover:text-primary transition-colors";
 const BOTTOM_LINK_CLASSES =
-  "text-xs lg:text-sm leading-5.25 font-normal text-foreground hover:text-primary transition-colors";
+  "[html[data-theme='dark']_&]:hover:text-foreground font-normal leading-5.25 hover:text-primary lg:text-sm text-[rgb(229,232,232)] text-xs transition-colors";
 const SOCIAL_LINK_CLASSES =
-  "w-10 h-10 rounded-full bg-foreground flex items-center justify-center hover:bg-background transition-colors";
+  "w-10 h-10 rounded-full bg-[rgb(229,232,232)] flex items-center justify-center hover:bg-[rgb(51,51,51)] transition-colors";
 
 const SOCIAL_ICON: Record<
   Social.FACEBOOK | Social.YOUTUBE | Social.TWITTER | Social.LINKEDIN,
-  React.ReactNode
+  ReactNode
 > = {
   [Social.FACEBOOK]: (
     <FaFacebookF size={18} style={{ color: "var(--primary)" }} />
@@ -81,8 +82,11 @@ const socialLinks: SocialLink[] = [
 
 const footerSections: FooterSection[] = [
   {
-    heading: "Courses",
-    links: [{ label: FooterMenu.COURSE_DETAIL, href: PagePath.COURSES }],
+    heading: "Learning",
+    links: [
+      { label: FooterMenu.COURSE_DETAIL, href: PagePath.COURSES },
+      { label: FooterMenu.BOOTCAMP_DETAIL, href: PagePath.BOOTCAMPS },
+    ],
   },
   {
     heading: "Company",
@@ -102,40 +106,56 @@ const bottomLinks = [
 
 export const Footer = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === PagePath.HOME;
   return (
     <footer className="flex flex-col font-prompt items-center w-full">
-      <div className="flex flex-col isolate items-center py-16 relative w-full">
-        <div
-          className="absolute blur-3xl h-72 left-[calc(50%-144px)] rounded-full top-64.5 w-72 z-0"
-          style={{
-            backgroundColor: "var(--secondary-alpha-50)",
-          }}
-        />
-        <div className="flex flex-col gap-2.5 items-center lg:gap-4 max-w-4xl px-8 relative w-full z-10">
-          <Badge
-            text="ราคา Early Bird ประหยัดได้กว่า 80%"
-            icon={<SparkleIcon size={16} color="#e5e8e8" weight="fill" />}
-            variant="transparentPrimary"
-            shape="rounded"
-            size="sm"
+      {isHomePage && (
+        <div className="flex flex-col isolate items-center py-16 relative w-full">
+          <div
+            className="absolute blur-3xl h-72 left-[calc(50%-144px)] rounded-full top-64.5 w-72 z-0"
+            style={{
+              backgroundColor: "var(--secondary-alpha-50)",
+            }}
           />
-          <h1 className={CTA_TITLE_CLASSES}>
-            พร้อมจะยกระดับ อัพสกิลในการทำงานหรือยัง?
-          </h1>
-          <div className="w-fit">
-            <Button
-              text="สมัครเลย"
-              icon={<FaArrowRight size={16} color="#e5e8e8" />}
-              variant="primaryGradientBorder"
-              size="sm"
+          <div className="flex flex-col gap-2.5 items-center lg:gap-4 max-w-7xl px-8 relative w-full z-10">
+            <Badge
+              text="ราคา Early Bird ประหยัดได้กว่า 80%"
+              icon={
+                <span className="[html[data-theme='dark']_&]:text-[#e5e8e8] text-secondary">
+                  <SparkleIcon size={16} color="currentColor" weight="fill" />
+                </span>
+              }
+              variant="transparentPrimary"
               shape="rounded"
-              onClick={() => router.push(PagePath.REGISTER)}
+              size="sm"
             />
+            <h1 className={CTA_TITLE_CLASSES}>
+              พร้อมจะยกระดับ อัพสกิลในการทำงานหรือยัง?
+            </h1>
+            <div className="w-fit">
+              <div className="flex flex-col gap-4 md:flex-row">
+                <Button
+                  text="ดูคอร์ส AI Automation"
+                  variant="primaryGradientBorder"
+                  size="sm"
+                  shape="rounded"
+                  onClick={() => router.push(PagePath.COURSES)}
+                />
+                <Button
+                  text="ดูหลักสูตร Bootcamp"
+                  variant="secondaryGradientBorder"
+                  size="sm"
+                  shape="rounded"
+                  onClick={() => router.push(PagePath.BOOTCAMPS)}
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="bg-background-light lg:pt-px lg:px-12 lg:py-0 px-4 py-8 relative w-full z-20">
+      <div className="bg-[rgb(51,51,51)] lg:pt-px lg:px-12 lg:py-0 px-4 py-8 relative w-full z-20">
         <div className="flex flex-col gap-12 items-start lg:px-8 lg:py-12">
           <div className="flex flex-col gap-8 items-start justify-between lg:flex-row lg:gap-8 lg:items-center w-full">
             <div className="flex flex-col gap-4 items-start lg:w-117 w-full">
@@ -151,7 +171,7 @@ export const Footer = () => {
                   Sprouting Tech Academy
                 </h1>
               </div>
-              <p className="font-normal leading-5.5 text-foreground text-sm">
+              <p className="font-normal leading-5.5 text-[rgb(229,232,232)] text-sm">
                 Empowering the next generation of AI professionals with
                 world-class education and hands-on training in artificial
                 intelligence and machine learning.
@@ -198,9 +218,9 @@ export const Footer = () => {
             </div>
           </div>
 
-          <div className="border-foreground border-t flex flex-col items-start pt-8.25 w-full">
+          <div className="border-[rgb(229,232,232)] border-t flex flex-col items-start pt-8.25 w-full">
             <div className="flex flex-col gap-2 items-center justify-between lg:flex-row lg:gap-0 w-full">
-              <p className="font-normal leading-5.25 lg:text-left lg:text-sm text-center text-foreground text-xs">
+              <p className="font-normal leading-5.25 lg:text-left lg:text-sm text-[rgb(229,232,232)] text-center text-xs">
                 © 2025 Sprouting Tech Academy. All rights reserved.
               </p>
               <div className="flex flex-row gap-4 items-center justify-center lg:gap-6 lg:justify-start">

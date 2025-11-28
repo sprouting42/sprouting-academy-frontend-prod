@@ -1,7 +1,7 @@
 "use client";
 
 import { Mesh, Program, Renderer, Triangle, Vec2 } from "ogl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const vertex = `
 attribute vec2 position;
@@ -88,6 +88,8 @@ type Props = {
   resolutionScale?: number;
 };
 
+export type { Props as DarkVeilProps };
+
 export const DarkVeil = ({
   hueShift = 0,
   noiseIntensity = 0,
@@ -98,18 +100,60 @@ export const DarkVeil = ({
   resolutionScale = 1,
 }: Props) => {
   const ref = useRef<HTMLCanvasElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [theme, setTheme] = useState<string | null>(null);
+
   useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Track theme changes
+    const updateTheme = () => {
+      setTheme(document.documentElement.getAttribute("data-theme"));
+    };
+    updateTheme();
+
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
     const canvas = ref.current as HTMLCanvasElement;
     const parent = canvas.parentElement as HTMLElement;
 
+    const isMobile = window.innerWidth < 768;
+    const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+    const effectiveResolutionScale = isMobile
+      ? resolutionScale * 0.5
+      : resolutionScale;
+
     const renderer = new Renderer({
-      dpr: Math.min(window.devicePixelRatio, 2),
+      dpr,
       canvas,
     });
 
     const gl = renderer.gl;
     const geometry = new Triangle(gl);
 
+    // Always use dark background color for the animation
     const backgroundColor = [36 / 255, 36 / 255, 36 / 255];
 
     const program = new Program(gl, {
@@ -132,7 +176,10 @@ export const DarkVeil = ({
     const resize = () => {
       const w = parent.clientWidth,
         h = parent.clientHeight;
-      renderer.setSize(w * resolutionScale, h * resolutionScale);
+      renderer.setSize(
+        w * effectiveResolutionScale,
+        h * effectiveResolutionScale,
+      );
       program.uniforms.uResolution.value.set(w, h);
     };
 
@@ -163,6 +210,7 @@ export const DarkVeil = ({
   }, [
     hueShift,
     noiseIntensity,
+    isVisible,
     scanlineIntensity,
     speed,
     scanlineFrequency,
@@ -172,10 +220,13 @@ export const DarkVeil = ({
   return (
     <canvas
       ref={ref}
-      className="bg-background block h-full w-full"
+      className="block h-full w-full"
       style={{
         height: "100%",
         maxHeight: "100%",
+        opacity: theme === "light" ? 0.1 : 1,
+        mixBlendMode: theme === "light" ? "normal" : "normal",
+        filter: theme === "light" ? "none" : "none",
       }}
     />
   );

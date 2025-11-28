@@ -1,6 +1,7 @@
 "use client";
 
-import { PhoneIcon, UserIcon } from "@phosphor-icons/react";
+import { PhoneIcon } from "@phosphor-icons/react/dist/csr/Phone";
+import { UserIcon } from "@phosphor-icons/react/dist/csr/User";
 import { MdEmail } from "react-icons/md";
 
 import { Card } from "../common/card";

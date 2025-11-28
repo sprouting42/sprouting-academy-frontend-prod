@@ -67,7 +67,7 @@ const sortClassnameRule = {
         const normalized = originalValue.trim().replace(/\s+/g, " ");
         const tokens = normalized.length > 0 ? normalized.split(" ") : [];
         const sortedTokens = [...tokens].sort((left, right) =>
-          left.localeCompare(right),
+          left.localeCompare(right, "en-US", { sensitivity: "base" }),
         );
         const sortedValue = sortedTokens.join(" ");
 

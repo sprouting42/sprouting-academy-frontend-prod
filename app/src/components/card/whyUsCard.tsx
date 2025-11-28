@@ -58,7 +58,7 @@ export const WhyUsCard = ({
             ) : null}
             <h3
               className={cn(
-                "font-semibold leading-snug text-secondary text-xl",
+                "font-semibold leading-snug text-primary text-xl [html[data-theme='dark']_&]:text-secondary",
                 titleClassName,
               )}
             >

@@ -1,6 +1,7 @@
 export enum NavigationMenu {
   HOME = "หน้าหลัก",
   COURSES = "หลักสูตรทั้งหมด",
+  BOOTCAMP = "Bootcamp",
 }
 
 export enum FooterMenu {
@@ -8,6 +9,7 @@ export enum FooterMenu {
   INSTRUCTORS = "Instructors",
   CONTACT = "Contact",
   COURSE_DETAIL = "Course Detail",
+  BOOTCAMP_DETAIL = "Bootcamp Detail",
   PRIVACY_POLICY = "Privacy Policy",
   TERMS_OF_SERVICE = "Terms of Service",
   COOKIE_POLICY = "Cookie Policy",
@@ -16,6 +18,7 @@ export enum FooterMenu {
 export enum PagePath {
   HOME = "/",
   COURSES = "/courses",
+  BOOTCAMPS = "/bootcamps",
   ABOUT_US = "/about-us",
   INSTRUCTORS = "/instructors",
   CONTACT = "/contact",
@@ -27,4 +30,5 @@ export enum PagePath {
   CART = "/cart",
   CHECKOUT = "/checkout",
   PROFILE = "/profile",
+  QUOTATION = "/quotation",
 }

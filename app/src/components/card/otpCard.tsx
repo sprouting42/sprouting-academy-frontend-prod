@@ -1,13 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { BiSolidLeftArrow } from "react-icons/bi";
 import { PiCircleBold } from "react-icons/pi";
 
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/common";
 import { Card } from "@/components/common/card";
 import { OtpInput } from "@/components/common/input";
 import { cn } from "@/utils/cn";
+
+const COUNTDOWN = 60;
 
 interface OtpCardProps {
   className?: string;
@@ -33,13 +35,13 @@ export const OtpCard = ({
   onErrorClear,
 }: OtpCardProps) => {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [isResending, setIsResending] = React.useState(false);
-  const [countdown, setCountdown] = React.useState(60);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [countdown, setCountdown] = useState(COUNTDOWN);
 
-  const validateOtp = (otpValue: string): boolean => {
+  const validateOtp = useCallback((otpValue: string): boolean => {
     return /^\d{6}$/.test(otpValue);
-  };
+  }, []);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -62,29 +64,32 @@ export const OtpCard = ({
     setIsResending(true);
     try {
       await onResendOtp?.();
-      setCountdown(60);
+      setCountdown(COUNTDOWN);
     } finally {
       setIsResending(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateOtp(otpValue)) {
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await onSubmit?.(otpValue);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const handleSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      if (!validateOtp(otpValue)) {
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await onSubmit?.(otpValue);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [otpValue, onSubmit, validateOtp],
+  );
 
   return (
     <Card
       variant="gradientDarkToLight"
-      className={cn("h-auto overflow-hidden w-full max-w-[640px]", className)}
+      className={cn("h-auto overflow-hidden w-full max-w-160", className)}
       cardContent={
         <div className="bg-linear-to-b flex flex-col from-background-light h-full justify-between p-4 rounded-2xl to-background w-full">
           <form
@@ -96,7 +101,7 @@ export const OtpCard = ({
                 <Button
                   type="button"
                   onClick={handleBack}
-                  variant="linkButton"
+                  variant="textButton"
                   size="sm"
                   text="ย้อนกลับ"
                   icon={<BiSolidLeftArrow size={16} className="h-4 w-4" />}
@@ -105,7 +110,7 @@ export const OtpCard = ({
                 <h1 className="flex-1 font-medium font-prompt leading-6 lg:leading-8.25 lg:text-[22px] text-center text-foreground text-lg">
                   ยืนยันรหัส OTP
                 </h1>
-                <div className="w-[100px]" />
+                <div className="w-25" />
               </div>
               <p className="font-normal font-prompt leading-5 lg:leading-6 lg:text-base text-foreground text-sm">
                 เราได้ส่งรหัส 6 หลักไปยัง {userEmail}
@@ -133,7 +138,7 @@ export const OtpCard = ({
             <Button
               type="button"
               onClick={handleResendOtp}
-              variant="linkButton"
+              variant="textButton"
               size="sm"
               text={
                 isResending

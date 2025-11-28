@@ -11,7 +11,7 @@ import { Dropdown } from "@/components/dropdown/dropdown";
 import { CardPayment } from "./cardPayment";
 import { CourseSummary } from "./courseSummary";
 import { DirectPayment } from "./directPayment";
-import { PropmtPayment } from "./promt-payment";
+import { PropmtPayment } from "./promtPayment";
 import { PaymentCardProps } from "./types";
 
 export const PaymentCard = ({

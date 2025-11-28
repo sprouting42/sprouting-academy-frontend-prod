@@ -1,7 +1,9 @@
+import { type ReactNode } from "react";
+
 import { cn } from "@/utils/cn";
 
 interface CardProps {
-  cardContent: React.ReactNode;
+  cardContent: ReactNode;
   variant?:
     | "gradientDarkToLight"
     | "gradientLightToDark"
@@ -29,12 +31,12 @@ export const Card = ({
   > = {
     gradientDarkToLight: {
       wrapper:
-        "p-0.5 bg-linear-to-t from-foreground/50 to-background rounded-2xl",
+        "p-0.5 rounded-2xl bg-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:bg-linear-to-b [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background [html[data-theme='dark']_&]:shadow-none",
       inner: "rounded-2xl",
     },
     gradientLightToDark: {
       wrapper:
-        "p-0.5 bg-linear-to-t from-background to-foreground/50 rounded-2xl",
+        "p-0.5 rounded-2xl bg-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background [html[data-theme='dark']_&]:shadow-none",
       inner: "rounded-2xl",
     },
     background: {
@@ -66,5 +68,5 @@ export const Card = ({
     return cardElement;
   }
 
-  return <div className={cn("w-full ", wrapper, className)}>{cardElement}</div>;
+  return <div className={cn("w-full", wrapper, className)}>{cardElement}</div>;
 };

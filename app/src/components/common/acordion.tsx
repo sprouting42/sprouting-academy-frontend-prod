@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { GoTriangleRight } from "react-icons/go";
 
 import { Card } from "@/components/common/card";
 import { cn } from "@/utils/cn";
 
 interface AcordionProps {
-  body: string | React.ReactNode;
+  body: string | ReactNode;
   defaultOpen?: boolean;
   className?: string;
-  titleText?: React.ReactNode;
-  icon?: React.ReactNode;
+  titleText?: ReactNode;
+  icon?: ReactNode;
   cardVariant?:
     | "gradientDarkToLight"
     | "gradientLightToDark"
@@ -21,13 +21,13 @@ interface AcordionProps {
 interface AccordionTitleProps {
   isOpen: boolean;
   onClick: () => void;
-  titleText?: React.ReactNode;
-  icon?: React.ReactNode;
+  titleText?: ReactNode;
+  icon?: ReactNode;
   className?: string;
 }
 
 interface AccordionBodyProps {
-  body: string | React.ReactNode;
+  body: string | ReactNode;
   isOpen: boolean;
   className?: string;
   cardVariant?:
@@ -79,7 +79,7 @@ const AccordionBody = ({ body, isOpen, cardVariant }: AccordionBodyProps) => {
         <Card
           variant={cardVariant}
           cardContent={body}
-          className="!p-px !rounded-full"
+          className="p-px! rounded-full!"
         />
       ) : null}
     </div>

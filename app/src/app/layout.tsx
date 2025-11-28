@@ -1,15 +1,14 @@
-import "./globals.css";
+import "../app/(site)/globals.css";
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Prompt } from "next/font/google";
+import { headers } from "next/headers";
 import Image from "next/image";
 import Script from "next/script";
-import { Suspense } from "react";
+import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
-import { DarkVeil, Footer, NavigationBar } from "@/components/layout";
 import { FB_PIXEL_ID, GA_ID, IS_ANALYTICS_ENV } from "@/lib/analytics";
-import { AnalyticsPageViewTracker } from "@/lib/analyticsPageViewTracker";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -32,11 +31,19 @@ export const metadata: Metadata = {
   title: "Sprouting Tech Academy",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isAdminRoute = pathname.startsWith("/admin");
+
+  if (isAdminRoute) {
+    return children;
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -92,19 +99,7 @@ export default function RootLayout({
           </>
         )}
 
-        <div className="min-h-screen overflow-hidden relative">
-          <Suspense fallback={null}>
-            <AnalyticsPageViewTracker />
-          </Suspense>
-          <div className="darkveil-container fixed inset-0 pointer-events-none w-full">
-            <DarkVeil hueShift={52} />
-          </div>
-          <div className="relative z-10" style={{ zoom: 0.85 }}>
-            <NavigationBar />
-            <div className="lg:pt-32 lg:px-8 pt-28 px-4 py-4">{children}</div>
-            {/* <Footer /> */}
-          </div>
-        </div>
+        {children}
         <Toaster position="top-center" expand={true} richColors={false} />
       </body>
     </html>

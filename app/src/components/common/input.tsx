@@ -1,13 +1,23 @@
 "use client";
 
-import React, { useRef } from "react";
+import {
+  type ChangeEvent,
+  type ClipboardEvent,
+  type InputHTMLAttributes,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { PiCheckBold } from "react-icons/pi";
 
 import { cn } from "@/utils/cn";
 
 interface InputProps
   extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
+    InputHTMLAttributes<HTMLInputElement>,
     "onChange" | "onBlur" | "value" | "type" | "prefix"
   > {
   onChange?: (value: string) => void;
@@ -15,8 +25,8 @@ interface InputProps
   value?: string;
   type?: string;
   loading?: boolean;
-  prefix?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
   variant?: "primary";
   inputClassName?: string;
 }
@@ -25,7 +35,7 @@ interface OtpInputProps {
   length: number;
   value?: string;
   onChange?: (value: string) => void;
-  placeholder?: React.ReactNode;
+  placeholder?: ReactNode;
   disabled?: boolean;
   variant?: "primary";
   className?: string;
@@ -47,7 +57,7 @@ interface CheckboxInputProps {
   className?: string;
   checkboxClassName?: string;
   iconClassName?: string;
-  content?: React.ReactNode;
+  content?: ReactNode;
   id?: string;
   name?: string;
   value?: string;
@@ -74,7 +84,7 @@ export const Input = ({
   const variantClasses = {
     primary:
       "h-[48px] w-full text-foreground font-prompt " +
-      "placeholder:text-[#E5E8E880] border-0 focus:outline-none rounded-full bg-background-light " +
+      "placeholder:text-[rgba(51,51,51,0.5)] [html[data-theme='dark']_&]:placeholder:text-[#E5E8E880] border-0 focus:outline-none rounded-full bg-[rgba(51,51,51,0.02)] [html[data-theme='dark']_&]:bg-background-light " +
       (isDisabled
         ? "opacity-50 cursor-not-allowed"
         : "cursor-text hover:opacity-90 focus:opacity-95 transition-all duration-200") +
@@ -85,11 +95,11 @@ export const Input = ({
     return (
       <div
         className={cn(
-          "rounded-full p-px bg-linear-to-t from-foreground/50 to-background-light overflow-hidden relative flex items-center " +
+          "rounded-full p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light overflow-hidden relative flex items-center " +
             "transition-all duration-200 " +
             (isDisabled
               ? ""
-              : "hover:from-foreground/70 hover:to-background-light hover:shadow-sm focus-within:from-foreground/90 focus-within:to-background-light focus-within:shadow-md"),
+              : "hover:shadow-sm focus-within:shadow-md [html[data-theme='dark']_&]:hover:from-foreground/70 [html[data-theme='dark']_&]:hover:to-background-light [html[data-theme='dark']_&]:focus-within:from-foreground/90 [html[data-theme='dark']_&]:focus-within:to-background-light"),
           className,
         )}
       >
@@ -173,39 +183,107 @@ export const OtpInput = ({
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleChange = (index: number, newValue: string) => {
-    const sanitized = newValue.slice(-1);
-
-    if (sanitized && !/^\d$/.test(sanitized)) {
-      return;
+  const getValueArray = useCallback(() => {
+    const chars = value.split("");
+    if (chars.length < length) {
+      chars.push(...Array(length - chars.length).fill(""));
     }
+    return chars.slice(0, length);
+  }, [length, value]);
 
-    const valueArray = value.padEnd(length, "").split("");
-    valueArray[index] = sanitized;
-    const result = valueArray.join("").slice(0, length);
-    onChange?.(result);
-
-    if (sanitized && index < length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      const valueArray = value.padEnd(length, "").split("");
-
-      if (valueArray[index]) {
-        valueArray[index] = "";
-        onChange?.(valueArray.join("").slice(0, length));
-      } else if (index > 0) {
-        inputRefs.current[index - 1]?.focus();
+  const focusInput = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < length) {
+        inputRefs.current[index]?.focus();
       }
-    }
-  };
+    },
+    [length],
+  );
+
+  const updateValue = useCallback(
+    (valueArray: string[]) => {
+      onChange?.(valueArray.join("").slice(0, length));
+    },
+    [length, onChange],
+  );
+
+  const fillFromIndex = useCallback(
+    (startIndex: number, rawValue: string) => {
+      const digits = rawValue.replace(/\D/g, "");
+      if (!digits) return;
+
+      const valueArray = getValueArray();
+      let nextIndex = startIndex;
+
+      for (const digit of digits) {
+        if (nextIndex >= length) break;
+        valueArray[nextIndex] = digit;
+        nextIndex += 1;
+      }
+
+      updateValue(valueArray);
+      const nextFocusIndex = Math.min(nextIndex, length - 1);
+      focusInput(nextFocusIndex);
+    },
+    [focusInput, getValueArray, length, updateValue],
+  );
+
+  const handleChange = useCallback(
+    (index: number, newValue: string) => {
+      if (!newValue) {
+        const valueArray = getValueArray();
+        valueArray[index] = "";
+        updateValue(valueArray);
+        return;
+      }
+
+      fillFromIndex(index, newValue);
+    },
+    [fillFromIndex, getValueArray, updateValue],
+  );
+
+  const handleKeyDown = useCallback(
+    (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Backspace") {
+        e.preventDefault();
+        const valueArray = getValueArray();
+
+        if (valueArray[index]) {
+          valueArray[index] = "";
+          updateValue(valueArray);
+        } else if (index > 0) {
+          valueArray[index - 1] = "";
+          updateValue(valueArray);
+          focusInput(index - 1);
+        }
+        return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        focusInput(index - 1);
+        return;
+      }
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        focusInput(index + 1);
+        return;
+      }
+    },
+    [focusInput, getValueArray, updateValue],
+  );
+
+  const handlePaste = useCallback(
+    (index: number, e: ClipboardEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const clipboardData = e.clipboardData.getData("text");
+      fillFromIndex(index, clipboardData);
+    },
+    [fillFromIndex],
+  );
+
+  const valueArray = getValueArray();
 
   if (variant === "primary") {
     return (
@@ -226,13 +304,15 @@ export const OtpInput = ({
               maxLength={1}
               pattern="[0-9]"
               autoComplete={index === 0 ? "one-time-code" : "off"}
-              value={value.padEnd(length, "")[index] || ""}
+              value={valueArray[index] ?? ""}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={(e) => handlePaste(index, e)}
+              onFocus={(e) => e.currentTarget.select()}
               disabled={disabled}
               className={cn(variantClasses[variant], inputClassName)}
             />
-            {placeholder && !value.padEnd(length, "")[index] && (
+            {placeholder && !(valueArray[index] ?? "") && (
               <div className="absolute flex inset-0 items-center justify-center pointer-events-none rounded-full text-foreground/50">
                 {placeholder}
               </div>
@@ -258,9 +338,11 @@ export const OtpInput = ({
           maxLength={1}
           pattern="[0-9]"
           autoComplete={index === 0 ? "one-time-code" : "off"}
-          value={value.padEnd(length, "")[index] || ""}
+          value={valueArray[index] ?? ""}
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
+          onPaste={(e) => handlePaste(index, e)}
+          onFocus={(e) => e.currentTarget.select()}
           className={cn(variantClasses[variant], inputClassName)}
         />
       ))}
@@ -274,16 +356,16 @@ export const FileInput = ({
   className,
   inputClassName,
 }: FileInputProps) => {
-  const [fileName, setFileName] = React.useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     setFileName(file ? file.name : null);
     onChange?.(file);
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: MouseEvent) => {
     e.stopPropagation();
     fileInputRef.current?.click();
   };

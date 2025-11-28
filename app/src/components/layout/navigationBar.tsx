@@ -3,22 +3,42 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FaFacebookF } from "react-icons/fa6";
 import { PiYoutubeLogoFill } from "react-icons/pi";
 import { TbBrandTwitterFilled } from "react-icons/tb";
 import { TfiLinkedin } from "react-icons/tfi";
 
-import { Button } from "@/components/common/button";
+import { ButtonCart } from "@/components/button/buttonCart";
+import {
+  Button,
+  GradientBorderWrapper,
+  NavLink,
+  UserAvatar,
+} from "@/components/common";
+import { MenuDropdown } from "@/components/dropdown";
+import {
+  AVATAR_ALT_TEXT,
+  HAMBURGER_LINE_VARIANTS,
+  HAMBURGER_TRANSITION,
+  MOBILE_MENU_TOP_OFFSET,
+  MOBILE_MENU_TRANSITION,
+  MOBILE_MENU_VARIANTS,
+  NAV_TRANSITION,
+  NAV_VARIANTS,
+  NAVIGATION_Z_INDEX,
+} from "@/constants/navigationBar";
 import { NavigationMenu, PagePath, Social } from "@/enum";
+import { useGetMe, useSignOut } from "@/hooks/useAuth";
 import { cn } from "@/utils/cn";
 
-import { ButtonCart } from "../button/buttonCart";
-
-interface GradientBorderWrapperProps {
-  children: React.ReactNode;
-  className?: string;
-}
+import ThemeSwitcher from "./themeSwitcher";
 
 interface NavigationLink {
   href: string;
@@ -28,76 +48,27 @@ interface NavigationLink {
 interface SocialLink {
   href: string;
   ariaLabel: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
-
-const navVariants = {
-  visible: { y: 0 },
-  hidden: { y: "-100%" },
-};
-
-const navTransition = {
-  duration: 0.3,
-  ease: "easeInOut" as const,
-};
-
-const hamburgerLineVariants = {
-  topBottom: {
-    closed: { width: "100%" },
-    open: { width: "0%" },
-  },
-  middleTop: {
-    closed: { rotate: 0 },
-    open: { rotate: 45 },
-  },
-  middleBottom: {
-    closed: { rotate: 0 },
-    open: { rotate: -45 },
-  },
-};
-
-const hamburgerTransition = {
-  duration: 0.25,
-  ease: "easeInOut" as const,
-};
-
-const mobileMenuVariants = {
-  closed: {
-    opacity: 0,
-    y: -20,
-  },
-  open: {
-    opacity: 1,
-    y: 0,
-  },
-};
-
-const mobileMenuTransition = {
-  duration: 0.3,
-  ease: "easeInOut" as const,
-};
 
 const navigationLinks: NavigationLink[] = [
   { href: PagePath.HOME, label: NavigationMenu.HOME },
   { href: PagePath.COURSES, label: NavigationMenu.COURSES },
+  { href: PagePath.BOOTCAMPS, label: NavigationMenu.BOOTCAMP },
 ];
 
 const SOCIAL_ICON: Record<
   Social.FACEBOOK | Social.YOUTUBE | Social.TWITTER | Social.LINKEDIN,
-  React.ReactNode
+  ReactNode
 > = {
-  [Social.FACEBOOK]: (
-    <FaFacebookF size={18} style={{ color: "var(--primary)" }} />
-  ),
+  [Social.FACEBOOK]: <FaFacebookF size={18} className="social-icon-primary" />,
   [Social.YOUTUBE]: (
-    <PiYoutubeLogoFill size={18} style={{ color: "var(--primary)" }} />
+    <PiYoutubeLogoFill size={18} className="social-icon-primary" />
   ),
   [Social.TWITTER]: (
-    <TbBrandTwitterFilled size={18} style={{ color: "var(--primary)" }} />
+    <TbBrandTwitterFilled size={18} className="social-icon-primary" />
   ),
-  [Social.LINKEDIN]: (
-    <TfiLinkedin size={18} style={{ color: "var(--primary)" }} />
-  ),
+  [Social.LINKEDIN]: <TfiLinkedin size={18} className="social-icon-primary" />,
 };
 
 const socialLinks: SocialLink[] = [
@@ -123,35 +94,20 @@ const socialLinks: SocialLink[] = [
   },
 ];
 
-const mobileLinkBaseClasses = [
-  "text-[22px] leading-8.25",
-  "text-transparent bg-clip-text",
-  "transition-all duration-200",
-  "cursor-pointer",
-];
-
-const GradientBorderWrapper = ({
-  children,
-  className,
-}: GradientBorderWrapperProps) => {
-  return (
-    <div
-      className={cn(
-        "p-0.5 rounded-full bg-linear-to-r from-primary to-secondary",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-};
-
 export const NavigationBar = () => {
   const router = useRouter();
+  const { data: user, isLoading: isUserLoading } = useGetMe();
+  const signOutMutation = useSignOut();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -219,21 +175,25 @@ export const NavigationBar = () => {
       if (drawerOpen) {
         setIsVisible(true);
       }
+
+      if (window.innerWidth >= 1024 && isOpen) {
+        setIsOpen(false);
+      }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isDrawerOpen]);
+  }, [isDrawerOpen, isOpen]);
 
   return (
     <motion.nav
       initial="visible"
       animate={isVisible ? "visible" : "hidden"}
-      variants={navVariants}
-      transition={navTransition}
+      variants={NAV_VARIANTS}
+      transition={NAV_TRANSITION}
+      style={{ zIndex: NAVIGATION_Z_INDEX }}
       className={cn(
         "fixed top-0 left-0 right-0 w-full px-4 py-8 lg:p-8 gap-10 font-prompt",
-        "z-9999",
         isOpen && "bg-background",
         !isOpen && "bg-transparent",
       )}
@@ -254,7 +214,7 @@ export const NavigationBar = () => {
             Sprouting Tech Academy
           </h3>
         </div>
-        {/* <div className="hidden items-center justify-center lg:flex">
+        <div className="hidden items-center justify-center lg:flex">
           <GradientBorderWrapper>
             <div className="bg-background-light flex items-center justify-center px-8 py-4 rounded-full">
               <div className="flex flex-row gap-8 items-center">
@@ -271,15 +231,62 @@ export const NavigationBar = () => {
             </div>
           </GradientBorderWrapper>
         </div>
+
         <div className="flex gap-4 items-center justify-end lg:gap-8">
+          <ThemeSwitcher />
           <div className="hidden lg:block">
-            <Button
-              onClick={() => router.push(PagePath.LOGIN)}
-              text="เข้าสู่ระบบ"
-              variant="primaryGradientBorder"
-              size="sm"
-              shape="rounded"
-            />
+            {!isMounted || isUserLoading ? (
+              <GradientBorderWrapper>
+                <div className="aspect-square bg-background-light flex h-11 items-center justify-center overflow-hidden relative rounded-full shrink-0 w-11">
+                  <div className="animate-pulse bg-foreground/10 h-full rounded-full w-full" />
+                </div>
+              </GradientBorderWrapper>
+            ) : user ? (
+              <MenuDropdown
+                isOpen={isDropdownOpen}
+                onToggle={() => setIsDropdownOpen(!isDropdownOpen)}
+                onClose={() => setIsDropdownOpen(false)}
+                trigger={
+                  <GradientBorderWrapper>
+                    <Button
+                      variant="profileButton"
+                      aria-label={AVATAR_ALT_TEXT}
+                    >
+                      <UserAvatar avatarUrl={user.avatarUrl} size="sm" />
+                    </Button>
+                  </GradientBorderWrapper>
+                }
+              >
+                <NavLink
+                  href={PagePath.PROFILE}
+                  text="บัญชีของฉัน"
+                  variant="menuItem"
+                  onClick={() => setIsDropdownOpen(false)}
+                />
+                <div className="border-foreground/10 border-t my-2" />
+                <Button
+                  onClick={() => {
+                    signOutMutation.mutate();
+                    setIsDropdownOpen(false);
+                  }}
+                  text={
+                    signOutMutation.isPending
+                      ? "กำลังออกจากระบบ..."
+                      : "ออกจากระบบ"
+                  }
+                  variant="menuItemDanger"
+                  disabled={signOutMutation.isPending}
+                />
+              </MenuDropdown>
+            ) : (
+              <Button
+                onClick={() => router.push(PagePath.LOGIN)}
+                text="เข้าสู่ระบบ"
+                variant="primaryGradientBorder"
+                size="sm"
+                shape="rounded"
+              />
+            )}
           </div>
           <div>
             <ButtonCart />
@@ -304,10 +311,10 @@ export const NavigationBar = () => {
                   isOpen &&
                     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                 )}
-                variants={hamburgerLineVariants.topBottom}
+                variants={HAMBURGER_LINE_VARIANTS.topBottom}
                 initial="closed"
                 animate={isOpen ? "open" : "closed"}
-                transition={hamburgerTransition}
+                transition={HAMBURGER_TRANSITION}
               />
               <div
                 className={cn(
@@ -317,17 +324,17 @@ export const NavigationBar = () => {
               >
                 <motion.span
                   className="bg-primary block h-0.75 rounded-full w-6"
-                  variants={hamburgerLineVariants.middleTop}
+                  variants={HAMBURGER_LINE_VARIANTS.middleTop}
                   initial="closed"
                   animate={isOpen ? "open" : "closed"}
-                  transition={hamburgerTransition}
+                  transition={HAMBURGER_TRANSITION}
                 />
                 <motion.span
                   className="absolute bg-primary block h-0.75 left-0 rounded-full top-0 w-6"
-                  variants={hamburgerLineVariants.middleBottom}
+                  variants={HAMBURGER_LINE_VARIANTS.middleBottom}
                   initial="closed"
                   animate={isOpen ? "open" : "closed"}
-                  transition={hamburgerTransition}
+                  transition={HAMBURGER_TRANSITION}
                 />
               </div>
               <motion.span
@@ -336,10 +343,10 @@ export const NavigationBar = () => {
                   isOpen &&
                     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                 )}
-                variants={hamburgerLineVariants.topBottom}
+                variants={HAMBURGER_LINE_VARIANTS.topBottom}
                 initial="closed"
                 animate={isOpen ? "open" : "closed"}
-                transition={hamburgerTransition}
+                transition={HAMBURGER_TRANSITION}
               />
             </motion.button>
           </div>
@@ -357,17 +364,18 @@ export const NavigationBar = () => {
                 />
                 <motion.div
                   className={cn(
-                    "fixed left-0 w-full h-full top-28",
+                    "fixed left-0 w-full h-full",
+                    MOBILE_MENU_TOP_OFFSET,
                     "z-50 bg-background lg:hidden",
                   )}
                   role="dialog"
                   aria-modal="true"
                   aria-label="Navigation menu"
-                  variants={mobileMenuVariants}
+                  variants={MOBILE_MENU_VARIANTS}
                   initial="closed"
                   animate="open"
                   exit="closed"
-                  transition={mobileMenuTransition}
+                  transition={MOBILE_MENU_TRANSITION}
                 >
                   <div
                     className={cn(
@@ -375,42 +383,73 @@ export const NavigationBar = () => {
                     )}
                   >
                     <div className="flex flex-1 flex-col gap-4 items-center justify-center">
+                      {!isMounted || isUserLoading ? (
+                        <div className="flex flex-col gap-3 items-center justify-center w-full">
+                          <GradientBorderWrapper className="flex items-center justify-center p-1">
+                            <div className="aspect-square bg-background-light flex h-24 items-center justify-center overflow-hidden relative rounded-full shadow-lg shrink-0 w-24">
+                              <div className="animate-pulse bg-foreground/10 h-full rounded-full w-full" />
+                            </div>
+                          </GradientBorderWrapper>
+                          <div className="animate-pulse bg-foreground/10 h-6 rounded w-32" />
+                        </div>
+                      ) : user ? (
+                        <div className="flex flex-col gap-3 items-center justify-center w-full">
+                          <GradientBorderWrapper className="flex items-center justify-center p-1">
+                            <UserAvatar avatarUrl={user.avatarUrl} size="lg" />
+                          </GradientBorderWrapper>
+                          <p className="font-medium font-prompt leading-6 text-base text-foreground">
+                            {user.fullName}
+                          </p>
+                        </div>
+                      ) : null}
                       {navigationLinks.map((link) => (
-                        <Link
+                        <NavLink
                           key={link.href}
                           href={link.href}
-                          className={cn(
-                            ...mobileLinkBaseClasses,
-                            "hover:opacity-80 hover:scale-105",
-                            "active:opacity-60 active:scale-95",
-                          )}
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(to right, var(--primary), var(--secondary))",
-                          }}
+                          text={link.label}
+                          variant="mobileGradient"
                           onClick={() => setIsOpen(false)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundImage =
-                              "linear-gradient(to right, var(--secondary), var(--primary))";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundImage =
-                              "linear-gradient(to right, var(--primary), var(--secondary))";
-                          }}
-                        >
-                          {link.label}
-                        </Link>
+                        />
                       ))}
-                      <Button
-                        onClick={() => {
-                          router.push(PagePath.LOGIN);
-                          setIsOpen(false);
-                        }}
-                        text="เข้าสู่ระบบ"
-                        variant="primaryGradientBorder"
-                        size="sm"
-                        shape="rounded"
-                      />
+                      {isMounted && !isUserLoading && user && (
+                        <>
+                          <div className="border-foreground/10 border-t my-2 w-full" />
+                          <NavLink
+                            href={PagePath.PROFILE}
+                            text="บัญชีของฉัน"
+                            variant="mobileGradient"
+                            onClick={() => setIsOpen(false)}
+                          />
+                          <Button
+                            onClick={() => {
+                              signOutMutation.mutate();
+                              setIsOpen(false);
+                            }}
+                            text={
+                              signOutMutation.isPending
+                                ? "กำลังออกจากระบบ..."
+                                : "ออกจากระบบ"
+                            }
+                            variant="errorButton"
+                            size="md"
+                            shape="rounded"
+                            disabled={signOutMutation.isPending}
+                            loading={signOutMutation.isPending}
+                          />
+                        </>
+                      )}
+                      {isMounted && !isUserLoading && !user && (
+                        <Button
+                          onClick={() => {
+                            router.push(PagePath.LOGIN);
+                            setIsOpen(false);
+                          }}
+                          text="เข้าสู่ระบบ"
+                          variant="primaryGradientBorder"
+                          size="sm"
+                          shape="rounded"
+                        />
+                      )}
                     </div>
 
                     <div className="flex gap-4 items-center justify-center mt-auto">
@@ -432,7 +471,7 @@ export const NavigationBar = () => {
               </>
             )}
           </AnimatePresence>
-        </div> */}
+        </div>
       </div>
     </motion.nav>
   );

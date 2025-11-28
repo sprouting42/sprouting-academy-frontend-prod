@@ -1,4 +1,5 @@
-import { BankIcon, FileArrowUpIcon } from "@phosphor-icons/react";
+import { BankIcon } from "@phosphor-icons/react/dist/csr/Bank";
+import { FileArrowUpIcon } from "@phosphor-icons/react/dist/csr/FileArrowUp";
 
 import { Card } from "@/components/common/card";
 import { FileInput } from "@/components/common/input";

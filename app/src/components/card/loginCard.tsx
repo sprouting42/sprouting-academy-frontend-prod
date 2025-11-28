@@ -1,10 +1,17 @@
 "use client";
-import React, { useCallback } from "react";
+import {
+  type FormEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { BiSolidLeftArrow } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
 import { FaApple, FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
-import { Button } from "@/components/common/button";
+import { Button } from "@/components/common";
 import { Card } from "@/components/common/card";
 import { Input } from "@/components/common/input";
 import { Label } from "@/components/common/label";
@@ -22,14 +29,17 @@ interface LoginCardProps {
   emailPlaceholder?: string;
   submitButtonText?: string;
   dividerText?: string;
+  onBack?: () => void;
   socialButtons?: SocialLoginButton[];
   onSubmit?: (email: string) => void;
   className?: string;
+  error?: string;
+  onErrorClear?: () => void;
 }
 
 const SOCIAL_ICON: Record<
   Social.GOOGLE | Social.FACEBOOK | Social.APPLE,
-  React.ReactNode
+  ReactNode
 > = {
   [Social.GOOGLE]: <FcGoogle size={24} className="h-5 lg:h-6 lg:w-6 w-5" />,
   [Social.FACEBOOK]: (
@@ -61,26 +71,44 @@ export const LoginCard = ({
   ],
   onSubmit,
   className,
+  error,
+  onErrorClear,
+  onBack,
 }: LoginCardProps) => {
-  const [email, setEmail] = React.useState("");
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [emailError, setEmailError] = React.useState("");
-  const [hasAttemptedSubmit, setHasAttemptedSubmit] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+
+  useEffect(() => {
+    if (error && onErrorClear) {
+      const timer = setTimeout(() => {
+        onErrorClear();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, onErrorClear]);
 
   const isValidEmail = useCallback((email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }, []);
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-    if (hasAttemptedSubmit || emailError) {
-      if (value.trim() && !isValidEmail(value)) {
-        setEmailError("กรุณากรอกอีเมลให้ถูกต้อง");
-      } else {
-        setEmailError("");
+  const handleEmailChange = useCallback(
+    (value: string) => {
+      setEmail(value);
+      if (error && onErrorClear) {
+        onErrorClear();
       }
-    }
-  };
+      if (hasAttemptedSubmit || emailError) {
+        if (value.trim() && !isValidEmail(value)) {
+          setEmailError("กรุณากรอกอีเมลให้ถูกต้อง");
+        } else {
+          setEmailError("");
+        }
+      }
+    },
+    [emailError, error, hasAttemptedSubmit, isValidEmail, onErrorClear],
+  );
 
   const handleBlur = () => {
     if (email.trim() && !isValidEmail(email)) {
@@ -88,43 +116,63 @@ export const LoginCard = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setHasAttemptedSubmit(true);
+  const handleSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setHasAttemptedSubmit(true);
 
-    if (!email.trim()) {
-      setEmailError("กรุณากรอกอีเมล");
-      return;
-    }
+      if (!email.trim()) {
+        setEmailError("กรุณากรอกอีเมล");
+        return;
+      }
 
-    if (!isValidEmail(email)) {
-      setEmailError("กรุณากรอกอีเมลให้ถูกต้อง");
-      return;
-    }
+      if (!isValidEmail(email)) {
+        setEmailError("กรุณากรอกอีเมลให้ถูกต้อง");
+        return;
+      }
 
-    setEmailError("");
-    setIsSubmitting(true);
-    try {
-      await onSubmit?.(email);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      setEmailError("");
+      setIsSubmitting(true);
+      try {
+        await onSubmit?.(email);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [email, isValidEmail, onSubmit],
+  );
 
   return (
     <Card
       variant="gradientDarkToLight"
-      className={cn("h-auto overflow-hidden w-full max-w-[640px]", className)}
+      className={cn("h-auto overflow-hidden w-full max-w-160", className)}
       cardContent={
         <div className="bg-linear-to-b flex flex-col from-background-light h-full justify-between p-4 rounded-2xl to-background w-full">
           <form
             className="flex flex-col gap-4 h-full justify-between lg:gap-6"
             onSubmit={handleSubmit}
           >
-            <div className="flex items-center justify-between w-full">
-              <h1 className="font-medium font-prompt leading-6 lg:leading-8.25 lg:text-[22px] mx-auto text-foreground text-lg">
+            <div className="flex flex-col items-center justify-between lg:flex-row w-full">
+              {onBack && (
+                <Button
+                  type="button"
+                  onClick={onBack}
+                  variant="textButton"
+                  size="sm"
+                  text="ย้อนกลับ"
+                  icon={<BiSolidLeftArrow size={16} className="h-4 w-4" />}
+                  className="items-start justify-start lg:items-center lg:w-auto w-full z-10"
+                />
+              )}
+              <h1
+                className={cn(
+                  "font-medium font-prompt leading-6 lg:leading-8.25 lg:text-[22px] text-center text-foreground text-lg",
+                  onBack ? "flex-1" : "mx-auto",
+                )}
+              >
                 {title}
               </h1>
+              {onBack && <div className="w-25" />}
             </div>
 
             <div className="flex flex-col gap-4">
@@ -158,9 +206,9 @@ export const LoginCard = ({
                     autoComplete="email"
                   />
                 </div>
-                {emailError && (
-                  <p className="font-normal font-prompt leading-4 px-4 text-red-500 text-xs">
-                    {emailError}
+                {(emailError || error) && (
+                  <p className="font-normal font-prompt leading-4 px-4 text-center text-red-500 text-xs">
+                    {error || emailError}
                   </p>
                 )}
               </div>

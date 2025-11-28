@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 export interface CourseItem {
   course: string;
@@ -26,7 +26,7 @@ export interface PaymentMethodLabels {
 
 export interface CourseSummaryProps {
   titleText: string;
-  titleIcon?: React.ReactNode;
+  titleIcon?: ReactNode;
   courses: CourseItem[];
   price: string;
 }
@@ -66,7 +66,7 @@ export interface PaymentCardProps {
   cardTitle: string;
   dropdownOptions: string[];
   titleText: string;
-  titleIcon: React.ReactNode;
+  titleIcon: ReactNode;
   courses: CourseItem[];
   price: string;
   directPayment: BankInfo;

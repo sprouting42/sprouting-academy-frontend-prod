@@ -5,7 +5,7 @@ export const LoginCardSkeleton = () => {
     <div className="flex items-center justify-center py-48">
       <Card
         variant="gradientDarkToLight"
-        className="h-auto max-w-[640px] overflow-hidden w-full"
+        className="h-auto max-w-160 overflow-hidden w-full"
         cardContent={
           <div className="bg-linear-to-b flex flex-col from-background-light h-full justify-between p-4 rounded-2xl to-background w-full">
             <div className="flex flex-col gap-4 h-full justify-between lg:gap-6">

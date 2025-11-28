@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import React from "react";
+import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { BiSolidDetail } from "react-icons/bi";
 import { HiCash } from "react-icons/hi";
 import {
@@ -18,6 +18,11 @@ import { Button } from "@/components/common/button";
 import { Card } from "@/components/common/card";
 import { CheckboxInput, Input, Textarea } from "@/components/common/input";
 import { Label } from "@/components/common/label";
+import { courses } from "@/data/courses";
+import {
+  type QuotationFormData,
+  quotationSchema,
+} from "@/schemas/quotation.schema";
 import { cn } from "@/utils/cn";
 
 interface ErrorMessageProps {
@@ -34,43 +39,56 @@ const ErrorMessage = ({ message, id }: ErrorMessageProps) => {
   );
 };
 
-const courseOptions = [
-  "Basic Course",
-  "AI for Sale Course",
-  "AI for Marketing Course",
-  "AI for HR Course",
-] as const;
+const formatDateBadgeText = (dateBadgeText: string): string => {
+  return dateBadgeText.replace("เรียนวันที่ ", "");
+};
 
-const quotationSchema = z.object({
-  companyName: z.string().min(1, "กรุณากรอกชื่อบริษัท/องค์กร"),
-  contactPersonName: z.string().min(1, "กรุณากรอกชื่อผู้ติดต่อ"),
-  phone: z
-    .string()
-    .min(1, "กรุณากรอกเบอร์โทรศัพท์")
-    .regex(/^[0-9-]+$/, "เบอร์โทรศัพท์ไม่ถูกต้อง"),
-  email: z
-    .string()
-    .min(1, "กรุณากรอกอีเมล")
-    .pipe(z.email({ message: "รูปแบบอีเมลไม่ถูกต้อง" })),
-  courses: z
-    .array(z.enum(courseOptions))
-    .min(1, "กรุณาเลือกคอร์สที่สนใจอย่างน้อย 1 คอร์ส"),
-  numberOfStudents: z
-    .string()
-    .min(1, "กรุณากรอกจำนวนผู้เรียน")
-    .regex(/^\d+/, "จำนวนผู้เรียนต้องเป็นตัวเลข"),
-  budget: z.string().optional(),
-  additionalDetails: z.string().optional(),
-});
+type CourseOption = {
+  id: string;
+  title: string;
+  dateBadgeText: string;
+  formattedDateBadgeText: string;
+};
 
-export type QuotationFormData = z.infer<typeof quotationSchema>;
+interface CourseOptionItemProps {
+  course: CourseOption;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+const CourseOptionItem = ({
+  course,
+  checked,
+  onChange,
+}: CourseOptionItemProps) => (
+  <div className="flex flex-row gap-4 items-start justify-between p-0 w-full">
+    <CheckboxInput
+      id={`course-${course.id}`}
+      name="courses"
+      value={course.id}
+      checked={checked}
+      onChange={onChange}
+      variant="primary"
+      size="sm"
+      className="flex items-center"
+      checkboxClassName="flex-shrink-0 border-foreground rounded-sm"
+      content={
+        <div className="flex flex-col gap-0.5">
+          <span className="font-medium leading-[30px] lg:text-base text-sm">
+            {course.title}
+          </span>
+        </div>
+      }
+    />
+  </div>
+);
 
 interface QuotationFormProps {
   onSubmit?: (data: QuotationFormData) => void | Promise<void>;
   className?: string;
 }
 
-const createFieldValidator = <T extends z.ZodTypeAny>(schema: T) => {
+const createFieldValidator = <T extends z.ZodType>(schema: T) => {
   return ({ value }: { value: unknown }) => {
     const result = schema.safeParse(value);
     return result.success ? undefined : result.error.issues[0]?.message;
@@ -86,8 +104,44 @@ const INPUT_COMMON_PROPS = {
 };
 
 export const QuotationForm = ({ onSubmit, className }: QuotationFormProps) => {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const fieldRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fieldRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const courseOptions = useMemo<CourseOption[]>(
+    () =>
+      courses.map((course) => ({
+        id: course.id,
+        title: course.title,
+        dateBadgeText: course.dateBadgeText,
+        formattedDateBadgeText: course.dateBadgeText
+          ? formatDateBadgeText(course.dateBadgeText)
+          : "",
+      })),
+    [],
+  );
+
+  const createCourseChangeHandler = useCallback(
+    (
+      courseId: string,
+      field: {
+        state: { value: string[] };
+        handleChange: (value: string[]) => void;
+        handleBlur: () => void;
+      },
+    ) => {
+      return (isChecked: boolean) => {
+        const currentCourses = Array.isArray(field.state.value)
+          ? field.state.value
+          : [];
+        const newCourses = isChecked
+          ? [...currentCourses, courseId]
+          : currentCourses.filter((c) => c !== courseId);
+        field.handleChange(newCourses);
+        field.handleBlur();
+      };
+    },
+    [],
+  );
 
   const form = useForm({
     defaultValues: {
@@ -95,7 +149,7 @@ export const QuotationForm = ({ onSubmit, className }: QuotationFormProps) => {
       contactPersonName: "",
       phone: "",
       email: "",
-      courses: [] as (typeof courseOptions)[number][],
+      courses: [] as string[],
       numberOfStudents: "",
       budget: "",
       additionalDetails: "",
@@ -132,7 +186,7 @@ export const QuotationForm = ({ onSubmit, className }: QuotationFormProps) => {
     },
   });
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
     form.handleSubmit();
@@ -345,43 +399,23 @@ export const QuotationForm = ({ onSubmit, className }: QuotationFormProps) => {
                     </span>
                   </div>
                   <div className="flex flex-col gap-4 items-start p-0 px-4 w-full">
-                    {courseOptions.map((course) => (
-                      <div
-                        key={course}
-                        className="flex flex-row gap-4 items-start justify-between p-0 w-full"
-                      >
-                        <CheckboxInput
-                          id={`course-${course.replace(/\s+/g, "-").toLowerCase()}`}
-                          name="courses"
-                          value={course}
-                          checked={
-                            Array.isArray(field.state.value) &&
-                            field.state.value.includes(course)
-                          }
-                          onChange={(checked) => {
-                            const currentCourses = Array.isArray(
-                              field.state.value,
-                            )
-                              ? field.state.value
-                              : [];
-                            const newCourses = checked
-                              ? [...currentCourses, course]
-                              : currentCourses.filter((c) => c !== course);
-                            field.handleChange(newCourses);
-                            field.handleBlur();
-                          }}
-                          variant="primary"
-                          size="sm"
-                          className="flex items-center"
-                          checkboxClassName="flex-shrink-0 border-foreground rounded-sm"
-                          content={
-                            <span className="font-medium leading-[30px] lg:text-base text-sm">
-                              {course}
-                            </span>
-                          }
+                    {courseOptions.map((course) => {
+                      const checked =
+                        Array.isArray(field.state.value) &&
+                        field.state.value.includes(course.id);
+                      const handleChange = createCourseChangeHandler(
+                        course.id,
+                        field,
+                      );
+                      return (
+                        <CourseOptionItem
+                          key={course.id}
+                          course={course}
+                          checked={checked}
+                          onChange={handleChange}
                         />
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                   <ErrorMessage
                     message={field.state.meta.errors[0]}

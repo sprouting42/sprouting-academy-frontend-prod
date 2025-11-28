@@ -1,13 +1,13 @@
 "use client";
 
-import { XIcon } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react/dist/csr/X";
 import { cn } from "@utils/cn";
-import React, { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 
 type DrawerProps = {
   isOpen?: boolean;
   onClose?: () => void;
-  content?: React.ReactNode;
+  content?: ReactNode;
   className?: string;
 };
 

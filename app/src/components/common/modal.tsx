@@ -1,6 +1,13 @@
 "use client";
 
-import React from "react";
+import type { ComponentProps, ReactNode } from "react";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -14,10 +21,10 @@ type ModalSize = "sm" | "md" | "lg" | "xl";
 interface ModalProps {
   open?: boolean;
   onClose?: () => void;
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  children?: React.ReactNode;
-  footer?: React.ReactNode;
+  title?: ReactNode;
+  description?: ReactNode;
+  children?: ReactNode;
+  footer?: ReactNode;
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
   lockScroll?: boolean;
@@ -27,8 +34,8 @@ interface ModalProps {
   contentClassName?: string;
   btnClassName?: string;
   position?: "topLeft" | "topRight" | "center" | "bottomLeft" | "bottomRight";
-  closeButtonProps?: React.ComponentProps<typeof Button>;
-  buttons?: React.ReactNode;
+  closeButtonProps?: ComponentProps<typeof Button>;
+  buttons?: ReactNode;
 }
 
 export const Modal = ({
@@ -46,10 +53,10 @@ export const Modal = ({
   position = "center",
   buttons,
 }: ModalProps) => {
-  const [mounted, setMounted] = React.useState(false);
-  const modalRef = React.useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = useCallback(() => {
     if (onClose) {
       onClose();
     }
@@ -61,11 +68,13 @@ export const Modal = ({
     }
   });
 
-  React.useEffect(() => {
-    setMounted(true);
+  useEffect(() => {
+    startTransition(() => {
+      setMounted(true);
+    });
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!lockScroll) {
       return;
     }
@@ -81,7 +90,7 @@ export const Modal = ({
     return;
   }, [lockScroll, open]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || !onClose) {
       return;
     }
@@ -152,13 +161,7 @@ export const Modal = ({
           contentClassName,
         )}
         cardContent={
-          <div
-            ref={modalRef}
-            className={cn(
-              "flex flex-col gap-4 w-full",
-              overlayPositionClasses[position].content,
-            )}
-          >
+          <div ref={modalRef} className={cn("flex flex-col gap-4 w-full")}>
             {title && (
               <div className="flex flex-col w-full">
                 <div className="font-medium font-prompt leading-7 lg:leading-10.5 lg:text-[28px] text-foreground text-xl">

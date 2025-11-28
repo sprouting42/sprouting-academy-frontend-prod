@@ -1,4 +1,4 @@
-import React from "react";
+import type { ReactNode } from "react";
 
 import { cn } from "@/utils/cn";
 
@@ -9,10 +9,13 @@ interface BadgeProps {
     | "primary"
     | "secondary"
     | "transparentPrimary"
-    | "transparentSecondary";
+    | "transparentSecondary"
+    | "error"
+    | "premium"
+    | "courseDate";
   size?: "xs" | "sm" | "md" | "lg";
   shape?: "square" | "rounded";
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   className?: string;
 }
 
@@ -28,12 +31,15 @@ export const Badge = ({
   const baseClasses = "flex items-start";
 
   const variantClasses = {
-    primary: "w-fit bg-primary text-foreground font-normal font-prompt",
+    primary: "w-fit bg-primary text-white font-normal font-prompt",
     secondary:
-      "w-fit bg-gradient-to-b from-primary to-secondary text-foreground font-normal font-prompt",
+      "w-fit bg-gradient-to-b from-primary to-secondary text-white font-normal font-prompt",
     transparentPrimary:
-      "w-fit bg-primary-light text-foreground font-semibold font-prompt",
+      "w-fit bg-primary-light text-primary font-semibold font-prompt",
     transparentSecondary: "w-fit bg-secondary-light text-secondary font-prompt",
+    error: "w-fit bg-error text-white font-normal font-prompt",
+    premium: "w-fit bg-premium text-white font-bold font-prompt",
+    courseDate: "w-fit bg-course-date-badge text-black font-normal font-prompt",
   };
 
   const sizeClasses = {
