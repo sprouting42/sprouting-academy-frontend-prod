@@ -1,0 +1,41 @@
+export enum NavigationMenu {
+  HOME = "หน้าหลัก",
+  COURSES = "คอร์สเรียน",
+  BOOTCAMP = "บูทแคมป์",
+  EBOOK = "อีบุ๊ค",
+  INSTRUCTORS = "ผู้สอน",
+  CONTACT = "ติดต่อเรา",
+  ABOUT_US = "เกี่ยวกับเรา",
+}
+
+export enum FooterMenu {
+  ABOUT_US = "เกี่ยวกับเรา",
+  INSTRUCTORS = "ผู้สอน",
+  CONTACT = "ติดต่อเรา",
+  COURSE_DETAIL = "คอร์สเรียน",
+  BOOTCAMP_DETAIL = "บูทแคมป์",
+  FAQ = "คำถามที่พบบ่อย (FAQ)",
+  PRIVACY_POLICY = "นโยบายความเป็นส่วนตัว",
+  TERMS_OF_SERVICE = "ข้อตกลงและเงื่อนไข",
+  COOKIE_POLICY = "Cookie Policy",
+}
+
+export enum PagePath {
+  HOME = "/",
+  COURSES = "/courses",
+  BOOTCAMPS = "/bootcamps",
+  EBOOK = "/ebook",
+  ABOUT_US = "/about-us",
+  INSTRUCTORS = "/instructors",
+  CONTACT = "/contact",
+  FAQ = "/faq",
+  PRIVACY_POLICY = "/privacy-policy",
+  TERMS_OF_SERVICE = "/terms-of-service",
+  COOKIE_POLICY = "/cookie-policy",
+  LOGIN = "/login",
+  REGISTER = "/register",
+  CART = "/cart",
+  CHECKOUT = "/checkout",
+  PROFILE = "/profile",
+  QUOTATION = "/quotation",
+}

@@ -60,7 +60,13 @@ export const bootcamps: BootcampData[] = [
       title: "Basic HTML & CSS Bootcamp",
       description:
         "พื้นฐานสำคัญสู่สาย Web Developer เรียน 7-14 วัน สร้าง Personal Portfolio Website ได้ทันที",
-      buttonItems: [{ id: "1", text: "ลงทะเบียนรุ่นถัดไป", link: "/courses" }],
+      buttonItems: [
+        {
+          id: "1",
+          text: "ลงทะเบียนรุ่นถัดไป",
+          link: "https://form.jotform.com/253230682479058",
+        },
+      ],
       className:
         "object-cover  sm:object-center md:object-center lg:object-[0%_] rounded-lg",
     },
@@ -139,7 +145,13 @@ export const bootcamps: BootcampData[] = [
       title: "Java Spring Boot Full Stack Developer Bootcamp",
       description:
         "เรียน 12 สัปดาห์ พร้อมฝึกงานจริง 12 สัปดาห์ สร้างระบบจริงสู่ Portfolio สมัครงาน",
-      buttonItems: [{ id: "1", text: "ลงทะเบียนรุ่นถัดไป", link: "/courses" }],
+      buttonItems: [
+        {
+          id: "1",
+          text: "ลงทะเบียนรุ่นถัดไป",
+          link: "https://form.jotform.com/253230682479058",
+        },
+      ],
       className: "object-cover sm:object-center md:object-[0%_16%] rounded-lg",
     },
     suitableFor: {
@@ -293,7 +305,13 @@ export const bootcamps: BootcampData[] = [
       title: "C# .NET Core Full Stack Developer Bootcamp",
       description:
         "หลักสูตร 12 สัปดาห์ พร้อมฝึกงานจริง 12 สัปดาห์ สร้าง Enterprise Web App ด้วย .NET Core และ React",
-      buttonItems: [{ id: "1", text: "ลงทะเบียนรุ่นถัดไป", link: "/courses" }],
+      buttonItems: [
+        {
+          id: "1",
+          text: "ลงทะเบียนรุ่นถัดไป",
+          link: "https://form.jotform.com/253230682479058",
+        },
+      ],
       className:
         "object-cover  sm:object-center md:object-center lg:object-[0%_10%] rounded-lg",
     },

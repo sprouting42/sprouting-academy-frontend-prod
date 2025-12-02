@@ -11,7 +11,7 @@ export const advancedAutomationEbooks = [
     price: "1,000 บาท",
     imageBadgeText: "n8n",
     textButton: "สั่งซื้อ",
-    link: PagePath.CHECKOUT,
+    link: PagePath.EBOOK,
     bulletPoints: [],
   },
   {
@@ -24,7 +24,7 @@ export const advancedAutomationEbooks = [
     price: "1,000 บาท",
     imageBadgeText: "n8n",
     textButton: "สั่งซื้อ",
-    link: PagePath.CHECKOUT,
+    link: PagePath.EBOOK,
     bulletPoints: [],
   },
 ];
@@ -39,7 +39,7 @@ export const makeForBusinessEbooks = [
     price: "1,000 บาท",
     imageBadgeText: "Make",
     textButton: "สั่งซื้อ",
-    link: PagePath.CHECKOUT,
+    link: PagePath.EBOOK,
     bulletPoints: [],
   },
   {
@@ -52,7 +52,7 @@ export const makeForBusinessEbooks = [
     price: "1,000 บาท",
     imageBadgeText: "Make",
     textButton: "สั่งซื้อ",
-    link: PagePath.CHECKOUT,
+    link: PagePath.EBOOK,
     bulletPoints: [],
   },
   {
@@ -65,7 +65,7 @@ export const makeForBusinessEbooks = [
     price: "1,000 บาท",
     imageBadgeText: "Make",
     textButton: "สั่งซื้อ",
-    link: PagePath.CHECKOUT,
+    link: PagePath.EBOOK,
     bulletPoints: [],
   },
 ];

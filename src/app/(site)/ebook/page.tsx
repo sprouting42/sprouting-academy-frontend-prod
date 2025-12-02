@@ -101,7 +101,7 @@ export default function EbookPage() {
                 }}
                 className="w-fit"
               >
-                <CourseCard {...ebook} cardVariant="ebook" />
+                <CourseCard {...ebook} cardVariant="ebook" disabled />
               </motion.div>
             ))}
           </div>
@@ -142,7 +142,7 @@ export default function EbookPage() {
                 }}
                 className="w-fit"
               >
-                <CourseCard {...ebook} cardVariant="ebook" />
+                <CourseCard {...ebook} cardVariant="ebook" disabled />
               </motion.div>
             ))}
           </div>

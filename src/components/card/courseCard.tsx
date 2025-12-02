@@ -36,6 +36,7 @@ interface CourseCardProps {
   showAccordion?: boolean;
   onButtonClick?: () => void;
   isButtonLoading?: boolean;
+  disabled?: boolean;
 }
 const variantTextStyle = {
   primary: "bg-clip-text bg-gradient-to-l from-primary to-secondary",
@@ -65,6 +66,7 @@ export const CourseCard = ({
   showAccordion,
   onButtonClick,
   isButtonLoading = false,
+  disabled,
 }: CourseCardProps) => {
   const isEbook = cardVariant === "ebook";
 
@@ -92,6 +94,7 @@ export const CourseCard = ({
               textButton={textButton}
               link={link}
               isEbook={isEbook}
+              disabled={disabled}
             />
           ) : (
             <>
@@ -105,6 +108,7 @@ export const CourseCard = ({
                   imageBadgeText={imageBadgeText}
                   targetAudience={targetAudience}
                   isEbook={isEbook}
+                  disabled={disabled}
                 />
               </div>
 
@@ -286,6 +290,7 @@ const CardContent = ({
   textButton,
   link,
   isEbook,
+  disabled,
 }: {
   coverImage: MediaCourse | string;
   alt: string;
@@ -298,6 +303,7 @@ const CardContent = ({
   textButton?: string;
   link?: string;
   isEbook?: boolean;
+  disabled?: boolean;
 }) => {
   const imageUrl =
     typeof coverImage === "string" ? coverImage : coverImage?.url || "";
@@ -375,6 +381,7 @@ const CardContent = ({
                 size="md"
                 shape="square"
                 className="w-full"
+                disabled={disabled}
               />
             </Link>
           ) : (
@@ -384,6 +391,7 @@ const CardContent = ({
               size="md"
               shape="square"
               className="w-full"
+              disabled={disabled}
             />
           )}
         </div>

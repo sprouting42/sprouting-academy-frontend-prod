@@ -10,7 +10,7 @@ import { TbBrandTwitterFilled } from "react-icons/tb";
 import { TfiLinkedin } from "react-icons/tfi";
 
 import { Button } from "@/components/common/button";
-import { FooterMenu, PagePath, Social } from "@/enum";
+import { FooterMenu, PagePath, Social, SocialPath } from "@/enum";
 
 import { Badge } from "../common/badge";
 
@@ -51,7 +51,7 @@ const SOCIAL_ICON: Record<
 
 const socialLinks: SocialLink[] = [
   {
-    href: "#",
+    href: SocialPath.FACEBOOK,
     ariaLabel: Social.FACEBOOK,
     icon: SOCIAL_ICON[Social.FACEBOOK],
   },

@@ -87,6 +87,7 @@ export default function BootcampsPage() {
             variant="primaryGradientBorder"
             text="ปรึกษา Mentors ฟรี"
             shape="rounded"
+            disabled
           />
         </motion.div>
 

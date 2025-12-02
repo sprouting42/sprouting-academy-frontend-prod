@@ -6,3 +6,7 @@ export enum Social {
   GOOGLE = "Google",
   APPLE = "Apple",
 }
+
+export enum SocialPath {
+  FACEBOOK = "https://www.facebook.com/sproutingtechacademy",
+}
