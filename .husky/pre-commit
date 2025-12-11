@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -e
+
+npm run format
+npm run lint:fix
+
+# Stop the commit if formatting/linting changed files so the updated files can be staged.
+if ! git diff --quiet; then
+  echo "Formatting or linting updated files. Please stage the changes and retry the commit."
+  exit 1
+fi
+
+npm run build
