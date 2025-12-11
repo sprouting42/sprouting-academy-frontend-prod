@@ -14,7 +14,7 @@ export const GradientBorderWrapper = ({
   return (
     <div
       className={cn(
-        "p-1 rounded-full bg-linear-to-r from-primary to-secondary inline-flex items-center justify-center lg:p-0.5",
+        "p-1 rounded-full bg-linear-to-r from-primary to-secondary flex items-center justify-center lg:p-0.5 shrink-0",
         className,
       )}
     >

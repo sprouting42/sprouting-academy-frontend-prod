@@ -12,11 +12,13 @@ interface AcordionProps {
   className?: string;
   titleText?: ReactNode;
   icon?: ReactNode;
+  rightIcon?: (isOpen: boolean) => ReactNode;
   cardVariant?:
     | "gradientDarkToLight"
     | "gradientLightToDark"
     | "background"
     | "transparent";
+  cardContentClassName?: string;
 }
 interface AccordionTitleProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ interface AccordionTitleProps {
   titleText?: ReactNode;
   icon?: ReactNode;
   className?: string;
+  rightIcon?: (isOpen: boolean) => ReactNode;
 }
 
 interface AccordionBodyProps {
@@ -35,6 +38,7 @@ interface AccordionBodyProps {
     | "gradientLightToDark"
     | "background"
     | "transparent";
+  cardContentClassName?: string;
 }
 
 const AccordionTitle = ({
@@ -43,6 +47,7 @@ const AccordionTitle = ({
   titleText,
   icon,
   className,
+  rightIcon,
 }: AccordionTitleProps) => {
   return (
     <button
@@ -58,21 +63,26 @@ const AccordionTitle = ({
       <div
         className={cn(
           "transition-transform duration-200",
-          isOpen && "rotate-90",
+          !rightIcon && isOpen && "rotate-90",
         )}
       >
-        <GoTriangleRight size={18} />
+        {rightIcon ? rightIcon(isOpen) : <GoTriangleRight size={18} />}
       </div>
     </button>
   );
 };
 
-const AccordionBody = ({ body, isOpen, cardVariant }: AccordionBodyProps) => {
+const AccordionBody = ({
+  body,
+  isOpen,
+  cardVariant,
+  cardContentClassName,
+}: AccordionBodyProps) => {
   return (
     <div
       className={cn(
         "transition-all duration-250 ease-in-out  ",
-        isOpen ? "opacity-100 w-full rounded-2xl" : "max-h-0 opacity-0 w-full",
+        isOpen ? "opacity-100 w-full rounded-2xl " : "max-h-0 opacity-0 w-full",
       )}
     >
       {isOpen ? (
@@ -80,6 +90,7 @@ const AccordionBody = ({ body, isOpen, cardVariant }: AccordionBodyProps) => {
           variant={cardVariant}
           cardContent={body}
           className="p-px! rounded-full!"
+          contentClassName={cardContentClassName}
         />
       ) : null}
     </div>
@@ -91,8 +102,10 @@ export const Acordion = ({
   defaultOpen = false,
   titleText,
   icon,
+  rightIcon,
   cardVariant = "gradientDarkToLight",
   className,
+  cardContentClassName,
 }: AcordionProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -108,8 +121,14 @@ export const Acordion = ({
         titleText={titleText}
         icon={icon}
         className={className}
+        rightIcon={rightIcon}
       />
-      <AccordionBody body={body} isOpen={isOpen} cardVariant={cardVariant} />
+      <AccordionBody
+        body={body}
+        isOpen={isOpen}
+        cardVariant={cardVariant}
+        cardContentClassName={cardContentClassName}
+      />
     </div>
   );
 };

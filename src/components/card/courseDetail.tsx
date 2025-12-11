@@ -57,7 +57,7 @@ export const CourseDetail = ({
               </h2>
               <ul className="[&>li]:before:content-['•'] [&>li]:before:mr-3 [&>li]:before:text-xs [&>li]:flex [&>li]:items-center [&>li]:list-none mb-8 mt-2 pl-3 space-y-1">
                 {courseTopics?.map((topic, index) => (
-                  <li key={index}>{topic}</li>
+                  <li key={`case-study-${index}-${topic}`}>{topic}</li>
                 ))}
               </ul>
 
@@ -66,7 +66,7 @@ export const CourseDetail = ({
               </h2>
               <ul className="[&>li]:before:content-['•'] [&>li]:before:mr-3 [&>li]:before:text-xs [&>li]:flex [&>li]:items-center [&>li]:list-none mb-8 mt-2 pl-3 space-y-1">
                 {caseStudies?.map((topic, index) => (
-                  <li key={index}>{topic}</li>
+                  <li key={`case-study-${index}-${topic}`}>{topic}</li>
                 ))}
               </ul>
 

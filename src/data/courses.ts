@@ -116,15 +116,15 @@ export async function fetchCourses(): Promise<CourseData[]> {
 
 export async function fetchCoursesAndBanners(): Promise<{
   courses: CourseData[];
-  bannerImages: { src: string; alt?: string }[];
+  bannerImages: { src: string; alt?: string; id: string }[];
 }> {
   let mappedCourses: CourseData[] = [];
-  let bannerImages: { src: string; alt?: string }[] = [];
+  let bannerImages: { src: string; alt?: string; id: string }[] = [];
 
   try {
     const [courseResponse, bannerResponse] = await Promise.all([
       cmsFetch.get<CourseApiResponse>("routes/course"),
-      cmsFetch.get<BannerApiResponse>("routes/banner"),
+      cmsFetch.get<BannerApiResponse>("routes/banner?banner=course"),
     ]);
 
     if (courseResponse?.data?.courses?.docs) {
@@ -137,6 +137,7 @@ export async function fetchCoursesAndBanners(): Promise<{
         .map((banner) => ({
           src: banner.url || "",
           alt: banner.alt || undefined,
+          id: banner.id,
         }));
     }
   } catch (error) {

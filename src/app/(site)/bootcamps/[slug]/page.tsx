@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 
-import { getBootcampBySlug } from "@/data";
+import { fetchBootcampBySlug } from "@/data/bootcampsPayload";
 
-import { BootcampContent } from "./bootcampContent";
+import { BootcampPayloadContent } from "./bootcampPayloadContent";
 
 interface BootcampPageProps {
   params: Promise<{ slug: string }>;
@@ -10,11 +10,11 @@ interface BootcampPageProps {
 
 export default async function BootcampPage({ params }: BootcampPageProps) {
   const { slug } = await params;
-  const bootcamp = getBootcampBySlug(slug);
+  const bootcamp = await fetchBootcampBySlug(slug);
 
   if (!bootcamp) {
     notFound();
   }
 
-  return <BootcampContent bootcamp={bootcamp} />;
+  return <BootcampPayloadContent bootcamp={bootcamp} />;
 }

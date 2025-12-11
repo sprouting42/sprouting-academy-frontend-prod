@@ -2,22 +2,9 @@ import { interceptedApiFetch } from "@/utils/api-interceptor";
 
 import type { ApiResponse } from "./auth";
 
-// TODO: [OMISE-001] Update CreateChargeRequest to support token parameter when backend API is updated
-// Current: Backend accepts raw card details (server-side tokenization)
-// Future: Backend should accept token from Omise.js (client-side tokenization)
-// Example future type:
-// export type CreateChargeRequest = {
-//   orderId: string;
-//   token: string; // Omise token from client-side tokenization
-//   description?: string;
-// };
 export type CreateChargeRequest = {
   orderId: string;
-  cardNumber: string;
-  cardName: string;
-  expirationMonth: number;
-  expirationYear: number;
-  securityCode: string;
+  token: string;
   description?: string;
 };
 
@@ -68,10 +55,6 @@ export type GetMyPaymentsResponse =
   | CreateChargeResponse[];
 
 export const paymentApi = {
-  // TODO: [OMISE-001] Update to use Omise.js client-side tokenization when backend supports token parameter
-  // Current flow: Frontend → Backend (raw card details) → Backend creates Omise token → Backend creates charge
-  // Future flow: Frontend (Omise.js creates token) → Backend (token only) → Backend creates charge
-  // Benefits: Better security, PCI DSS compliance, card details never pass through our backend
   createCharge: async (
     payload: CreateChargeRequest,
   ): Promise<ApiResponse<CreateChargeResponse>> => {

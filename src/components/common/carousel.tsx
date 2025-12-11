@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ReactNode } from "react";
 
 import { useCircularIndex } from "@/hooks/useCircularIndex";
-
+import { cn } from "@/utils/cn";
 type CarouselItem = {
   src?: string;
   alt?: string;
@@ -17,19 +17,19 @@ type CarouselItem = {
 type CarouselProps = {
   items: CarouselItem[];
   autoplayInterval?: number;
-  height?: string;
   showDots?: boolean;
   showArrows?: boolean;
+  maxWidth?: string;
 };
 
 type Direction = 1 | -1 | 0;
 
 export const Carousel = ({
   items,
-  autoplayInterval = 5000,
-  height,
+  autoplayInterval,
   showDots = true,
   showArrows = true,
+  maxWidth,
 }: CarouselProps) => {
   const {
     currentIndex,
@@ -42,10 +42,9 @@ export const Carousel = ({
     resumeAutoplay,
   } = useCircularIndex(items.length, autoplayInterval);
   if (!items || items.length === 0) return null;
-
   const imageVariants = {
     enter: (direction: Direction) => ({
-      x: direction > 0 ? "-100%" : "100%",
+      x: direction > 0 ? "100%" : "-100%",
       opacity: 1,
     }),
     center: {
@@ -54,7 +53,7 @@ export const Carousel = ({
       opacity: 1,
     },
     exit: (direction: Direction) => ({
-      x: direction < 0 ? "-100%" : "100%",
+      x: direction < 0 ? "100%" : "-100%",
       opacity: 1,
       zIndex: 0,
     }),
@@ -64,13 +63,11 @@ export const Carousel = ({
 
   return (
     <div
-      className={`${height} max-w-304 mx-auto rounded-lg w-full `}
+      className={cn("mx-auto rounded-lg w-full", maxWidth)}
       onMouseEnter={pauseAutoplay}
       onMouseLeave={resumeAutoplay}
     >
-      <div
-        className={`overflow-hidden relative ${height && !items[currentIndex]?.content ? "flex-1" : ""}`}
-      >
+      <div className="overflow-hidden relative w-full">
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={items[currentIndex]?.id || `carousel-item-${currentIndex}`}
@@ -82,20 +79,22 @@ export const Carousel = ({
             transition={{
               x: { type: "tween", duration: 0.8, ease: "easeInOut" },
             }}
-            className="w-full"
+            className={
+              items[currentIndex]?.content
+                ? "relative w-full"
+                : "absolute inset-0"
+            }
           >
             {items[currentIndex]?.content ? (
               items[currentIndex].content
             ) : items[currentIndex]?.src ? (
-              <div
-                className={`relative w-full ${height ? "h-full" : "aspect-video"}`}
-              >
+              <div className="aspect-video relative w-full">
                 <Image
-                  src={items[currentIndex].src}
+                  src={items[currentIndex].src!}
                   alt={items[currentIndex].alt ?? `carousel-${currentIndex}`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1216px"
+                  sizes="100vw"
                   priority={currentIndex === 0}
                 />
               </div>
@@ -106,7 +105,7 @@ export const Carousel = ({
         {showNavigation && (
           <>
             {showDots && (
-              <div className="-translate-x-1/2 absolute bottom-4 cursor-pointer flex gap-1.5 left-1/2 md:gap-2 z-10">
+              <div className="-translate-x-1/2 absolute bottom-9 cursor-pointer flex gap-1.5 left-1/2 md:gap-2 z-10">
                 {items.map((item, index) => (
                   <motion.button
                     key={item.id || `carousel-dot-${index}`}
@@ -129,34 +128,40 @@ export const Carousel = ({
               </div>
             )}
             {showArrows && (
-              <div className="absolute bottom-4 flex gap-2 md:gap-4 right-4 z-10">
+              <>
                 <motion.button
                   type="button"
                   onClick={handlePrevWithDirection}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="[html[data-theme='dark']_&]:bg-foreground [html[data-theme='light']_&]:bg-[rgb(229,232,232)] flex h-8 hover:bg-foreground items-center justify-center md:h-10 md:w-10 p-2 rounded-full shadow-md text-secondary transition-colors w-8"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="absolute bottom-6 box-border carousel-button-gradient p-0.25 right-19 rounded-full z-10"
                   aria-label="Previous slide"
                 >
-                  <CaretLeftIcon
-                    size={20}
-                    className="md:h-6 md:w-6 text-primary"
-                  />
+                  <div className="[html[data-theme='light']_&]:bg-white bg-background-light flex flex-col h-8 items-center justify-center rounded-full w-8">
+                    <CaretLeftIcon
+                      size={16}
+                      weight="bold"
+                      className="[html[data-theme='light']_&]:text-primary md:h-4 md:w-4 text-foreground"
+                    />
+                  </div>
                 </motion.button>
                 <motion.button
                   type="button"
                   onClick={handleNextWithDirection}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="[html[data-theme='dark']_&]:bg-foreground [html[data-theme='light']_&]:bg-[rgb(229,232,232)] flex h-8 hover:bg-foreground items-center justify-center md:h-10 md:w-10 p-2 rounded-full shadow-md text-secondary transition-colors w-8"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="absolute bottom-6 box-border carousel-button-gradient p-0.25 right-6 rounded-full z-10"
                   aria-label="Next slide"
                 >
-                  <CaretRightIcon
-                    size={20}
-                    className="md:h-6 md:w-6 text-primary"
-                  />
+                  <div className="[html[data-theme='light']_&]:bg-white bg-background-light flex flex-col h-8 items-center justify-center rounded-full w-8">
+                    <CaretRightIcon
+                      size={16}
+                      weight="bold"
+                      className="[html[data-theme='light']_&]:text-primary md:h-4 md:w-4 text-foreground"
+                    />
+                  </div>
                 </motion.button>
-              </div>
+              </>
             )}
           </>
         )}

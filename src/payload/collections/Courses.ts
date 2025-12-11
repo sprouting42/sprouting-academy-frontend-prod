@@ -98,19 +98,12 @@ const Courses: CollectionConfig = {
     },
     {
       name: "courseStatus",
-      type: "select",
-      required: true,
-      defaultValue: "false",
-      options: [
-        {
-          label: "Active",
-          value: "true",
-        },
-        {
-          label: "Inactive",
-          value: "false",
-        },
-      ],
+      type: "checkbox",
+      label: "Active",
+      defaultValue: false,
+      admin: {
+        description: "Check to set the course status to Active",
+      },
     },
   ],
 };

@@ -8,6 +8,7 @@ import { Button } from "@/components/common/button";
 import { Card } from "@/components/common/card";
 import { Label } from "@/components/common/label";
 import { Dropdown } from "@/components/dropdown/dropdown";
+import { isValidEmail } from "@/utils/validation";
 
 // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
 // import { PropmtPayment } from "./promtPayment";
@@ -84,8 +85,7 @@ export const PaymentCard = ({
       return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userInfo.email.trim())) {
+    if (!isValidEmail(userInfo.email)) {
       toast.error("กรุณากรอกอีเมลให้ถูกต้อง");
       return false;
     }

@@ -113,6 +113,12 @@ export default async function RootLayout({
           </>
         )}
 
+        {/* Omise.js */}
+        <Script
+          src="https://cdn.omise.co/omise.js"
+          strategy="afterInteractive"
+        />
+
         {children}
         <Toaster position="top-center" expand={true} richColors={false} />
       </body>

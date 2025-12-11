@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarIcon } from "@phosphor-icons/react/dist/csr/Calendar";
+import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { CiCreditCard1, CiCreditCard2 } from "react-icons/ci";
 import { toast } from "sonner";
@@ -23,10 +24,31 @@ export const CardPayment = ({
   const [expirationMonth, setExpirationMonth] = useState("");
   const [expirationYear, setExpirationYear] = useState("");
   const [securityCode, setSecurityCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  // TODO: [OMISE-001] Implement Omise.js client-side tokenization when backend supports token parameter
-  // Current: Sending raw card details to backend (server-side tokenization)
-  // Future: Use Omise.js to create token in browser, send only token to backend
+  const omisePublicKey = process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY || "";
+
+  const createChargeMutation = useMutation({
+    mutationFn: async (tokenId: string) => {
+      return paymentApi.createCharge({ orderId, token: tokenId });
+    },
+    onSuccess: (resp) => {
+      if (isApiErrorResponse(resp)) {
+        const msg = resp.errorMessage || "Payment failed";
+        onPaymentError?.(msg);
+        toast.error(msg);
+        return;
+      }
+      if (isApiSuccessResponse(resp)) {
+        const chargeId = resp.responseContent.omiseChargeId;
+        toast.success("Payment successful!");
+        onPaymentSuccess?.(chargeId);
+      }
+    },
+    onError: (error) => {
+      const msg = error instanceof Error ? error.message : "Payment failed";
+      onPaymentError?.(msg);
+      toast.error(msg);
+    },
+  });
 
   const formatCardNumber = useCallback((value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -88,94 +110,92 @@ export const CardPayment = ({
     }
   }, []);
 
+  const showError = useCallback(
+    (message: string) => {
+      onPaymentError?.(message);
+      toast.error(message);
+    },
+    [onPaymentError],
+  );
+
+  const validateInputs = useCallback(
+    (
+      cardNumberDigits: string,
+      monthNum: number,
+      yearNum: number,
+    ): string | null => {
+      if (!orderId) return "ไม่พบ Order ID";
+      if (!validateCardNumber(cardNumberDigits))
+        return "กรุณากรอกหมายเลขบัตรให้ถูกต้อง";
+      if (!cardName.trim()) return "กรุณากรอกชื่อผู้ถือบัตร";
+      if (!expirationMonth || !expirationYear) return "กรุณากรอกวันหมดอายุ";
+      if (monthNum < 1 || monthNum > 12) return "เดือนไม่ถูกต้อง (1-12)";
+      if (!validateExpirationDate(monthNum, yearNum))
+        return "วันหมดอายุบัตรไม่ถูกต้องหรือหมดอายุแล้ว";
+      if (securityCode.length < 3 || securityCode.length > 4)
+        return "กรุณากรอกรหัสหลังบัตรให้ถูกต้อง";
+      if (!omisePublicKey) return "Payment system not initialized";
+      if (!window.Omise) return "Omise.js not loaded";
+      return null;
+    },
+    [
+      orderId,
+      cardName,
+      expirationMonth,
+      expirationYear,
+      securityCode,
+      omisePublicKey,
+      validateCardNumber,
+      validateExpirationDate,
+    ],
+  );
+
+  const handleOmiseTokenCallback = useCallback(
+    (statusCode: number, response: OmiseTokenResponse | OmiseError) => {
+      if (statusCode !== 200 || response.object === "error") {
+        const error = response as OmiseError;
+        showError(error.message || "Failed to create payment token");
+        createChargeMutation.reset();
+        return;
+      }
+
+      const tokenResponse = response as OmiseTokenResponse;
+      createChargeMutation.mutate(tokenResponse.id);
+    },
+    [createChargeMutation, showError],
+  );
+
   const handleSubmit = useCallback(async () => {
-    if (!orderId) {
-      const errorMsg = "ไม่พบ Order ID";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
     const cardNumberDigits = cardNumber.replace(/\s/g, "");
-    if (!validateCardNumber(cardNumberDigits)) {
-      const errorMsg = "กรุณากรอกหมายเลขบัตรให้ถูกต้อง";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
-    if (!cardName.trim()) {
-      const errorMsg = "กรุณากรอกชื่อผู้ถือบัตร";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
-    if (!expirationMonth || !expirationYear) {
-      const errorMsg = "กรุณากรอกวันหมดอายุ";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
     const monthNum = parseInt(expirationMonth, 10);
     const yearNum = parseInt(`20${expirationYear}`, 10);
 
-    if (monthNum < 1 || monthNum > 12) {
-      const errorMsg = "เดือนไม่ถูกต้อง (1-12)";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
+    const validationError = validateInputs(cardNumberDigits, monthNum, yearNum);
+    if (validationError) {
+      showError(validationError);
       return;
     }
 
-    if (!validateExpirationDate(monthNum, yearNum)) {
-      const errorMsg = "วันหมดอายุบัตรไม่ถูกต้องหรือหมดอายุแล้ว";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
+    if (createChargeMutation.isPending) {
       return;
     }
-
-    if (securityCode.length < 3 || securityCode.length > 4) {
-      const errorMsg = "กรุณากรอกรหัสหลังบัตรให้ถูกต้อง";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
-    setIsLoading(true);
 
     try {
-      // TODO: [OMISE-001] Replace with Omise.js client-side tokenization when backend API supports token parameter
-      // Steps:
-      // 1. Install omise package: npm install omise
-      // 2. Get Omise public key from backend API (or env variable)
-      // 3. Use Omise.createToken() to create token from card details
-      // 4. Send only token to backend instead of raw card details
-      // This improves security by ensuring card details never pass through our backend
-      const chargeResponse = await paymentApi.createCharge({
-        orderId,
-        cardNumber: cardNumberDigits,
-        cardName: cardName.trim(),
-        expirationMonth: monthNum,
-        expirationYear: yearNum,
-        securityCode,
-      });
-
-      if (isApiErrorResponse(chargeResponse)) {
-        const errorMsg = chargeResponse.errorMessage || "Payment failed";
-        onPaymentError?.(errorMsg);
-        toast.error(errorMsg);
-      } else if (isApiSuccessResponse(chargeResponse)) {
-        toast.success("Payment successful!");
-        onPaymentSuccess?.(chargeResponse.responseContent.omiseChargeId);
-      }
+      window.Omise!.setPublicKey(omisePublicKey);
+      window.Omise!.createToken(
+        "card",
+        {
+          name: cardName.trim(),
+          number: cardNumberDigits,
+          expiration_month: expirationMonth,
+          expiration_year: expirationYear,
+          security_code: securityCode,
+        },
+        handleOmiseTokenCallback,
+      );
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : "Payment failed";
-      onPaymentError?.(errorMsg);
-      toast.error(errorMsg);
-    } finally {
-      setIsLoading(false);
+      showError(error instanceof Error ? error.message : "Payment failed");
+      createChargeMutation.reset();
     }
   }, [
     cardNumber,
@@ -183,11 +203,11 @@ export const CardPayment = ({
     expirationMonth,
     expirationYear,
     securityCode,
-    orderId,
-    onPaymentError,
-    onPaymentSuccess,
-    validateCardNumber,
-    validateExpirationDate,
+    omisePublicKey,
+    validateInputs,
+    handleOmiseTokenCallback,
+    showError,
+    createChargeMutation,
   ]);
 
   useEffect(() => {
@@ -214,7 +234,7 @@ export const CardPayment = ({
             value={cardNumber}
             onChange={handleCardNumberChange}
             maxLength={19}
-            disabled={isLoading}
+            disabled={createChargeMutation.isPending}
             aria-label="หมายเลขบัตรเครดิต"
             aria-required="true"
             aria-invalid={
@@ -238,7 +258,7 @@ export const CardPayment = ({
               }
               onChange={handleExpirationChange}
               maxLength={5}
-              disabled={isLoading}
+              disabled={createChargeMutation.isPending}
               aria-label="วันหมดอายุบัตร"
               aria-required="true"
             />
@@ -253,7 +273,7 @@ export const CardPayment = ({
               onChange={setSecurityCode}
               maxLength={4}
               type="password"
-              disabled={isLoading}
+              disabled={createChargeMutation.isPending}
               aria-label="รหัสความปลอดภัยหลังบัตร"
               aria-required="true"
             />
@@ -268,7 +288,7 @@ export const CardPayment = ({
             inputClassName="rounded-3xl"
             value={cardName}
             onChange={setCardName}
-            disabled={isLoading}
+            disabled={createChargeMutation.isPending}
             aria-label="ชื่อผู้ถือบัตร"
             aria-required="true"
           />

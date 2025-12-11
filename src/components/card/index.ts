@@ -1,6 +1,7 @@
 export * from "./courseCard";
 export * from "./courseDetail";
 export * from "./courseOutlineCard";
+export * from "./coursePlannerCard";
 export * from "./enrolledCourseCard";
 export * from "./featureHighlightCard";
 export * from "./instructorDetail";

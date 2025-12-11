@@ -15,7 +15,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "errorButton"
     | "profileButton"
     | "textButton"
-    | "menuItemDanger";
+    | "menuItemDanger"
+    | "lightButton";
   size?: "sm" | "md" | "lg";
   shape?: "square" | "rounded" | "circle";
   icon?: ReactNode;
@@ -117,12 +118,18 @@ export const Button = ({
       inner:
         "bg-background-light flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 hover:opacity-80 active:opacity-60 active:scale-95 shrink-0 overflow-hidden aspect-square relative",
     },
+    lightButton: {
+      inner: cn(
+        "bg-foreground text-background font-medium shadow-[0px_2px_8px_rgba(0,0,0,0.12)]",
+        interactiveStates,
+      ),
+    },
   };
 
   const sizeClasses = {
-    sm: "py-3 px-6 text-base",
-    md: "py-3 px-6 text-lg",
-    lg: "w-10 h-10 text-lg font-black",
+    sm: "py-2 px-4 md:py-3 md:px-6 text-sm md:text-base",
+    md: "py-2.5 px-5 md:py-3 md:px-6 text-base md:text-lg",
+    lg: "w-8 h-8 md:w-10 md:h-10 text-base md:text-lg font-black",
   };
 
   const textButtonSizeClasses = {
@@ -138,7 +145,7 @@ export const Button = ({
   };
 
   const shapeClasses = {
-    square: "rounded-lg",
+    square: "rounded-xl",
     rounded: "rounded-full",
     circle: "rounded-full aspect-square",
   };
@@ -165,6 +172,24 @@ export const Button = ({
     return wrapper;
   };
 
+  const getSizeClass = () => {
+    if (isIconOnly) return iconSizeClasses[size];
+    if (isTextButton) return textButtonSizeClasses[size];
+    if (!isProfileButton && !isMenuItemDanger) return sizeClasses[size];
+    return "";
+  };
+
+  const getButtonContent = () => {
+    if (loading) return loadingIndicator;
+    if (isProfileButton) return children;
+    return (
+      <>
+        {icon}
+        {text || children}
+      </>
+    );
+  };
+
   const buttonElement = (
     <button
       className={cn(
@@ -177,29 +202,14 @@ export const Button = ({
           !isTextButton &&
           !isMenuItemDanger &&
           shapeClasses[shape],
-        isIconOnly
-          ? iconSizeClasses[size]
-          : isTextButton
-            ? textButtonSizeClasses[size]
-            : !isProfileButton && !isMenuItemDanger
-              ? sizeClasses[size]
-              : "",
+        getSizeClass(),
         isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
         className,
       )}
       disabled={isDisabled}
       {...props}
     >
-      {loading ? (
-        loadingIndicator
-      ) : isProfileButton ? (
-        children
-      ) : (
-        <>
-          {icon}
-          {text || children}
-        </>
-      )}
+      {getButtonContent()}
     </button>
   );
 
@@ -207,7 +217,5 @@ export const Button = ({
     return buttonElement;
   }
 
-  return (
-    <div className={cn(getWrapperClassName(), className)}>{buttonElement}</div>
-  );
+  return <div className={getWrapperClassName()}>{buttonElement}</div>;
 };

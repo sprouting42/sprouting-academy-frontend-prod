@@ -98,22 +98,22 @@ export default function AboutUs({ instructors }: AboutUsProps) {
           ผู้ก่อตั้ง
         </motion.h2>
         <div className="flex flex-col gap-8 max-w-304 w-full">
-          {instructors.map((instructor) => (
+          {instructors[0] && (
             <motion.div
-              key={instructor.id}
+              key={instructors[0].id}
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
               }}
             >
               <InstructorDetail
-                instructorImage={instructor.instructorImage}
-                instructorName={instructor.instructorName}
-                instructorDescription={instructor.instructorDescription}
-                instructorHighlight={instructor.instructorHighlight}
+                instructorImage={instructors[0].instructorImage}
+                instructorName={instructors[0].instructorName}
+                instructorDescription={instructors[0].instructorDescription}
+                instructorHighlight={instructors[0].instructorHighlight}
               />
             </motion.div>
-          ))}
+          )}
         </div>
       </motion.section>
     </div>

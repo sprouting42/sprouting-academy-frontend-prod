@@ -144,7 +144,9 @@ export const MobileMenu = ({
             transition={MOBILE_MENU_TRANSITION}
           >
             <div
-              className={cn("flex flex-col gap-16 px-4 min-h-full pt-24 pb-8")}
+              className={cn(
+                "flex flex-col gap-16 px-4 min-h-full lg:pt-24 pb-8",
+              )}
             >
               <div className="flex flex-1 flex-col gap-4 items-center justify-center">
                 {renderUserSection()}

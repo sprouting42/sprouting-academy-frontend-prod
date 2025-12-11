@@ -46,7 +46,24 @@ const refreshAccessToken = async (): Promise<string> => {
 
   return refreshPromise;
 };
+const handleUnauthorizedError = async <TArgs extends unknown[]>(
+  originalMethod: <T>(path: string, ...args: TArgs) => Promise<T>,
+  path: string,
+  args: TArgs,
+  originalError: unknown,
+): Promise<never> => {
+  isRefreshing = true;
 
+  try {
+    await refreshAccessToken();
+    return await originalMethod(path, ...args);
+  } catch {
+    removeAuthToken();
+    throw originalError;
+  } finally {
+    isRefreshing = false;
+  }
+};
 const createInterceptedMethod = <TArgs extends unknown[]>(
   originalMethod: <T>(path: string, ...args: TArgs) => Promise<T>,
 ) => {
@@ -54,25 +71,12 @@ const createInterceptedMethod = <TArgs extends unknown[]>(
     try {
       return await originalMethod<T>(path, ...args);
     } catch (error) {
-      if (isHTTPError(error)) {
-        const status = error.response.status;
-
-        if (status === 401 && !isRefreshing) {
-          isRefreshing = true;
-
-          try {
-            await refreshAccessToken();
-            return await originalMethod<T>(path, ...args);
-          } catch (refreshError) {
-            removeAuthToken();
-            if (process.env.NODE_ENV === "development") {
-              console.error("Token refresh failed:", refreshError);
-            }
-            throw error;
-          } finally {
-            isRefreshing = false;
-          }
-        }
+      if (
+        isHTTPError(error) &&
+        error.response.status === 401 &&
+        !isRefreshing
+      ) {
+        return handleUnauthorizedError(originalMethod, path, args, error);
       }
 
       throw error;

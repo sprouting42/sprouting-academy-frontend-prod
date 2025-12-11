@@ -8,6 +8,7 @@ import {
   type MouseEvent,
   type ReactNode,
   useCallback,
+  useId,
   useRef,
   useState,
 } from "react";
@@ -27,7 +28,7 @@ interface InputProps
   loading?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
-  variant?: "primary";
+  variant?: "primary" | "secondary";
   inputClassName?: string;
 }
 
@@ -37,7 +38,7 @@ interface OtpInputProps {
   onChange?: (value: string) => void;
   placeholder?: ReactNode;
   disabled?: boolean;
-  variant?: "primary";
+  variant?: "primary" | "secondary";
   className?: string;
   inputClassName?: string;
 }
@@ -83,26 +84,36 @@ export const Input = ({
   ...props
 }: InputProps) => {
   const isDisabled = disabled || loading;
-
+  const getPaddingClass = () => {
+    if (prefix) return " pl-2 pr-4 py-2 md:py-3";
+    if (suffix) return " pl-4 pr-2 py-2 md:py-3";
+    return " px-4 py-2 md:py-3";
+  };
   const variantClasses = {
     primary:
-      "h-12 w-full text-foreground font-prompt " +
+      "h-10 md:h-12 w-full text-sm md:text-base text-foreground font-prompt " +
       "placeholder:text-foreground/50 border-0 focus:outline-none rounded-full bg-foreground/2 [html[data-theme='dark']_&]:bg-background-light " +
       (isDisabled
         ? "opacity-50 cursor-not-allowed"
         : "cursor-text hover:opacity-90 focus:opacity-95 transition-all duration-200") +
-      (prefix ? " pl-2 pr-4 py-3" : suffix ? " pl-4 pr-2 py-3" : " px-4 py-3"),
+      getPaddingClass(),
+
+    secondary:
+      "h-12 w-full text-foreground font-prompt " +
+      "placeholder:text-foreground/50 border-0 focus:outline-none rounded-full bg-base-300 " +
+      (isDisabled
+        ? "opacity-50 cursor-not-allowed"
+        : "cursor-text hover:opacity-90 focus:opacity-95 transition-all duration-200") +
+      getPaddingClass(),
   };
 
-  if (variant === "primary") {
+  if (variant === "secondary") {
     return (
       <div
         className={cn(
-          "rounded-full p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light overflow-hidden relative flex items-center " +
+          "rounded-full p-[1.3px] [html[data-theme='light']_&]:bg-gradient-to-b [html[data-theme='light']_&]:from-[#EEEEEE] [html[data-theme='light']_&]:to-[#DEDEDE] [html[data-theme='dark']_&]:bg-gradient-to-b [html[data-theme='dark']_&]:from-[#454545] [html[data-theme='dark']_&]:to-base-300 overflow-hidden relative flex items-center " +
             "transition-all duration-200 " +
-            (isDisabled
-              ? ""
-              : "hover:shadow-sm focus-within:shadow-md [html[data-theme='dark']_&]:hover:from-foreground/70 [html[data-theme='dark']_&]:hover:to-background-light [html[data-theme='dark']_&]:focus-within:from-foreground/90 [html[data-theme='dark']_&]:focus-within:to-background-light"),
+            (isDisabled ? "" : "hover:opacity-90 focus-within:opacity-95"),
           className,
         )}
       >
@@ -137,14 +148,22 @@ export const Input = ({
   }
 
   return (
-    <div className="flex items-center relative">
+    <div
+      className={cn(
+        "rounded-full p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light overflow-hidden relative flex items-center " +
+          "transition-all duration-200 " +
+          (isDisabled
+            ? ""
+            : "hover:shadow-sm focus-within:shadow-md [html[data-theme='dark']_&]:hover:from-foreground/70 [html[data-theme='dark']_&]:hover:to-background-light [html[data-theme='dark']_&]:focus-within:from-foreground/90 [html[data-theme='dark']_&]:focus-within:to-background-light"),
+        className,
+      )}
+    >
       {prefix && (
         <div className="flex items-center justify-center pl-2 shrink-0">
           {prefix}
         </div>
       )}
       <input
-        {...props}
         type={type}
         placeholder={placeholder}
         value={value}
@@ -153,6 +172,7 @@ export const Input = ({
         disabled={isDisabled}
         required={required}
         className={cn(variantClasses[variant], inputClassName)}
+        {...props}
       />
       {suffix && (
         <div className="flex items-center justify-center pr-2 shrink-0">
@@ -178,6 +198,7 @@ export const OtpInput = ({
   className,
   inputClassName,
 }: OtpInputProps) => {
+  const inputId = useId();
   const variantClasses = {
     primary:
       "w-full lg:h-12 h-8 text-center text-foreground font-medium rounded-full bg-background-light focus:outline-none focus:ring-0 " +
@@ -293,8 +314,8 @@ export const OtpInput = ({
       <div className={cn("flex gap-3 lg:gap-4", className)}>
         {Array.from({ length }).map((_, index) => (
           <div
-            key={index}
-            className="[html[data-theme='light']_&]:from-foreground/20 [html[data-theme='light']_&]:to-foreground/10 bg-linear-to-t from-foreground/50 p-px relative rounded-full to-background-light"
+            key={`${inputId}-${index}`}
+            className="bg-linear-to-t from-foreground/50 p-px relative rounded-full to-background-light"
           >
             <input
               ref={(el) => {
@@ -326,11 +347,12 @@ export const OtpInput = ({
     );
   }
 
+  // Primary variant (default) - OtpInput currently only supports primary variant
   return (
     <div className={cn("flex gap-3 lg:gap-4", className)}>
       {Array.from({ length }).map((_, index) => (
         <input
-          key={index}
+          key={`${inputId}-${index}`}
           ref={(el) => {
             inputRefs.current[index] = el;
           }}
@@ -346,7 +368,7 @@ export const OtpInput = ({
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={(e) => handlePaste(index, e)}
           onFocus={(e) => e.currentTarget.select()}
-          className={cn(variantClasses[variant], inputClassName)}
+          className={cn(variantClasses.primary, inputClassName)}
         />
       ))}
     </div>
@@ -533,7 +555,7 @@ interface TextareaProps {
   disabled?: boolean;
   loading?: boolean;
   required?: boolean;
-  variant?: "primary";
+  variant?: "primary" | "secondary";
   className?: string;
   textareaClassName?: string;
   rows?: number;
@@ -568,17 +590,23 @@ export const Textarea = ({
       (isDisabled
         ? "opacity-50 cursor-not-allowed"
         : "cursor-text hover:opacity-90 focus:opacity-95 transition-all duration-200"),
+
+    secondary:
+      "w-full h-full text-foreground font-prompt " +
+      "placeholder:text-foreground/50 border-0 focus:outline-none rounded-2xl bg-base-300 " +
+      "p-4 resize-none overflow-y-auto " +
+      (isDisabled
+        ? "opacity-50 cursor-not-allowed"
+        : "cursor-text hover:opacity-90 focus:opacity-95 transition-all duration-200"),
   };
 
-  if (variant === "primary") {
+  if (variant === "secondary") {
     return (
       <div
         className={cn(
-          "rounded-2xl h-21.5 p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light overflow-hidden relative " +
+          "rounded-2xl h-21.5 p-[1.3px] [html[data-theme='light']_&]:bg-gradient-to-b [html[data-theme='light']_&]:from-[#EEEEEE] [html[data-theme='light']_&]:to-[#DEDEDE] [html[data-theme='dark']_&]:bg-gradient-to-b [html[data-theme='dark']_&]:from-[#454545] [html[data-theme='dark']_&]:to-base-300 overflow-hidden relative " +
             "transition-all duration-200 " +
-            (isDisabled
-              ? ""
-              : "hover:shadow-sm focus-within:shadow-md [html[data-theme='dark']_&]:hover:from-foreground/70 [html[data-theme='dark']_&]:hover:to-background-light [html[data-theme='dark']_&]:focus-within:from-foreground/90 [html[data-theme='dark']_&]:focus-within:to-background-light"),
+            (isDisabled ? "" : "hover:opacity-90 focus-within:opacity-95"),
           className,
         )}
       >
@@ -604,9 +632,22 @@ export const Textarea = ({
     );
   }
 
+  // Primary variant (default)
   return (
-    <div className="flex items-center relative">
+    <div
+      className={cn(
+        "rounded-2xl h-21.5 p-px border border-background shadow-[0_4px_4px_0_rgba(0,0,0,0.08)] [html[data-theme='dark']_&]:border-0 [html[data-theme='dark']_&]:shadow-none [html[data-theme='dark']_&]:bg-linear-to-t [html[data-theme='dark']_&]:from-foreground/50 [html[data-theme='dark']_&]:to-background-light overflow-hidden relative " +
+          "transition-all duration-200 " +
+          (isDisabled
+            ? ""
+            : "hover:shadow-sm focus-within:shadow-md [html[data-theme='dark']_&]:hover:from-foreground/70 [html[data-theme='dark']_&]:hover:to-background-light [html[data-theme='dark']_&]:focus-within:from-foreground/90 [html[data-theme='dark']_&]:focus-within:to-background-light"),
+        className,
+      )}
+    >
       <textarea
+        id={id}
+        name={name}
+        autoComplete={autoComplete}
         rows={rows}
         placeholder={placeholder}
         value={value}

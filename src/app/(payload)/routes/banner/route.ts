@@ -12,6 +12,7 @@ export const GET = async (request: NextRequest) => {
     const payload = await getPayload({ config });
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get("id");
+    const banner = searchParams.get("banner");
 
     let pagination: PaginationParams;
     try {
@@ -48,13 +49,26 @@ export const GET = async (request: NextRequest) => {
       });
     }
 
-    const banners = await payload.find({
-      collection: "media-banner",
-      limit,
-      page,
-      depth: 2,
-      sort: "-createdAt",
-    });
+    const banners = banner
+      ? await payload.find({
+          collection: "media-banner",
+          where: {
+            banner: {
+              equals: banner,
+            },
+          },
+          limit,
+          page,
+          depth: 2,
+          sort: "-createdAt",
+        })
+      : await payload.find({
+          collection: "media-banner",
+          limit,
+          page,
+          depth: 2,
+          sort: "-createdAt",
+        });
 
     return Response.json({
       success: true,
@@ -73,6 +87,7 @@ export const GET = async (request: NextRequest) => {
       usage: {
         allBanners: "/banner",
         withPagination: "/banner?page=1&limit=5",
+        filterByWhereToShow: "/banner?whereToShow=course",
         singleBanner: "/banner?id=banner-uuid-here",
       },
     });

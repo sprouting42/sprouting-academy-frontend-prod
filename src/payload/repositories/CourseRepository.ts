@@ -42,6 +42,11 @@ export const CourseRepository = (payload: BasePayload): ICourseRepository => {
   ): Promise<PaginatedDocs<CourseWithDetail>> => {
     const courses = (await payload.find({
       collection: "courses",
+      where: {
+        courseStatus: {
+          equals: true,
+        },
+      },
       limit,
       page,
       depth: 3,

@@ -70,6 +70,7 @@ export type User = {
   id: string;
   email: string;
   fullName: string;
+  nickname?: string | null;
   phone: string | null;
   avatarUrl: string | null;
   role: "ADMIN" | "INSTRUCTOR" | "STUDENT";
@@ -134,5 +135,55 @@ export const authApi = {
       "auth/refresh",
       payload,
     );
+  },
+
+  uploadAvatar: async (
+    avatarFile: File,
+  ): Promise<ApiResponse<{ url: string; path: string; filename: string }>> => {
+    const formData = new FormData();
+    formData.append("file", avatarFile);
+
+    return interceptedApiFetch.post<
+      ApiResponse<{ url: string; path: string; filename: string }>
+    >("auth/upload-avatar", formData);
+  },
+
+  updateProfile: async (payload: {
+    fullName?: string;
+    nickname?: string;
+    phone?: string | null;
+    email?: string;
+    avatarFile?: File | null;
+    avatarUrl?: string | null;
+  }): Promise<ApiResponse<User>> => {
+    const requestBody: {
+      fullName?: string;
+      nickname?: string;
+      phone?: string;
+      avatarUrl?: string;
+    } = {};
+
+    if (payload.fullName && payload.fullName.trim()) {
+      requestBody.fullName = payload.fullName.trim();
+    }
+    if (payload.nickname !== undefined) {
+      requestBody.nickname = payload.nickname || undefined;
+    }
+    if (
+      payload.phone !== undefined &&
+      payload.phone !== null &&
+      payload.phone.trim()
+    ) {
+      requestBody.phone = payload.phone.trim();
+    }
+    if (payload.avatarUrl && payload.avatarUrl.trim()) {
+      requestBody.avatarUrl = payload.avatarUrl.trim();
+    }
+
+    if (Object.keys(requestBody).length === 0) {
+      throw new Error("No fields to update");
+    }
+
+    return interceptedApiFetch.patch<ApiResponse<User>>("auth/me", requestBody);
   },
 };

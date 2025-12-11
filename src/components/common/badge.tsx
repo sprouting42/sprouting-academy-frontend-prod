@@ -39,7 +39,7 @@ export const Badge = ({
     transparentSecondary: "w-fit bg-secondary-light text-secondary font-prompt",
     error: "w-fit bg-[var(--error)] text-white font-normal font-prompt",
     premium: "w-fit bg-premium text-white font-bold font-prompt",
-    courseDate: "w-fit bg-course-date-badge text-black font-normal font-prompt",
+    courseDate: "w-fit bg-course-date-badge text-white font-normal font-prompt",
   };
 
   const sizeClasses = {

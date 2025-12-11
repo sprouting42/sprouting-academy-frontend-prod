@@ -156,7 +156,7 @@ export const NavigationBar = () => {
 
         <div className="flex gap-4 items-center justify-end lg:gap-8">
           <ThemeSwitcher />
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex lg:items-center">
             <DesktopUserMenu
               isMounted={isMounted}
               isUserLoading={isUserLoading}

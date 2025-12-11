@@ -101,7 +101,6 @@ export const Dropdown = ({
               )}
             >
               <ul
-                role="listbox"
                 className={cn(
                   "max-h-60 overflow-auto",
                   "bg-background",
@@ -112,17 +111,19 @@ export const Dropdown = ({
                 {options?.map((opt) => {
                   const selected = opt === value;
                   return (
-                    <li
-                      key={opt}
-                      role="option"
-                      aria-selected={selected}
-                      className={cn(
-                        "px-4 py-2 cursor-pointer font-prompt text-sm",
-                        selected ? "bg-foreground/10" : "hover:bg-foreground/5",
-                      )}
-                      onClick={() => handleOptionClick(opt)}
-                    >
-                      {opt}
+                    <li key={opt}>
+                      <button
+                        type="button"
+                        className={cn(
+                          "w-full text-left px-4 py-2 cursor-pointer font-prompt text-sm",
+                          selected
+                            ? "bg-foreground/10"
+                            : "hover:bg-foreground/5",
+                        )}
+                        onClick={() => handleOptionClick(opt)}
+                      >
+                        {opt}
+                      </button>
                     </li>
                   );
                 })}

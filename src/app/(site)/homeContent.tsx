@@ -11,7 +11,7 @@ import { WhyUsCard } from "@/components/card/whyUsCard";
 import { Button } from "@/components/common/button";
 import { Carousel } from "@/components/common/carousel";
 import { Hero } from "@/components/hero";
-import { bootcampsData } from "@/data/bootcamp-coursecard";
+import type { BootcampCardData } from "@/data/bootcampCard";
 import type { CourseData } from "@/data/courses";
 import type { InstructorData } from "@/data/instructors";
 import { testimonials } from "@/data/testimonials";
@@ -21,9 +21,14 @@ import { useAddItemToCart } from "@/hooks/useCart";
 interface HomeContentProps {
   courses: CourseData[];
   instructors: InstructorData[];
+  bootcamps: BootcampCardData[];
 }
 
-export function HomeContent({ courses, instructors }: HomeContentProps) {
+export function HomeContent({
+  courses,
+  instructors,
+  bootcamps,
+}: HomeContentProps) {
   const { mutate: addItemToCart, isPending } = useAddItemToCart();
 
   const whyUsRef = useRef(null);
@@ -57,93 +62,14 @@ export function HomeContent({ courses, instructors }: HomeContentProps) {
               text: "ดูคอร์ส Bootcamp",
               link: PagePath.BOOTCAMPS,
             },
+            {
+              id: "quotation",
+              text: "ขอใบเสนอราคาองค์กร",
+              link: PagePath.QUOTATION,
+            },
           ],
         }}
       />
-
-      {/* Why Learn with Us Section */}
-      <motion.section
-        ref={whyUsRef}
-        initial="hidden"
-        animate={whyUsInView ? "visible" : "hidden"}
-        variants={{
-          visible: { transition: { staggerChildren: 0.2 } },
-        }}
-        className="flex flex-col gap-6 items-center px-4"
-      >
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={whyUsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-          className="[html[data-theme='dark']_&]:bg-clip-text [html[data-theme='dark']_&]:bg-linear-to-r [html[data-theme='dark']_&]:from-secondary [html[data-theme='dark']_&]:text-transparent [html[data-theme='dark']_&]:to-primary font-bold font-prompt lg:text-3xl text-3xl text-center text-primary"
-        >
-          ทำไมต้องเรียนกับเรา?
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={whyUsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="font-prompt lg:text-base max-w-3xl text-center text-foreground text-lg"
-        >
-          เราไม่ได้สอนแค่เทคนิคหรือจับมือทำ
-          แต่เราช่วยคุณสร้างวิธีคิดและการพัฒนาผ่านการสอนสดๆ
-          เพื่อให้คุณเข้าใจและสามารถนำกลับไปใช้งานจริงเองได้
-        </motion.p>
-        <div className="flex flex-col flex-wrap gap-6 items-center justify-center lg:flex-row lg:gap-8">
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-            }}
-          >
-            <WhyUsCard
-              iconSrc="/icons/robot.svg"
-              iconAlt="Make.com Automation"
-              title="Make.com Automation Mastery"
-              subtitle="เรียนรู้ Make.com เครื่องมือระดับโลกในการทำ AI Automation"
-            />
-          </motion.div>
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-            }}
-          >
-            <WhyUsCard
-              iconSrc="/icons/sparkle.svg"
-              iconAlt="Pro Thinking Process"
-              title="กระบวนการคิดแบบ Pro"
-              subtitle="สอนให้คิดเป็น ไม่ใช่แค่ทำตาม เพื่อใช้งานได้ตลอดชีวิต"
-            />
-          </motion.div>
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-            }}
-          >
-            <WhyUsCard
-              iconSrc="/icons/arrow.svg"
-              iconAlt="From Start to Real Application"
-              title="ตั้งแต่เริ่มจนถึงใช้งานจริง"
-              subtitle="เริ่มจากไม่รู้อะไรเลย จนสามารถใช้งานได้ในชีวิตจริง"
-            />
-          </motion.div>
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-            }}
-          >
-            <WhyUsCard
-              iconSrc="/icons/clock.svg"
-              iconAlt="Live Stream"
-              title="Live Stream สดทุกสัปดาห์"
-              subtitle="เรียนแบบ Interactive ถาม-ตอบได้ทันที ไม่ใช่วิดีโอย้อนหลัง"
-            />
-          </motion.div>
-        </div>
-      </motion.section>
 
       {/* Career Change with Intensive Bootcamp Section */}
       <motion.section
@@ -172,7 +98,7 @@ export function HomeContent({ courses, instructors }: HomeContentProps) {
           </p>
         </motion.div>
         <div className="flex flex-col gap-8 items-center justify-center md:flex-row md:items-stretch">
-          {bootcampsData.map((bootcamp) => (
+          {bootcamps.map((bootcamp) => (
             <motion.div
               key={bootcamp.id}
               variants={{
@@ -215,6 +141,7 @@ export function HomeContent({ courses, instructors }: HomeContentProps) {
         </motion.div>
       </motion.section>
 
+      {/* Course Detail Section */}
       <motion.section
         ref={coursesRef}
         initial="hidden"
@@ -302,6 +229,90 @@ export function HomeContent({ courses, instructors }: HomeContentProps) {
         </motion.div>
       </motion.section>
 
+      {/* Why Learn with Us Section */}
+      <motion.section
+        ref={whyUsRef}
+        initial="hidden"
+        animate={whyUsInView ? "visible" : "hidden"}
+        variants={{
+          visible: { transition: { staggerChildren: 0.2 } },
+        }}
+        className="flex flex-col gap-6 items-center px-4"
+      >
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={whyUsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
+          className="[html[data-theme='dark']_&]:bg-clip-text [html[data-theme='dark']_&]:bg-linear-to-r [html[data-theme='dark']_&]:from-secondary [html[data-theme='dark']_&]:text-transparent [html[data-theme='dark']_&]:to-primary font-bold font-prompt lg:text-3xl text-3xl text-center text-primary"
+        >
+          ทำไมต้องเรียนกับเรา?
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={whyUsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="font-prompt lg:text-base max-w-3xl text-center text-foreground text-lg"
+        >
+          เราไม่ได้สอนแค่เทคนิคหรือจับมือทำ
+          แต่เราช่วยคุณสร้างวิธีคิดและการพัฒนาผ่านการสอนสดๆ
+          เพื่อให้คุณเข้าใจและสามารถนำกลับไปใช้งานจริงเองได้
+        </motion.p>
+        <div className="flex flex-col flex-wrap gap-6 items-center justify-center lg:flex-row lg:gap-8">
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+            }}
+          >
+            <WhyUsCard
+              iconSrc="/icons/robot.svg"
+              iconAlt="Make.com Automation"
+              title="Make.com Automation Mastery"
+              subtitle="เรียนรู้ Make.com เครื่องมือระดับโลกในการทำ AI Automation"
+            />
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+            }}
+          >
+            <WhyUsCard
+              iconSrc="/icons/sparkle.svg"
+              iconAlt="Pro Thinking Process"
+              title="กระบวนการคิดแบบ Pro"
+              subtitle="สอนให้คิดเป็น ไม่ใช่แค่ทำตาม เพื่อใช้งานได้ตลอดชีวิต"
+            />
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+            }}
+          >
+            <WhyUsCard
+              iconSrc="/icons/arrow.svg"
+              iconAlt="From Start to Real Application"
+              title="ตั้งแต่เริ่มจนถึงใช้งานจริง"
+              subtitle="เริ่มจากไม่รู้อะไรเลย จนสามารถใช้งานได้ในชีวิตจริง"
+            />
+          </motion.div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+            }}
+          >
+            <WhyUsCard
+              iconSrc="/icons/clock.svg"
+              iconAlt="Live Stream"
+              title="Live Stream สดทุกสัปดาห์"
+              subtitle="เรียนแบบ Interactive ถาม-ตอบได้ทันที ไม่ใช่วิดีโอย้อนหลัง"
+            />
+          </motion.div>
+        </div>
+      </motion.section>
+
       <motion.section
         ref={instructorsRef}
         initial="hidden"
@@ -337,6 +348,7 @@ export function HomeContent({ courses, instructors }: HomeContentProps) {
             showDots={true}
             showArrows={true}
             autoplayInterval={108000}
+            maxWidth="max-w-304 w-full"
           />
         </div>
       </motion.section>

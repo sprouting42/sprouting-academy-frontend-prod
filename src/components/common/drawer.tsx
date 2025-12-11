@@ -59,7 +59,7 @@ export const Drawer = ({
         aria-hidden
       />
 
-      <aside
+      <div
         role="dialog"
         aria-modal="true"
         data-drawer-open={isOpen}
@@ -79,7 +79,7 @@ export const Drawer = ({
         <div className="h-full overflow-x-hidden overflow-y-auto scrollbar-thin">
           {content}
         </div>
-      </aside>
+      </div>
     </div>
   );
 };

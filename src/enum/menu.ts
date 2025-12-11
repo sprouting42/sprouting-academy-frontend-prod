@@ -37,5 +37,9 @@ export enum PagePath {
   CART = "/cart",
   CHECKOUT = "/checkout",
   PROFILE = "/profile",
+  PROFILE_COURSES = "/profile/courses",
+  PROFILE_CERTIFICATIONS = "/profile/certifications",
+  PROFILE_SETTINGS = "/profile/settings",
+  PROFILE_HELP = "/profile/help",
   QUOTATION = "/quotation",
 }

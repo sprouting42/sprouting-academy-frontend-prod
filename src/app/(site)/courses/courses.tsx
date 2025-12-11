@@ -9,6 +9,7 @@ import { CourseCard, CourseDetail } from "@/components/card";
 import { Button } from "@/components/common";
 import { Carousel } from "@/components/common";
 import { Popup } from "@/components/common/popup";
+import type { PopupImage } from "@/data/popup";
 import { PagePath } from "@/enum/menu";
 import { useAddItemToCart } from "@/hooks/useCart";
 import { MediaCourse } from "@/payload/payload-types";
@@ -44,9 +45,11 @@ export interface CourseData extends CourseCardProps, CourseDetailProps {
 export function Courses({
   courses,
   bannerImages,
+  popupImages,
 }: {
   courses: CourseData[];
-  bannerImages?: { src: string; alt?: string }[];
+  bannerImages?: { src: string; alt?: string; id: string }[];
+  popupImages: PopupImage[];
 }) {
   const router = useRouter();
   const headerRef = useRef(null);
@@ -57,23 +60,6 @@ export function Courses({
   const coursesInView = useInView(coursesRef, { once: true });
   const buttonInView = useInView(buttonRef, { once: true });
 
-  const popupImages = [
-    {
-      src: "/courses/ads_make.com-01.jpg",
-      alt: "AI Automation Course - Make.com",
-    },
-    {
-      src: "/courses/ads_make.com-02.jpg",
-      alt: "AI Automation Course - Make.com",
-    },
-    {
-      src: "/courses/ads_make.com-03.jpg",
-      alt: "AI Automation Course - Make.com",
-    },
-    { src: "/courses/ads_n8n-04.jpg", alt: "AI Automation Course - n8n" },
-    { src: "/courses/ads_n8n-05.jpg", alt: "AI Automation Course - n8n" },
-    { src: "/courses/ads_n8n-06.jpg", alt: "AI Automation Course - n8n" },
-  ];
   const { mutate: addItemToCart, isPending } = useAddItemToCart();
 
   return (
@@ -85,7 +71,7 @@ export function Courses({
           initial={{ opacity: 0, y: 30 }}
           animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col gap-2 mb-8 text-center"
+          className="flex flex-col gap-2 text-center"
         >
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -111,7 +97,7 @@ export function Courses({
 
         <Carousel
           items={(bannerImages || []).map((banner, index) => ({
-            id: `banner-${index}`,
+            id: banner.id,
             content: (
               <div className="h-[300px] md:h-[543px] relative sm:h-[400px] w-full">
                 <Image
@@ -128,6 +114,7 @@ export function Courses({
           autoplayInterval={4000}
           showDots={true}
           showArrows={true}
+          maxWidth="max-w-304 w-full"
         />
 
         <motion.div

@@ -92,7 +92,9 @@ export const Popup = ({ images, storageKey, onClose }: PopupProps) => {
     }),
   };
 
-  const visibleIndices = getVisibleIndices(currentIndex, images.length);
+  const visibleIndices = Array.from(
+    new Set(getVisibleIndices(currentIndex, images.length)),
+  );
   const showNavigation = images.length > 1;
 
   return (

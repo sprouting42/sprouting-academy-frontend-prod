@@ -26,7 +26,13 @@ const buildOptions = (
 ): Options => {
   const kyOptions: Options = { method };
 
-  if (body !== undefined) kyOptions.json = body;
+  if (body !== undefined) {
+    if (body instanceof FormData) {
+      kyOptions.body = body;
+    } else if (body !== null) {
+      kyOptions.json = body;
+    }
+  }
   if (params) kyOptions.searchParams = params;
   if (language) kyOptions.context = { language };
 
@@ -35,7 +41,6 @@ const buildOptions = (
 
 const createKyInstance = (prefixUrl: string) =>
   ky.create({
-    headers: { "Content-Type": "application/json" },
     hooks: {
       beforeRequest: [
         (request, options) => {
@@ -49,13 +54,12 @@ const createKyInstance = (prefixUrl: string) =>
             getLanguage();
 
           request.headers.set("x-language", language);
-        },
-      ],
-      afterResponse: [
-        async (_request, _options, response) => {
-          if (!response.ok && process.env.NODE_ENV === "development") {
-            const errorBody = await response.json().catch(() => ({}));
-            console.error("API Error:", errorBody);
+
+          if (options.body instanceof FormData) {
+          } else if (options.body !== undefined && options.body !== null) {
+            if (!request.headers.has("Content-Type")) {
+              request.headers.set("Content-Type", "application/json");
+            }
           }
         },
       ],

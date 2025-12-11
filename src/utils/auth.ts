@@ -34,7 +34,6 @@ export const isAuthenticated = (): boolean => {
 
   const expiry = getTokenExpiry(token);
   if (expiry && Date.now() >= expiry) {
-    removeAuthToken();
     return false;
   }
 
@@ -60,7 +59,6 @@ export const getAuthToken = (): string | null => {
 
   const expiry = getTokenExpiry(token);
   if (expiry && Date.now() >= expiry) {
-    removeAuthToken();
     return null;
   }
 

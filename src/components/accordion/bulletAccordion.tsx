@@ -1,5 +1,7 @@
 "use client";
 
+import { CaretDownIcon } from "@phosphor-icons/react";
+import { CaretUpIcon } from "@phosphor-icons/react";
 import React from "react";
 
 import { Acordion } from "@/components/common/acordion";
@@ -40,6 +42,21 @@ export const BulletAccordion = ({
             contentClassName="bg-linear-to-b from-background-light p-6 rounded-2xl to-background"
             cardContent={
               <Acordion
+                rightIcon={(isOpen) =>
+                  isOpen ? (
+                    <CaretUpIcon
+                      weight="bold"
+                      className="text-secondary"
+                      size={24}
+                    />
+                  ) : (
+                    <CaretDownIcon
+                      weight="bold"
+                      className="text-secondary"
+                      size={24}
+                    />
+                  )
+                }
                 titleText={
                   <span className="[html[data-theme='dark']_&]:text-secondary font-prompt font-semibold text-base text-primary">
                     {item.title}

@@ -2,20 +2,26 @@
 
 import { CalendarIcon } from "@phosphor-icons/react/dist/csr/Calendar";
 import { CertificateIcon } from "@phosphor-icons/react/dist/csr/Certificate";
-import { EnvelopeIcon } from "@phosphor-icons/react/dist/csr/Envelope";
 import { PhoneIcon } from "@phosphor-icons/react/dist/csr/Phone";
+import { FaEnvelope } from "react-icons/fa";
+import { TbPencilMinus } from "react-icons/tb";
 
 import { UserAvatar } from "@/components/common";
 import { Badge } from "@/components/common/badge";
 import { Button } from "@/components/common/button";
 import { Card } from "@/components/common/card";
 import { cn } from "@/utils/cn";
+import { formatJoinDate } from "@/utils/dateFormatter";
 
 interface ProfileCardProps {
   avatarUrl?: string | null;
   fullName: string;
+  nickname?: string | null;
   email: string;
   phone?: string | null;
+  certificatesCount?: number;
+  enrolledCoursesCount?: number;
+  joinDate?: string | Date;
   onEditClick?: () => void;
   className?: string;
 }
@@ -23,13 +29,34 @@ interface ProfileCardProps {
 export const ProfileCard = ({
   avatarUrl,
   fullName,
+  nickname,
   email,
   phone,
+  certificatesCount = 0,
+  enrolledCoursesCount = 0,
+  joinDate,
   className,
   onEditClick,
 }: ProfileCardProps) => {
+  const displayName = nickname || fullName.split(" ")[0] || fullName;
+  const getCertificatesText = () => {
+    if (certificatesCount === 0 && enrolledCoursesCount === 0) {
+      return "No Certificates or Enrolled Courses";
+    }
+
+    const certificateText =
+      certificatesCount === 1 ? "Certificate" : "Certificates";
+    const courseText =
+      enrolledCoursesCount === 1 ? "Enrolled Course" : "Enrolled Courses";
+
+    return `${certificatesCount} ${certificateText} & ${enrolledCoursesCount} ${courseText}`;
+  };
+
+  const certificatesText = getCertificatesText();
+
+  const formattedJoinDate = formatJoinDate(joinDate);
   return (
-    <div className={cn("relative w-full lg:h-86", className)}>
+    <div className={cn("relative w-full", className)}>
       <Card
         variant="gradientDarkToLight"
         className="h-full w-full"
@@ -38,95 +65,85 @@ export const ProfileCard = ({
         )}
         cardContent={
           <>
-            <div className="absolute bg-secondary/50 blur-3xl h-40 lg:h-53 lg:w-59.25 profile-blur-right rounded-full w-40 z-0" />
-            <div className="absolute bg-secondary/50 blur-3xl h-32 lg:h-29.25 lg:w-67 profile-blur-left rounded-full w-48 z-0" />
-
-            <div className="flex flex-col gap-6 lg:gap-0 lg:pb-0 lg:pt-25 lg:px-11 md:gap-6 md:pb-6 md:pt-6 md:px-6 pb-6 pt-6 px-4 relative z-10">
-              <div className="flex justify-end lg:right-11 lg:top-7 mb-4 md:absolute md:mb-0 md:right-6 md:top-6">
+            <div className="flex flex-col gap-5 md:gap-6 md:p-8 p-5 relative z-10">
+              <div className="flex justify-end md:absolute md:right-8 md:top-8">
                 <Button
-                  text="Edit profile"
+                  text="Edit"
+                  icon={
+                    <TbPencilMinus className="h-4 md:h-5 md:w-5 text-secondary w-4" />
+                  }
                   variant="primaryGradientBorder"
                   size="sm"
-                  shape="square"
+                  shape="rounded"
                   onClick={onEditClick}
-                  className="md:text-base min-h-11 text-sm"
+                  className="md:text-sm py-1.5 text-xs"
                 />
               </div>
 
-              <div className="flex flex-col gap-6 lg:gap-7 md:flex-row md:gap-6 md:items-start">
+              <div className="flex flex-col gap-5 md:flex-row md:gap-6 md:items-center">
                 <div className="flex justify-center md:justify-start shrink-0">
-                  <UserAvatar avatarUrl={avatarUrl} size="xl" />
+                  <UserAvatar avatarUrl={avatarUrl} size="xl" priority />
                 </div>
 
-                <div className="flex flex-1 flex-col gap-6 items-center lg:gap-8 md:gap-6 md:items-start md:text-left text-center w-full">
-                  <div className="flex flex-col gap-3 items-center lg:gap-11 md:flex-row md:gap-6 md:items-center w-full">
-                    <div className="flex flex-col gap-2 items-center md:items-start">
-                      <h2 className="font-bold font-prompt leading-8 text-secondary text-xl">
-                        {fullName.split(" ")[0] || fullName}
-                      </h2>
-                      <p className="font-normal font-prompt leading-7 text-base text-foreground">
-                        {fullName}
-                      </p>
-                    </div>
+                <div className="flex flex-col gap-2 items-center md:items-start md:text-left text-center w-full">
+                  <div className="flex flex-row flex-wrap gap-3 items-center justify-center md:justify-start">
+                    <h2 className="font-bold font-prompt lg:text-xl md:text-lg text-base text-foreground">
+                      {displayName}
+                    </h2>
                     <Badge
                       text="Premium"
                       variant="premium"
                       shape="rounded"
-                      size="lg"
-                      className="px-4 py-3 shrink-0"
+                      size="md"
+                      className="px-2 py-1 shrink-0"
                     />
                   </div>
 
-                  <div className="flex flex-col gap-4 lg:gap-11 md:flex-row md:gap-6 md:items-center w-full">
-                    <div className="flex flex-col gap-4 lg:gap-6 md:gap-5 md:w-auto w-full">
-                      <div className="flex flex-row gap-3 items-center justify-center md:justify-start">
-                        <EnvelopeIcon
-                          size={24}
-                          className="lg:h-7 lg:w-7 md:h-6 md:w-6 shrink-0 text-secondary"
-                          weight="regular"
-                        />
-                        <span className="font-normal font-prompt leading-7 text-base text-foreground wrap-break-word">
-                          {email}
-                        </span>
-                      </div>
+                  <p className="font-normal font-prompt lg:text-base md:text-sm text-foreground/80 text-sm">
+                    {fullName}
+                  </p>
 
-                      <div className="flex flex-row gap-3 items-start justify-center md:justify-start">
-                        <CalendarIcon
-                          size={24}
-                          className="lg:h-7 lg:w-7 md:h-6 md:w-6 shrink-0 text-secondary"
-                          weight="regular"
-                        />
-                        <span className="font-normal font-prompt leading-7 text-base text-foreground">
-                          Joined October 2025
-                        </span>
-                      </div>
+                  <div className="flex flex-row gap-2 items-center justify-center md:justify-start">
+                    <CertificateIcon
+                      className="h-5 md:h-6 md:w-6 shrink-0 text-secondary w-5"
+                      weight="fill"
+                    />
+                    <span className="font-normal font-prompt lg:text-sm md:text-sm text-foreground/80 text-xs">
+                      {certificatesText}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-foreground/10 border-t pt-5">
+                <div className="flex flex-col gap-3 items-center justify-center md:flex-row md:flex-wrap md:gap-x-8 md:gap-y-3 md:justify-start">
+                  {phone && (
+                    <div className="flex flex-row gap-2 items-center">
+                      <PhoneIcon
+                        className="h-5 md:h-5 md:w-5 shrink-0 text-secondary w-5"
+                        weight="fill"
+                      />
+                      <span className="font-normal font-prompt lg:text-sm md:text-sm text-foreground text-xs">
+                        {phone}
+                      </span>
                     </div>
+                  )}
 
-                    <div className="flex flex-col gap-4 lg:gap-6 md:gap-5 md:w-auto w-full">
-                      <div className="flex flex-row gap-3 items-start justify-center md:justify-start">
-                        <CertificateIcon
-                          size={24}
-                          className="lg:h-7 lg:w-7 md:h-6 md:w-6 shrink-0 text-secondary"
-                          weight="regular"
-                        />
-                        <span className="font-normal font-prompt leading-7 text-base text-foreground">
-                          5 Certificates
-                        </span>
-                      </div>
+                  <div className="flex flex-row gap-2 items-center">
+                    <FaEnvelope className="h-5 md:h-5 md:w-5 shrink-0 text-secondary w-5" />
+                    <span className="break-all font-normal font-prompt lg:text-sm md:text-sm text-foreground text-xs">
+                      {email}
+                    </span>
+                  </div>
 
-                      {phone && (
-                        <div className="flex flex-row gap-3 items-start justify-center md:justify-start">
-                          <PhoneIcon
-                            size={24}
-                            className="lg:h-7 lg:w-7 md:h-6 md:w-6 shrink-0 text-secondary"
-                            weight="regular"
-                          />
-                          <span className="font-normal font-prompt leading-7 text-base text-foreground wrap-break-word">
-                            {phone}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex flex-row gap-2 items-center">
+                    <CalendarIcon
+                      className="h-5 md:h-5 md:w-5 shrink-0 text-secondary w-5"
+                      weight="fill"
+                    />
+                    <span className="font-normal font-prompt lg:text-sm md:text-sm text-foreground text-xs">
+                      {formattedJoinDate}
+                    </span>
                   </div>
                 </div>
               </div>

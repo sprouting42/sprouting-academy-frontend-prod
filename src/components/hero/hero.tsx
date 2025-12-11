@@ -34,11 +34,11 @@ export const Hero = ({
     : "items-center md:items-center text-center";
 
   const titleBaseClasses =
-    "bg-clip-text bg-linear-to-r font-bold font-prompt from-primary text-transparent to-secondary";
+    "bg-clip-text bg-linear-to-r font-bold font-prompt from-secondary text-transparent to-primary";
 
-  const largeTitleClasses = `${titleBaseClasses} md:text-7xl py-2 sm:text-5xl text-3xl`;
+  const largeTitleClasses = `${titleBaseClasses} md:text-7xl leading-normal sm:text-5xl text-3xl`;
 
-  const smallTitleClasses = `${titleBaseClasses} text-xl leading-9 lg:text-3xl lg:leading-10`;
+  const smallTitleClasses = `${titleBaseClasses} text-xl leading-normal lg:text-3xl lg:leading-10`;
 
   const titleClasses =
     titleSize === "small" ? smallTitleClasses : largeTitleClasses;
@@ -68,7 +68,7 @@ export const Hero = ({
           variants={{
             visible: { transition: { staggerChildren: 0.2 } },
           }}
-          className={`flex flex-col gap-4 md:gap-8 py-2 ${
+          className={`flex flex-col gap-4 ${
             isLeftAligned ? "items-start" : "items-center"
           }`}
         >
@@ -113,8 +113,11 @@ export const Hero = ({
             transition={{ duration: 0.5, delay: 0.4 }}
             className={buttonWrapperClasses}
           >
-            {content.buttonItems.map(({ id, text, link }) => {
+            {content.buttonItems.map(({ id, text, link }, index) => {
               const isFirstButton = content.buttonItems?.[0]?.id === id;
+              const isLastButton =
+                index === (content.buttonItems?.length ?? 0) - 1;
+              const isPrimaryGradient = isFirstButton || isLastButton;
               return (
                 <motion.div
                   key={id}
@@ -134,11 +137,11 @@ export const Hero = ({
                       text={text}
                       shape="rounded"
                       variant={
-                        isFirstButton
+                        isPrimaryGradient
                           ? "primaryGradientBorder"
                           : "secondaryGradientBorder"
                       }
-                      className="w-full"
+                      className={`w-full ${isLastButton ? "[html[data-theme='light']_&]:bg-background [html[data-theme='dark']_&]:bg-base-100 [html[data-theme='light']_&]:text-primary" : ""}`}
                     />
                   </Link>
                 </motion.div>

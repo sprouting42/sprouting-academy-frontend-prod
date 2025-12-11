@@ -46,7 +46,7 @@ export const Testimonial = ({
         {Array.from({ length: Math.max(0, Math.round(testimonialRating)) }).map(
           (_, index) => (
             <FaStar
-              key={`testimonial-rating-${index}`}
+              key={`${testimonialName}-${testimonialPosition}-star-${index}`}
               size={20}
               className="text-secondary"
             />

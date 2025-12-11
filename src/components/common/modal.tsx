@@ -36,6 +36,7 @@ interface ModalProps {
   position?: "topLeft" | "topRight" | "center" | "bottomLeft" | "bottomRight";
   closeButtonProps?: ComponentProps<typeof Button>;
   buttons?: ReactNode;
+  cardVariant?: ComponentProps<typeof Card>["variant"];
 }
 
 export const Modal = ({
@@ -53,6 +54,7 @@ export const Modal = ({
   btnClassName,
   position = "center",
   buttons,
+  cardVariant = "gradientDarkToLight",
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -154,7 +156,7 @@ export const Modal = ({
       )}
     >
       <Card
-        variant="gradientDarkToLight"
+        variant={cardVariant}
         className={cn("w-full", sizeClasses[size], className)}
         contentClassName={cn(
           "relative z-1000 flex h-full flex-col gap-4 rounded-2xl p-4 outline-none transition-all duration-200 ease-out bg-gradient-to-b from-background-light to-background",

@@ -56,8 +56,7 @@ export const DesktopUserMenu = ({
         }
       >
         <NavLink
-          // href={PagePath.PROFILE}
-          href=""
+          href={PagePath.PROFILE}
           text="บัญชีของฉัน"
           variant="menuItem"
           onClick={() => setIsDropdownOpen(false)}

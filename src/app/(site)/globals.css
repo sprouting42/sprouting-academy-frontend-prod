@@ -64,6 +64,9 @@
     --primary: rgb(0, 110, 136);
     --secondary: rgb(19, 180, 153);
     --error: rgb(233, 41, 40);
+    --premium: rgb(22, 161, 73);
+    --course-date-badge: rgb(255, 114, 116);
+    --course-date-dot: rgb(255, 132, 132);
     --facebook-color: rgb(24, 119, 242);
     --primary-light: rgba(0, 110, 136, 0.1);
     --secondary-light: rgba(19, 180, 153, 0.1);
@@ -111,6 +114,7 @@ body {
 @supports (height: 100dvh) {
   .darkveil-container {
     height: 33.33dvh;
+    background: var(--background);
   }
 
   @media (min-width: 768px) {
@@ -147,6 +151,7 @@ body {
 @supports not (height: 100dvh) {
   .darkveil-container {
     height: 33.33vh;
+    background: var(--background);
   }
 
   @media (min-width: 768px) {
@@ -271,4 +276,21 @@ html[data-theme="light"] .social-icon-bg:hover {
 
 .gradient-link-primary:hover {
   background-image: linear-gradient(to right, var(--secondary), var(--primary));
+}
+
+.carousel-button-gradient {
+  background: var(--background);
+}
+
+html[data-theme="dark"] .carousel-button-gradient {
+  background: linear-gradient(
+    to bottom,
+    var(--background-light),
+    rgba(229, 232, 232, 0.5)
+  );
+  box-shadow: none;
+}
+
+html[data-theme="light"] .carousel-button-gradient {
+  background: rgba(51, 51, 51, 0.16);
 }

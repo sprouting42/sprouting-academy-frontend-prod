@@ -1,3 +1,4 @@
+import type { ComponentType, RefObject } from "react";
 import { BiSolidDetail } from "react-icons/bi";
 import { HiCash } from "react-icons/hi";
 import {
@@ -14,6 +15,7 @@ import { Input, Textarea } from "@/components/common/input";
 import { Label } from "@/components/common/label";
 import type { CourseData } from "@/data/courses";
 import { quotationSchema } from "@/schemas/quotation.schema";
+import { cn } from "@/utils/cn";
 
 interface ErrorMessageProps {
   message?: string;
@@ -61,14 +63,14 @@ interface FormField<T> {
 interface QuotationFieldsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any;
-  fieldRefs: React.MutableRefObject<Record<string, HTMLDivElement | null>>;
+  fieldRefs: RefObject<Record<string, HTMLDivElement | null>>;
   courseOptions: CourseData[];
   isLoadingCourses: boolean;
   createCourseChangeHandler: (
     courseId: string,
     field: FormField<string[]>,
   ) => (isChecked: boolean) => void;
-  CourseOptionItem: React.ComponentType<{
+  CourseOptionItem: ComponentType<{
     course: CourseData;
     checked: boolean;
     onChange: (checked: boolean) => void;
@@ -274,6 +276,12 @@ export const QuotationFields = ({
                   กำลังโหลดคอร์ส...
                 </span>
               </div>
+            ) : courseOptions.length === 0 ? (
+              <div className="flex items-center justify-center py-4 w-full">
+                <span className="font-prompt text-foreground/60">
+                  ไม่มีคอร์สที่พร้อมให้บริการ
+                </span>
+              </div>
             ) : (
               <div className="flex flex-col gap-4 items-start p-0 px-4 w-full">
                 {courseOptions.map((course) => {
@@ -320,7 +328,7 @@ export const QuotationFields = ({
               ref={(el) => {
                 fieldRefs.current.numberOfStudents = el;
               }}
-              className={FIELD_WRAPPER_FLEX_CLASS}
+              className={cn(FIELD_WRAPPER_FLEX_CLASS, "w-full lg:flex-1")}
             >
               <Label
                 text="จำนวนผู้เรียนโดยประมาณ"
@@ -349,7 +357,7 @@ export const QuotationFields = ({
 
         <form.Field name="budget">
           {(field: FormField<string | undefined>) => (
-            <div className={FIELD_WRAPPER_FLEX_CLASS}>
+            <div className={cn(FIELD_WRAPPER_FLEX_CLASS, "w-full lg:flex-1")}>
               <Label
                 text="งบประมาณโดยประมาณ (Optional)"
                 icon={<HiCash {...ICON_PROPS} />}

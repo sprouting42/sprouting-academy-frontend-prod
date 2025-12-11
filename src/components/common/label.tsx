@@ -19,14 +19,15 @@ export const Label = ({
     <label
       {...props}
       className={cn(
-        "flex items-center justify-start gap-2 lg:text-lg font-prompt text-base",
+        "flex items-center justify-start gap-1.5 md:gap-2 text-sm md:text-base lg:text-lg font-prompt",
         className,
       )}
     >
       {icon && (
         <span
           className={cn(
-            "w-6 h-6 flex items-center justify-center shrink-0 flex-none",
+            "flex items-center justify-center shrink-0 flex-none",
+            "[&>svg]:w-5 [&>svg]:h-5 md:[&>svg]:w-6 md:[&>svg]:h-6",
           )}
         >
           {icon}

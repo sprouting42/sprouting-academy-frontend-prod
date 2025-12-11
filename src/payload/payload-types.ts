@@ -68,12 +68,20 @@ export interface Config {
   blocks: {};
   collections: {
     admin: Admin;
+    'bootcamp-cards': BootcampCard;
+    'bootcamp-page': BootcampPage;
+    'contact-submissions': ContactSubmission;
     courses: Course;
     'course-detail': CourseDetail;
     instructors: Instructor;
+    'course-planner': CoursePlanner;
     'media-course': MediaCourse;
     'media-instructors': MediaInstructor;
     'media-banner': MediaBanner;
+    'media-bootcamp': MediaBootcamp;
+    'media-popup': MediaPopup;
+    ebooks: Ebook;
+    'media-ebook': MediaEbook;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,12 +90,20 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     admin: AdminSelect<false> | AdminSelect<true>;
+    'bootcamp-cards': BootcampCardsSelect<false> | BootcampCardsSelect<true>;
+    'bootcamp-page': BootcampPageSelect<false> | BootcampPageSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     'course-detail': CourseDetailSelect<false> | CourseDetailSelect<true>;
     instructors: InstructorsSelect<false> | InstructorsSelect<true>;
+    'course-planner': CoursePlannerSelect<false> | CoursePlannerSelect<true>;
     'media-course': MediaCourseSelect<false> | MediaCourseSelect<true>;
     'media-instructors': MediaInstructorsSelect<false> | MediaInstructorsSelect<true>;
     'media-banner': MediaBannerSelect<false> | MediaBannerSelect<true>;
+    'media-bootcamp': MediaBootcampSelect<false> | MediaBootcampSelect<true>;
+    'media-popup': MediaPopupSelect<false> | MediaPopupSelect<true>;
+    ebooks: EbooksSelect<false> | EbooksSelect<true>;
+    'media-ebook': MediaEbookSelect<false> | MediaEbookSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -153,6 +169,352 @@ export interface Admin {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bootcamp-cards".
+ */
+export interface BootcampCard {
+  /**
+   * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+   */
+  id: string;
+  BootcampImage?: (string | null) | MediaBootcamp;
+  BootcampTitle?: string | null;
+  BootcampDescription?: string | null;
+  BootcampBulletPoints?:
+    | {
+        /**
+         * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+         */
+        id: string;
+        BootcampBulletText: string;
+      }[]
+    | null;
+  imageBadgeText?: string | null;
+  classType?: string | null;
+  /**
+   * เลือก Bootcamp Page ที่ต้องการลิงก์ไป
+   */
+  link: string | BootcampPage;
+  /**
+   * เมื่อเปิดจะแสดงทั้ง Card และ Page
+   */
+  cardStatus?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-bootcamp".
+ */
+export interface MediaBootcamp {
+  id: string;
+  alt: string;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bootcamp-page".
+ */
+export interface BootcampPage {
+  id: string;
+  /**
+   * URL slug สำหรับ bootcamp นี้ (เช่น: basic-html, java-spring-boot)
+   */
+  slug: string;
+  /**
+   * ส่วนหัวของหน้า bootcamp ที่แสดงรูปภาพ, หัวข้อ, คำอธิบาย และปุ่มต่างๆ
+   */
+  hero: {
+    bootcampCoverImage: {
+      relationTo: 'media-bootcamp';
+      value: string | MediaBootcamp;
+    };
+    /**
+     * หัวข้อหลักของ bootcamp
+     */
+    title: string;
+    /**
+     * คำอธิบายสั้นๆ ของ bootcamp
+     */
+    description: string;
+    /**
+     * รายการปุ่มที่แสดงในส่วน hero (เช่น: ปุ่มลงทะเบียน, ปุ่มดูรายละเอียด)
+     */
+    buttonItems: {
+      /**
+       * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+       */
+      id: string;
+      /**
+       * ข้อความที่แสดงบนปุ่ม
+       */
+      text: string;
+      /**
+       * URL หรือ path ที่ปุ่มจะลิงก์ไป (เช่น: /courses, /register)
+       */
+      link: string;
+    }[];
+  };
+  /**
+   * ส่วนที่อธิบายว่าทำไมต้องเรียน bootcamp นี้ (optional)
+   */
+  whyStudy?: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: ทำไมต้องเรียน)
+     */
+    title?: string | null;
+    /**
+     * รายการทำไมต้องเรียน bootcamp นี้
+     */
+    bulletPoints?:
+      | {
+          /**
+           * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+           */
+          id: string;
+          /**
+           * รายการ (รองรับ markdown เช่น **bold**)
+           */
+          item?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * ส่วนที่อธิบายว่า bootcamp ถูกออกแบบมาเพื่ออะไร (optional)
+   */
+  designedFor?: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: Bootcamp ของ Sprouting Tech ถูกออกแบบให้)
+     */
+    title?: string | null;
+    /**
+     * รายการจุดประสงค์ของการออกแบบ bootcamp
+     */
+    bulletPoints?:
+      | {
+          /**
+           * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+           */
+          id: string;
+          /**
+           * รายการ (รองรับ markdown เช่น **bold**)
+           */
+          item?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * ส่วนที่ระบุข้อกำหนดหรือสิ่งที่ผู้เรียนต้องมีก่อนเริ่มเรียน (optional)
+   */
+  prerequirements?: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: สิ่งที่ต้องมีก่อนเรียน)
+     */
+    title?: string | null;
+    /**
+     * รายการข้อกำหนดหรือสิ่งที่ต้องมีก่อนเรียน
+     */
+    bulletPoints?:
+      | {
+          /**
+           * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+           */
+          id: string;
+          /**
+           * รายละเอียดของข้อกำหนด (เช่น: รู้พื้นฐาน HTML/CSS)
+           */
+          item?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * ส่วนที่แสดงรายละเอียดประโยชน์และสิ่งที่ผู้เรียนจะได้รับจาก bootcamp แบ่งเป็นหมวดหมู่ (optional)
+   */
+  bootcampBenefits: {
+    /**
+     * หัวข้อหลักของส่วนนี้ (เช่น: คุณจะได้อะไรจาก Bootcamp นี้?)
+     */
+    title: string;
+    /**
+     * หัวข้อย่อยหรือคำอธิบายเพิ่มเติม (เช่น: Skills ที่ตลาดต้องการที่สุดครบทุกด้าน)
+     */
+    subtitle: string;
+    /**
+     * รายการหมวดหมู่ของประโยชน์ที่ผู้เรียนจะได้รับ
+     */
+    items: {
+      /**
+       * Unique ID สำหรับ benefit นี้ (สร้างอัตโนมัติเป็น UUID)
+       */
+      id: string;
+      /**
+       * หัวข้อของ benefit หมวดหมู่นี้ (เช่น: สร้างระบบหลังบ้านที่มั่นคงด้วย Java)
+       */
+      title: string;
+      /**
+       * รายการรายละเอียดของ benefit ในหมวดหมู่นี้
+       */
+      items: {
+        /**
+         * รายละเอียดของ benefit (เช่น: เขียน Java มาตรฐานบริษัทใหญ่)
+         */
+        item: string;
+        id?: string | null;
+      }[];
+    }[];
+  };
+  /**
+   * ส่วนที่ระบุว่า bootcamp นี้เหมาะสำหรับใครบ้าง
+   */
+  suitableFor: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: เหมาะสำหรับ)
+     */
+    title: string;
+    /**
+     * รายการกลุ่มเป้าหมายที่เหมาะกับ bootcamp นี้
+     */
+    items: {
+      /**
+       * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+       */
+      id: string;
+      /**
+       * รายละเอียดของกลุ่มเป้าหมาย (เช่น: ผู้เริ่มต้นสาย Web Dev)
+       */
+      item: string;
+    }[];
+  };
+  /**
+   * ส่วนที่ระบุผลลัพธ์หรือสิ่งที่ผู้เรียนจะได้รับหลังจากจบ bootcamp
+   */
+  outcomes: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: ผลลัพธ์)
+     */
+    title: string;
+    /**
+     * รายการผลลัพธ์ที่ผู้เรียนจะได้รับ
+     */
+    items: {
+      /**
+       * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+       */
+      id: string;
+      /**
+       * รายละเอียดของผลลัพธ์ (เช่น: เข้าใจโครงสร้าง HTML5)
+       */
+      item: string;
+    }[];
+  };
+  /**
+   * รายการ phases หรือช่วงเวลาของ bootcamp พร้อมหัวข้อที่เรียนในแต่ละ phase
+   */
+  courseOutline?:
+    | {
+        /**
+         * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+         */
+        id: string;
+        /**
+         * ชื่อ phase หรือช่วงเวลา (เช่น: Phase 1: Foundation, วันที่ 1-3)
+         */
+        phase: string;
+        /**
+         * หัวข้อหรือเนื้อหาของ phase นี้
+         */
+        topic: string;
+      }[]
+    | null;
+  /**
+   * ส่วนที่แสดงเครื่องมือและเทคโนโลยีที่ใช้ใน bootcamp นี้
+   */
+  toolStack: {
+    /**
+     * หัวข้อของส่วนนี้ (เช่น: Tools & Stack ที่จะได้ใช้จริง)
+     */
+    title: string;
+    /**
+     * รายการ logo หรือ icon ของเครื่องมือและเทคโนโลยี
+     */
+    stackImages: {
+      /**
+       * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
+       */
+      id: string;
+      /**
+       * Path ของ logo หรือ icon
+       */
+      src: {
+        relationTo: 'media-bootcamp';
+        value: string | MediaBootcamp;
+      };
+    }[];
+  };
+  /**
+   * เลือกผู้วางแผนหลักสูตรสำหรับ bootcamp นี้ (เลือกได้หลายคน)
+   */
+  coursePlanner?: (string | CoursePlanner)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-planner".
+ */
+export interface CoursePlanner {
+  id: string;
+  /**
+   * ชื่อของผู้วางแผนหลักสูตร
+   */
+  name: string;
+  /**
+   * คำอธิบายของผู้วางแผนหลักสูตร
+   */
+  role?: string | null;
+  /**
+   * ข้อมูลของผู้วางแผนหลักสูตร
+   */
+  info?: string | null;
+  profileImage?: {
+    relationTo: 'media-bootcamp';
+    value: string | MediaBootcamp;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * ข้อมูลการติดต่อจากลูกค้า
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  company?: string | null;
+  email: string;
+  message: string;
+  status?: ('pending' | 'contacted' | 'completed') | null;
+  /**
+   * บันทึกสำหรับการติดตาม
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "courses".
  */
 export interface Course {
@@ -191,7 +553,10 @@ export interface Course {
   };
   coursesDate: string;
   coverBadgeText?: string | null;
-  courseStatus: 'true' | 'false';
+  /**
+   * Check to set the course status to Active
+   */
+  courseStatus?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -288,6 +653,107 @@ export interface Instructor {
 export interface MediaBanner {
   id: string;
   alt: string;
+  banner?: ('ebook' | 'course') | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-popup".
+ */
+export interface MediaPopup {
+  id: string;
+  alt: string;
+  content: 'n8n' | 'bootcamp' | 'course' | 'other';
+  activePopup?: boolean | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ebooks".
+ */
+export interface Ebook {
+  id: string;
+  /**
+   * ID ที่ใช้ระบุ ebook (เช่น ebook-advanced-n8n)
+   */
+  ebookId: string;
+  /**
+   * รูปภาพหน้าปกของ ebook
+   */
+  coverImage: {
+    relationTo: 'media-ebook';
+    value: string | MediaEbook;
+  };
+  /**
+   * ชื่อของ ebook
+   */
+  title: string;
+  /**
+   * คำอธิบายเกี่ยวกับ ebook
+   */
+  description: string;
+  /**
+   * ราคาของ ebook (เช่น 1,000 บาท)
+   */
+  price: string;
+  /**
+   * ข้อความที่แสดงบน badge ของรูปภาพ (เช่น n8n, Make)
+   */
+  imageBadgeText?: string | null;
+  /**
+   * ข้อความบนปุ่ม (เช่น สั่งซื้อ)
+   */
+  textButton?: string | null;
+  /**
+   * ลิงก์ไปยังหน้าสั่งซื้อ
+   */
+  link?: string | null;
+  /**
+   * optional
+   */
+  bulletPoints?:
+    | {
+        bulletPoint: string;
+        id?: string | null;
+      }[]
+    | null;
+  category?: ('advanced-automation' | 'make-for-business') | null;
+  /**
+   * Check to set the ebook status to Active
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-ebook".
+ */
+export interface MediaEbook {
+  id: string;
+  alt: string;
   prefix?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -330,6 +796,18 @@ export interface PayloadLockedDocument {
         value: string | Admin;
       } | null)
     | ({
+        relationTo: 'bootcamp-cards';
+        value: string | BootcampCard;
+      } | null)
+    | ({
+        relationTo: 'bootcamp-page';
+        value: string | BootcampPage;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: string | ContactSubmission;
+      } | null)
+    | ({
         relationTo: 'courses';
         value: string | Course;
       } | null)
@@ -342,6 +820,10 @@ export interface PayloadLockedDocument {
         value: string | Instructor;
       } | null)
     | ({
+        relationTo: 'course-planner';
+        value: string | CoursePlanner;
+      } | null)
+    | ({
         relationTo: 'media-course';
         value: string | MediaCourse;
       } | null)
@@ -352,6 +834,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media-banner';
         value: string | MediaBanner;
+      } | null)
+    | ({
+        relationTo: 'media-bootcamp';
+        value: string | MediaBootcamp;
+      } | null)
+    | ({
+        relationTo: 'media-popup';
+        value: string | MediaPopup;
+      } | null)
+    | ({
+        relationTo: 'ebooks';
+        value: string | Ebook;
+      } | null)
+    | ({
+        relationTo: 'media-ebook';
+        value: string | MediaEbook;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -417,6 +915,157 @@ export interface AdminSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bootcamp-cards_select".
+ */
+export interface BootcampCardsSelect<T extends boolean = true> {
+  id?: T;
+  BootcampImage?: T;
+  BootcampTitle?: T;
+  BootcampDescription?: T;
+  BootcampBulletPoints?:
+    | T
+    | {
+        id?: T;
+        BootcampBulletText?: T;
+      };
+  imageBadgeText?: T;
+  classType?: T;
+  link?: T;
+  cardStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bootcamp-page_select".
+ */
+export interface BootcampPageSelect<T extends boolean = true> {
+  slug?: T;
+  hero?:
+    | T
+    | {
+        bootcampCoverImage?: T;
+        title?: T;
+        description?: T;
+        buttonItems?:
+          | T
+          | {
+              id?: T;
+              text?: T;
+              link?: T;
+            };
+      };
+  whyStudy?:
+    | T
+    | {
+        title?: T;
+        bulletPoints?:
+          | T
+          | {
+              id?: T;
+              item?: T;
+            };
+      };
+  designedFor?:
+    | T
+    | {
+        title?: T;
+        bulletPoints?:
+          | T
+          | {
+              id?: T;
+              item?: T;
+            };
+      };
+  prerequirements?:
+    | T
+    | {
+        title?: T;
+        bulletPoints?:
+          | T
+          | {
+              id?: T;
+              item?: T;
+            };
+      };
+  bootcampBenefits?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        items?:
+          | T
+          | {
+              id?: T;
+              title?: T;
+              items?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+            };
+      };
+  suitableFor?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              id?: T;
+              item?: T;
+            };
+      };
+  outcomes?:
+    | T
+    | {
+        title?: T;
+        items?:
+          | T
+          | {
+              id?: T;
+              item?: T;
+            };
+      };
+  courseOutline?:
+    | T
+    | {
+        id?: T;
+        phase?: T;
+        topic?: T;
+      };
+  toolStack?:
+    | T
+    | {
+        title?: T;
+        stackImages?:
+          | T
+          | {
+              id?: T;
+              src?: T;
+            };
+      };
+  coursePlanner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  company?: T;
+  email?: T;
+  message?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -486,6 +1135,18 @@ export interface InstructorsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-planner_select".
+ */
+export interface CoursePlannerSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  info?: T;
+  profileImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media-course_select".
  */
 export interface MediaCourseSelect<T extends boolean = true> {
@@ -527,6 +1188,90 @@ export interface MediaInstructorsSelect<T extends boolean = true> {
  * via the `definition` "media-banner_select".
  */
 export interface MediaBannerSelect<T extends boolean = true> {
+  alt?: T;
+  banner?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-bootcamp_select".
+ */
+export interface MediaBootcampSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-popup_select".
+ */
+export interface MediaPopupSelect<T extends boolean = true> {
+  alt?: T;
+  content?: T;
+  activePopup?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ebooks_select".
+ */
+export interface EbooksSelect<T extends boolean = true> {
+  ebookId?: T;
+  coverImage?: T;
+  title?: T;
+  description?: T;
+  price?: T;
+  imageBadgeText?: T;
+  textButton?: T;
+  link?: T;
+  bulletPoints?:
+    | T
+    | {
+        bulletPoint?: T;
+        id?: T;
+      };
+  category?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-ebook_select".
+ */
+export interface MediaEbookSelect<T extends boolean = true> {
   alt?: T;
   prefix?: T;
   updatedAt?: T;

@@ -11,6 +11,15 @@ const MediaBanner: CollectionConfig = {
       type: "text",
       required: true,
     },
+    {
+      name: "banner",
+      type: "select",
+      required: false,
+      options: [
+        { label: "E-book", value: "ebook" },
+        { label: "Course", value: "course" },
+      ],
+    },
   ],
   upload: true,
 };

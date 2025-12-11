@@ -100,7 +100,7 @@ export const CartDrawer = ({ isOpen, onClose, className }: CartDrawerProps) => {
               cardData.map((item, idx) => {
                 const course: CartItem = item;
                 return (
-                  <div key={idx}>
+                  <div key={course.id}>
                     <div className="flex flex-row justify-between">
                       <CheckboxInput
                         content={course.courseName}

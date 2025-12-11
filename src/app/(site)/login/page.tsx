@@ -106,7 +106,7 @@ function LoginContent() {
     }
   };
 
-  const handleSocialLogin = async (
+  const handleSocialLogin = (
     provider: Social.GOOGLE | Social.FACEBOOK | Social.APPLE,
   ) => {
     toast.info("ฟีเจอร์นี้ยังไม่พร้อมใช้งาน", {

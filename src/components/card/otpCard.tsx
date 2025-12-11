@@ -63,7 +63,7 @@ export const OtpCard = ({
   const handleResendOtp = async () => {
     setIsResending(true);
     try {
-      await onResendOtp?.();
+      onResendOtp?.();
       setCountdown(COUNTDOWN);
     } finally {
       setIsResending(false);
@@ -78,13 +78,19 @@ export const OtpCard = ({
       }
       setIsSubmitting(true);
       try {
-        await onSubmit?.(otpValue);
+        onSubmit?.(otpValue);
       } finally {
         setIsSubmitting(false);
       }
     },
     [otpValue, onSubmit, validateOtp],
   );
+
+  const getResendButtonText = () => {
+    if (isResending) return "กำลังส่ง...";
+    if (countdown > 0) return `ส่ง OTP อีกรอบ (${countdown} วินาที)`;
+    return "ส่ง OTP อีกรอบ";
+  };
 
   return (
     <Card
@@ -140,13 +146,7 @@ export const OtpCard = ({
               onClick={handleResendOtp}
               variant="textButton"
               size="sm"
-              text={
-                isResending
-                  ? "กำลังส่ง..."
-                  : countdown > 0
-                    ? `ส่ง OTP อีกรอบ (${countdown} วินาที)`
-                    : "ส่ง OTP อีกรอบ"
-              }
+              text={getResendButtonText()}
               disabled={isResending || countdown > 0}
               loading={isResending}
               className="flex items-center justify-center"

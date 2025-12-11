@@ -1,7 +1,7 @@
 "use client";
 
 import { Mesh, Program, Renderer, Triangle, Vec2 } from "ogl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const vertex = `
 attribute vec2 position;
@@ -74,10 +74,65 @@ void main(){
     col.rgb+=(rand(gl_FragCoord.xy+uTime)-0.5)*uNoise;
     float intensity=length(col.rgb);
     float enhancedIntensity=pow(intensity,0.85);
-    col.rgb=mix(uBackgroundColor,col.rgb,enhancedIntensity);
+    float mixFactor=enhancedIntensity;
+    col.rgb=mix(uBackgroundColor,col.rgb,mixFactor);
     gl_FragColor=vec4(clamp(col.rgb,0.0,1.0),1.0);
 }
 `;
+
+const DARK_BACKGROUND_COLOR = [36 / 255, 36 / 255, 36 / 255];
+const LIGHT_BACKGROUND_COLOR = [244 / 255, 244 / 255, 244 / 255];
+
+const RGB_PATTERNS = [
+  /rgb\((\d+),\s*(\d+),\s*(\d+)\)/,
+  /rgb\((\d+)\s+(\d+)\s+(\d+)\)/,
+  /rgba\((\d+),\s*(\d+),\s*(\d+)/,
+];
+
+const parseRgbColor = (colorString: string): number[] | null => {
+  for (const pattern of RGB_PATTERNS) {
+    const match = colorString.match(pattern);
+    if (match) {
+      return [
+        parseInt(match[1], 10) / 255,
+        parseInt(match[2], 10) / 255,
+        parseInt(match[3], 10) / 255,
+      ];
+    }
+  }
+  return null;
+};
+
+const parseHexColor = (hex: string): number[] | null => {
+  const cleanHex = hex.replace("#", "");
+
+  if (cleanHex.length === 3) {
+    const r = parseInt(cleanHex[0] + cleanHex[0], 16) / 255;
+    const g = parseInt(cleanHex[1] + cleanHex[1], 16) / 255;
+    const b = parseInt(cleanHex[2] + cleanHex[2], 16) / 255;
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+      return [r, g, b];
+    }
+  }
+
+  if (cleanHex.length === 6) {
+    const r = parseInt(cleanHex.substring(0, 2), 16) / 255;
+    const g = parseInt(cleanHex.substring(2, 4), 16) / 255;
+    const b = parseInt(cleanHex.substring(4, 6), 16) / 255;
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) {
+      return [r, g, b];
+    }
+  }
+
+  return null;
+};
+
+const checkIsLightTheme = (): boolean => {
+  return (
+    document.documentElement.getAttribute("data-theme") === "light" ||
+    document.documentElement.classList.contains("light")
+  );
+};
 
 type Props = {
   hueShift?: number;
@@ -100,18 +155,34 @@ export const DarkVeil = ({
   warpAmount = 0,
   resolutionScale = 1,
 }: Props) => {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const backgroundColorRef = useRef<number[]>(DARK_BACKGROUND_COLOR);
   const [isVisible, setIsVisible] = useState(false);
   const [theme, setTheme] = useState<string | null>(null);
 
+  const getBackgroundColor = useCallback(() => {
+    if (typeof window === "undefined") {
+      return DARK_BACKGROUND_COLOR;
+    }
+
+    const computedStyle = getComputedStyle(document.documentElement);
+    const bgColor = computedStyle.getPropertyValue("--background").trim();
+
+    const parsedRgb = parseRgbColor(bgColor);
+    if (parsedRgb) return parsedRgb;
+
+    const parsedHex = parseHexColor(bgColor);
+    if (parsedHex) return parsedHex;
+
+    return checkIsLightTheme() ? LIGHT_BACKGROUND_COLOR : DARK_BACKGROUND_COLOR;
+  }, []);
+
   useEffect(() => {
-    const canvas = ref.current;
+    const canvas = canvasRef.current;
     if (!canvas) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
+      ([entry]) => setIsVisible(entry.isIntersecting),
       { threshold: 0.1 },
     );
 
@@ -121,8 +192,11 @@ export const DarkVeil = ({
 
   useEffect(() => {
     const updateTheme = () => {
-      setTheme(document.documentElement.getAttribute("data-theme"));
+      const newTheme = document.documentElement.getAttribute("data-theme");
+      setTheme(newTheme);
+      backgroundColorRef.current = getBackgroundColor();
     };
+
     updateTheme();
 
     const observer = new MutationObserver(updateTheme);
@@ -132,12 +206,14 @@ export const DarkVeil = ({
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [getBackgroundColor]);
 
   useEffect(() => {
     if (!isVisible) return;
-    const canvas = ref.current as HTMLCanvasElement;
-    const parent = canvas.parentElement as HTMLElement;
+
+    const canvas = canvasRef.current;
+    const parent = canvas?.parentElement;
+    if (!canvas || !parent) return;
 
     const isMobile = window.innerWidth < 768;
     const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
@@ -145,18 +221,9 @@ export const DarkVeil = ({
       ? resolutionScale * 0.5
       : resolutionScale;
 
-    const renderer = new Renderer({
-      dpr,
-      canvas,
-    });
-
+    const renderer = new Renderer({ dpr, canvas });
     const gl = renderer.gl;
     const geometry = new Triangle(gl);
-
-    const backgroundColor =
-      theme === "light"
-        ? [255 / 255, 255 / 255, 255 / 255]
-        : [36 / 255, 36 / 255, 36 / 255];
 
     const program = new Program(gl, {
       vertex,
@@ -169,52 +236,47 @@ export const DarkVeil = ({
         uScan: { value: scanlineIntensity },
         uScanFreq: { value: scanlineFrequency },
         uWarp: { value: warpAmount },
-        uBackgroundColor: { value: backgroundColor },
+        uBackgroundColor: { value: backgroundColorRef.current },
       },
     });
 
     const mesh = new Mesh(gl, { geometry, program });
 
-    const resize = () => {
-      const w = parent.clientWidth,
-        h = parent.clientHeight;
+    const handleResize = () => {
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
       renderer.setSize(
-        w * effectiveResolutionScale,
-        h * effectiveResolutionScale,
+        width * effectiveResolutionScale,
+        height * effectiveResolutionScale,
       );
-      program.uniforms.uResolution.value.set(w, h);
+      program.uniforms.uResolution.value.set(width, height);
     };
 
-    window.addEventListener("resize", resize);
-    resize();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-    const start = performance.now();
-    let frame = 0;
+    const startTime = performance.now();
+    let animationFrame = 0;
 
-    const loop = () => {
-      const currentTheme = document.documentElement.getAttribute("data-theme");
-      const currentBackgroundColor =
-        currentTheme === "light"
-          ? [255 / 255, 255 / 255, 255 / 255]
-          : [36 / 255, 36 / 255, 36 / 255];
-      program.uniforms.uBackgroundColor.value = currentBackgroundColor;
-
+    const renderLoop = () => {
+      program.uniforms.uBackgroundColor.value = backgroundColorRef.current;
       program.uniforms.uTime.value =
-        ((performance.now() - start) / 1000) * speed;
+        ((performance.now() - startTime) / 1000) * speed;
       program.uniforms.uHueShift.value = hueShift;
       program.uniforms.uNoise.value = noiseIntensity;
       program.uniforms.uScan.value = scanlineIntensity;
       program.uniforms.uScanFreq.value = scanlineFrequency;
       program.uniforms.uWarp.value = warpAmount;
+
       renderer.render({ scene: mesh });
-      frame = requestAnimationFrame(loop);
+      animationFrame = requestAnimationFrame(renderLoop);
     };
 
-    loop();
+    renderLoop();
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", handleResize);
     };
   }, [
     hueShift,
@@ -227,16 +289,21 @@ export const DarkVeil = ({
     resolutionScale,
     theme,
   ]);
+
+  const isLightTheme = theme === "light";
+
   return (
     <canvas
-      ref={ref}
+      ref={canvasRef}
       className="block h-full w-full"
       style={{
         height: "100%",
         maxHeight: "100%",
-        opacity: theme === "light" ? 0.4 : 1,
-        mixBlendMode: theme === "light" ? "screen" : "normal",
-        filter: theme === "light" ? "contrast(1.3) saturate(1.4)" : "none",
+        opacity: isLightTheme ? 0.5 : 1,
+        mixBlendMode: isLightTheme ? "multiply" : "normal",
+        filter: isLightTheme
+          ? "contrast(1.1) saturate(1.2) brightness(1.3)"
+          : "none",
       }}
     />
   );

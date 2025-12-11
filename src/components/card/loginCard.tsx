@@ -17,6 +17,7 @@ import { Input } from "@/components/common/input";
 import { Label } from "@/components/common/label";
 import { Social } from "@/enum";
 import { cn } from "@/utils/cn";
+import { isValidEmail } from "@/utils/validation";
 
 interface SocialLoginButton {
   provider: Social.GOOGLE | Social.FACEBOOK | Social.APPLE;
@@ -83,10 +84,6 @@ export const LoginCard = ({
     }
   }, [error, onErrorClear]);
 
-  const isValidEmail = useCallback((email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }, []);
-
   const handleEmailChange = useCallback(
     (value: string) => {
       setEmail(value);
@@ -101,7 +98,7 @@ export const LoginCard = ({
         }
       }
     },
-    [emailError, error, hasAttemptedSubmit, isValidEmail, onErrorClear],
+    [emailError, error, hasAttemptedSubmit, onErrorClear],
   );
 
   const handleBlur = () => {
@@ -128,12 +125,12 @@ export const LoginCard = ({
       setEmailError("");
       setIsSubmitting(true);
       try {
-        await onSubmit?.(email);
+        onSubmit?.(email);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [email, isValidEmail, onSubmit],
+    [email, onSubmit],
   );
 
   return (
