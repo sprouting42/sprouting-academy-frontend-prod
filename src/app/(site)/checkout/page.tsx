@@ -354,7 +354,7 @@ const CheckoutPage = () => {
             cardTitle="ชำระเงิน"
             dropdownOptions={[
               "โอนเงินผ่านธนาคาร",
-              "บัตรเครดิต/เดบิต",
+              // "บัตรเครดิต/เดบิต", // Temporarily disabled
               // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
               // "PromptPay",
             ]}
