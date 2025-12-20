@@ -1,5 +1,3 @@
-import "../app/(site)/globals.css";
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Prompt } from "next/font/google";
 import { headers } from "next/headers";

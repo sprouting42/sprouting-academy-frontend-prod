@@ -21,7 +21,6 @@ interface CourseCardProps {
   description: string;
   bulletPoints?: string[];
   price?: string;
-  dateBadgeText?: string;
   imageBadgeText: string;
   courseDetail?: ComponentProps<typeof CourseDetail>;
   classNameTitle?: string;
@@ -51,7 +50,6 @@ export const CourseCard = ({
   description,
   bulletPoints = [],
   price,
-  dateBadgeText,
   imageBadgeText,
   courseDetail,
   classNameTitle,
@@ -76,7 +74,7 @@ export const CourseCard = ({
       contentClassName={cn(
         isEbook
           ? "p-3 md:p-4 max-w-96 flex flex-col [html[data-theme='light']_&]:bg-white [html[data-theme='dark']_&]:bg-linear-to-b [html[data-theme='dark']_&]:from-background-light rounded-2xl gap-3 md:gap-4 h-full [html[data-theme='dark']_&]:to-background"
-          : "p-4 max-w-96 min-h-228.5 flex flex-col [html[data-theme='light']_&]:bg-white [html[data-theme='dark']_&]:bg-linear-to-b [html[data-theme='dark']_&]:from-background rounded-2xl gap-6 [html[data-theme='dark']_&]:to-background-light",
+          : "p-4 max-w-96 min-h-180 flex flex-col [html[data-theme='light']_&]:bg-white [html[data-theme='dark']_&]:bg-linear-to-b [html[data-theme='dark']_&]:from-background rounded-2xl gap-6 [html[data-theme='dark']_&]:to-background-light",
       )}
       className="h-full w-fit"
       cardContent={
@@ -116,7 +114,6 @@ export const CourseCard = ({
                 id={id}
                 text={earlyBirdText}
                 price={price}
-                dateBadgeText={dateBadgeText}
                 title={title}
                 date={date}
                 totalTime={totalTime}
@@ -149,7 +146,6 @@ export const CourseCard = ({
 const CardSubtitle = ({
   text,
   price,
-  dateBadgeText,
   textButton,
   link,
   isEbook,
@@ -159,7 +155,6 @@ const CardSubtitle = ({
   id: string;
   text: string;
   price?: string;
-  dateBadgeText?: string;
   title: string;
   date: string;
   totalTime: string;
@@ -245,15 +240,6 @@ const CardSubtitle = ({
             </p>
           )}
         </div>
-
-        {dateBadgeText && (
-          <Badge
-            text={dateBadgeText}
-            variant="primary"
-            shape="rounded"
-            size="md"
-          />
-        )}
       </div>
       {link ? (
         <Link href={link}>

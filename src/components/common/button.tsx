@@ -217,5 +217,7 @@ export const Button = ({
     return buttonElement;
   }
 
-  return <div className={getWrapperClassName()}>{buttonElement}</div>;
+  return (
+    <div className={cn(getWrapperClassName(), className)}>{buttonElement}</div>
+  );
 };

@@ -181,7 +181,6 @@ export function HomeContent({
                 description={course.description}
                 bulletPoints={course.bulletPoints}
                 price={course.price}
-                dateBadgeText={course.dateBadgeText}
                 imageBadgeText={course.imageBadgeText}
                 date={course.dateStart || ""}
                 totalTime={course.totalTime || ""}

@@ -1,12 +1,13 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
 
+import { submitQuotation } from "@/apis/quotation";
 import { Button } from "@/components/common/button";
 import { Card } from "@/components/common/card";
 import { CheckboxInput } from "@/components/common/input";
-import type { CourseData } from "@/data/courses";
+import { type CourseData } from "@/data/courses";
 import {
   type QuotationFormData,
   quotationSchema,
@@ -52,6 +53,8 @@ const CourseOptionItem = ({
 
 interface QuotationFormProps {
   onSubmit?: (data: QuotationFormData) => void | Promise<void>;
+  onSuccess?: (message: string) => void;
+  onError?: (error: string) => void;
   className?: string;
   courses?: CourseData[];
   isLoadingCourses?: boolean;
@@ -59,14 +62,14 @@ interface QuotationFormProps {
 
 export const QuotationForm = ({
   onSubmit,
+  onSuccess,
+  onError,
   className,
   courses = [],
   isLoadingCourses = false,
 }: QuotationFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fieldRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  const courseOptions = useMemo<CourseData[]>(() => courses, [courses]);
 
   const createCourseChangeHandler = useCallback(
     (
@@ -91,6 +94,9 @@ export const QuotationForm = ({
     [],
   );
 
+  const courseOptions = courses;
+  const loadingCourses = isLoadingCourses;
+
   const form = useForm({
     defaultValues: {
       companyName: "",
@@ -105,7 +111,16 @@ export const QuotationForm = ({
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
+        await submitQuotation(value as QuotationFormData);
         await onSubmit?.(value as QuotationFormData);
+        onSuccess?.("ส่งคำขอใบเสนอราคาสำเร็จ เราจะติดต่อกลับเร็วๆ นี้");
+        form.reset();
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง";
+        onError?.(errorMessage);
       } finally {
         setIsSubmitting(false);
       }
@@ -163,7 +178,7 @@ export const QuotationForm = ({
               form={form}
               fieldRefs={fieldRefs}
               courseOptions={courseOptions}
-              isLoadingCourses={isLoadingCourses}
+              isLoadingCourses={loadingCourses}
               createCourseChangeHandler={createCourseChangeHandler}
               CourseOptionItem={CourseOptionItem}
             />

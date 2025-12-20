@@ -21,6 +21,7 @@ import MediaCourse from "./collections/MediaCourse.ts";
 import MediaEbook from "./collections/MediaEbook.ts";
 import MediaInstructors from "./collections/MediaInstructors.ts";
 import MediaPopup from "./collections/MediaPopup.ts";
+import QuotationSubmissions from "./collections/QuotationSubmissions.ts";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
@@ -47,6 +48,7 @@ export default buildConfig({
     MediaPopup,
     Ebook,
     MediaEbook,
+    QuotationSubmissions,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

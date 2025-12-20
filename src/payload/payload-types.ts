@@ -82,6 +82,7 @@ export interface Config {
     'media-popup': MediaPopup;
     ebooks: Ebook;
     'media-ebook': MediaEbook;
+    'quotation-submissions': QuotationSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -104,6 +105,7 @@ export interface Config {
     'media-popup': MediaPopupSelect<false> | MediaPopupSelect<true>;
     ebooks: EbooksSelect<false> | EbooksSelect<true>;
     'media-ebook': MediaEbookSelect<false> | MediaEbookSelect<true>;
+    'quotation-submissions': QuotationSubmissionsSelect<false> | QuotationSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -551,12 +553,24 @@ export interface Course {
      */
     endDate?: string | null;
   };
-  coursesDate: string;
+  /**
+   * งดใช้งานชั่วคราว
+   */
+  coursesDate?: string | null;
   coverBadgeText?: string | null;
   /**
    * Check to set the course status to Active
    */
   courseStatus?: boolean | null;
+  /**
+   * เพิ่มวันที่เปิดสอน
+   */
+  courseDateSelector?:
+    | {
+        date: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -768,6 +782,33 @@ export interface MediaEbook {
   focalY?: number | null;
 }
 /**
+ * ข้อมูลการขอใบเสนอราคาจากลูกค้า
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotation-submissions".
+ */
+export interface QuotationSubmission {
+  id: string;
+  companyName: string;
+  contactPersonName: string;
+  phone: string;
+  email: string;
+  courses: {
+    courseId: string | Course;
+    id?: string | null;
+  }[];
+  numberOfStudents: string;
+  budget?: string | null;
+  additionalDetails?: string | null;
+  status?: ('pending' | 'contacted' | 'quoted' | 'completed' | 'cancelled') | null;
+  /**
+   * บันทึกสำหรับการติดตาม
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -850,6 +891,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media-ebook';
         value: string | MediaEbook;
+      } | null)
+    | ({
+        relationTo: 'quotation-submissions';
+        value: string | QuotationSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1092,6 +1137,12 @@ export interface CoursesSelect<T extends boolean = true> {
   coursesDate?: T;
   coverBadgeText?: T;
   courseStatus?: T;
+  courseDateSelector?:
+    | T
+    | {
+        date?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1285,6 +1336,29 @@ export interface MediaEbookSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotation-submissions_select".
+ */
+export interface QuotationSubmissionsSelect<T extends boolean = true> {
+  companyName?: T;
+  contactPersonName?: T;
+  phone?: T;
+  email?: T;
+  courses?:
+    | T
+    | {
+        courseId?: T;
+        id?: T;
+      };
+  numberOfStudents?: T;
+  budget?: T;
+  additionalDetails?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

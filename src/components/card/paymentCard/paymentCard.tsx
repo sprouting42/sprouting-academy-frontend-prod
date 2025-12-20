@@ -15,6 +15,7 @@ import { isValidEmail } from "@/utils/validation";
 import { CardPayment } from "./cardPayment";
 import { CourseSummary } from "./courseSummary";
 import { DirectPayment } from "./directPayment";
+// import { SummaryPaymentCard } from "./summaryPaymentCard";
 import { PaymentCardProps } from "./types";
 
 export const PaymentCard = ({
@@ -23,6 +24,7 @@ export const PaymentCard = ({
   titleIcon,
   dropdownOptions,
   courses,
+  // summaryItems,
   price,
   directPayment,
   // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
@@ -152,9 +154,24 @@ export const PaymentCard = ({
           <CourseSummary
             titleText={titleText}
             titleIcon={titleIcon}
-            courses={courses}
+            courses={courses || []}
             price={price}
           />
+
+          {/* {summaryItems && summaryItems.length > 0 ? (
+            <SummaryPaymentCard
+              titleText={titleText}
+              titleIcon={titleIcon}
+              items={summaryItems}
+            />
+          ) : (
+            <CourseSummary
+              titleText={titleText}
+              titleIcon={titleIcon}
+              courses={courses || []}
+              price={price}
+            />
+          )} */}
 
           <div className="flex flex-col gap-1 items-start w-full">
             <Dropdown

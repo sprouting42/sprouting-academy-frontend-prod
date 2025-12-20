@@ -21,7 +21,6 @@ export interface CourseCardProps {
   description: string;
   bulletPoints: string[];
   price: string;
-  dateBadgeText: string;
   imageBadgeText: string;
   dateStart?: string;
 }
@@ -66,6 +65,28 @@ export function Courses({
     <>
       <Popup images={popupImages} storageKey="course-popup-shown" />
       <div className="flex flex-col gap-8 items-center lg:p-28 md:p-16 p-4 sm:p-8 w-full">
+        <Carousel
+          items={(bannerImages || []).map((banner, index) => ({
+            id: banner.id,
+            content: (
+              <div className="h-[300px] md:h-[543px] relative sm:h-[400px] w-full">
+                <Image
+                  src={banner.src}
+                  alt={banner.alt ?? `Banner ${index + 1}`}
+                  fill
+                  className="object-cover rounded-lg"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1216px"
+                  priority={index === 0}
+                />
+              </div>
+            ),
+          }))}
+          autoplayInterval={4000}
+          showDots={true}
+          showArrows={true}
+          maxWidth="max-w-304 w-full"
+        />
+
         <motion.div
           ref={headerRef}
           initial={{ opacity: 0, y: 30 }}
@@ -94,28 +115,6 @@ export function Courses({
             เรียนรู้จากกูรูตัวจริงกับคอร์สที่เรามั่นใจว่าคุณจะนำกลับไปใช้ได้ในองค์กร
           </motion.h2>
         </motion.div>
-
-        <Carousel
-          items={(bannerImages || []).map((banner, index) => ({
-            id: banner.id,
-            content: (
-              <div className="h-[300px] md:h-[543px] relative sm:h-[400px] w-full">
-                <Image
-                  src={banner.src}
-                  alt={banner.alt ?? `Banner ${index + 1}`}
-                  fill
-                  className="object-cover rounded-lg"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1216px"
-                  priority={index === 0}
-                />
-              </div>
-            ),
-          }))}
-          autoplayInterval={4000}
-          showDots={true}
-          showArrows={true}
-          maxWidth="max-w-304 w-full"
-        />
 
         <motion.div
           ref={coursesRef}
@@ -146,7 +145,6 @@ export function Courses({
               description: course.description,
               bulletPoints: course.bulletPoints,
               price: course.price,
-              dateBadgeText: course.dateBadgeText,
               imageBadgeText: course.imageBadgeText,
               classNameTitle: "justify-center w-full",
               date: course.dateStart,

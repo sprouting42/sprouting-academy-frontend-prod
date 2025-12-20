@@ -6,7 +6,6 @@ import {
   MediaBanner,
   MediaCourse,
 } from "@/payload/payload-types";
-import { formatDate } from "@/utils/dateFormatter";
 import { cmsFetch } from "@/utils/ky";
 import {
   getCoverImageAlt,
@@ -22,9 +21,9 @@ export interface CourseCardProps {
   description: string;
   bulletPoints: string[];
   price: string;
-  dateBadgeText: string;
   imageBadgeText: string;
   dateStart?: string;
+  dateOptions?: string[];
 }
 
 export interface CourseDetailProps {
@@ -79,9 +78,6 @@ function mapCourseToData(course: CourseWithDetail): CourseData {
     price: course.normalPrice
       ? `${Number(course.normalPrice).toLocaleString()} บาท`
       : "",
-    dateBadgeText: formatDate(course.coursesDate)
-      ? `เรียนวันที่ ${formatDate(course.coursesDate)}`
-      : "",
     imageBadgeText: course.coverBadgeText || "",
     courseBenefit: detail?.courseBenefit || "",
     courseTopics: detail?.courseTopics?.map((t) => t.topic) || [],
@@ -93,7 +89,9 @@ function mapCourseToData(course: CourseWithDetail): CourseData {
     instructorImage: getInstructorImageUrl(instructorData),
     instructorName: instructorData?.name || "",
     instructorInformation: instructorData?.information || "",
-    dateStart: course.coursesDate,
+    dateStart: course.coursesDate || "",
+    dateOptions:
+      course.courseDateSelector?.map((item) => item.date).filter(Boolean) || [],
   };
 }
 

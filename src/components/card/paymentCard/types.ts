@@ -12,6 +12,15 @@ export interface CourseItem {
   price?: string;
 }
 
+export type ProductType = "course" | "ebook" | "bootcamp";
+
+export interface SummaryItem {
+  id: string;
+  name: string;
+  price: number;
+  type: ProductType;
+}
+
 export interface BankInfo {
   bankName: string;
   accountNumber: string;
@@ -85,7 +94,10 @@ export interface PaymentCardProps {
   dropdownOptions: string[];
   titleText: string;
   titleIcon: ReactNode;
-  courses: CourseItem[];
+  /** @deprecated Use summaryItems instead for new summary card */
+  courses?: CourseItem[];
+  /** Summary items with product type for grouped display */
+  summaryItems?: SummaryItem[];
   price: string;
   directPayment: BankInfo;
   // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready

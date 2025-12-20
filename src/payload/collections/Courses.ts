@@ -4,6 +4,9 @@ import { validateDateAfter } from "../utils/validateDateAfterStartDate";
 
 const Courses: CollectionConfig = {
   slug: "courses",
+  admin: {
+    useAsTitle: "coursesTitle",
+  },
   access: {
     read: () => true,
   },
@@ -85,7 +88,10 @@ const Courses: CollectionConfig = {
     {
       name: "coursesDate",
       type: "date",
-      required: true,
+      admin: {
+        description: "งดใช้งานชั่วคราว",
+      },
+      required: false,
       validate: validateDateAfter(
         "earlyBirdPrice.endDate",
         "วันที่คอร์สต้องอยู่หลังวันที่สิ้นสุด Early Bird Price",
@@ -104,6 +110,22 @@ const Courses: CollectionConfig = {
       admin: {
         description: "Check to set the course status to Active",
       },
+    },
+    {
+      name: "courseDateSelector",
+      type: "array",
+      label: "Course Date สำหรับเลือกวันที่เรียน",
+      admin: {
+        description: "เพิ่มวันที่เปิดสอน",
+      },
+      fields: [
+        {
+          name: "date",
+          label: "วันที่เรียน",
+          type: "date",
+          required: true,
+        },
+      ],
     },
   ],
 };
