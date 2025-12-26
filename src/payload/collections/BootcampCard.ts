@@ -11,16 +11,6 @@ const BootcampCard: CollectionConfig = {
   },
   fields: [
     {
-      name: "id",
-      type: "text",
-      required: true,
-      defaultValue: () => crypto.randomUUID(),
-      admin: {
-        description: "ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)",
-        readOnly: true,
-      },
-    },
-    {
       name: "BootcampImage",
       type: "upload",
       relationTo: "media-bootcamp",
@@ -82,6 +72,12 @@ const BootcampCard: CollectionConfig = {
       admin: {
         description: "เลือก Bootcamp Page ที่ต้องการลิงก์ไป",
       },
+    },
+    {
+      name: "price",
+      type: "number",
+      required: true,
+      label: "Price",
     },
     {
       name: "cardStatus",

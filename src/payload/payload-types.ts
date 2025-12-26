@@ -83,6 +83,8 @@ export interface Config {
     ebooks: Ebook;
     'media-ebook': MediaEbook;
     'quotation-submissions': QuotationSubmission;
+    founders: Founder;
+    'media-founders': MediaFounder;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +108,8 @@ export interface Config {
     ebooks: EbooksSelect<false> | EbooksSelect<true>;
     'media-ebook': MediaEbookSelect<false> | MediaEbookSelect<true>;
     'quotation-submissions': QuotationSubmissionsSelect<false> | QuotationSubmissionsSelect<true>;
+    founders: FoundersSelect<false> | FoundersSelect<true>;
+    'media-founders': MediaFoundersSelect<false> | MediaFoundersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -174,9 +178,6 @@ export interface Admin {
  * via the `definition` "bootcamp-cards".
  */
 export interface BootcampCard {
-  /**
-   * ID ระบุตัวตนของรายการนี้ (สร้างอัตโนมัติเป็น UUID)
-   */
   id: string;
   BootcampImage?: (string | null) | MediaBootcamp;
   BootcampTitle?: string | null;
@@ -196,6 +197,7 @@ export interface BootcampCard {
    * เลือก Bootcamp Page ที่ต้องการลิงก์ไป
    */
   link: string | BootcampPage;
+  price: number;
   /**
    * เมื่อเปิดจะแสดงทั้ง Card และ Page
    */
@@ -729,9 +731,9 @@ export interface Ebook {
    */
   description: string;
   /**
-   * ราคาของ ebook (เช่น 1,000 บาท)
+   * ราคาของ ebook
    */
-  price: string;
+  price?: number | null;
   /**
    * ข้อความที่แสดงบน badge ของรูปภาพ (เช่น n8n, Make)
    */
@@ -753,6 +755,18 @@ export interface Ebook {
         id?: string | null;
       }[]
     | null;
+  /**
+   * จำนวนหน้าของ ebook
+   */
+  ebookpage?: number | null;
+  /**
+   * ลิงก์ดาวน์โหลด ebook จาก Google Drive หรือแหล่งอื่น
+   * สำหรับ Google Drive:
+   * 1. ตั้งค่าไฟล์เป็น 'Anyone with the link' (ไม่ใช่ restrict)
+   * 2. ใส่ share link (https://drive.google.com/file/d/FILE_ID/view?usp=sharing)
+   * 3. ระบบจะแปลงเป็น direct download link อัตโนมัติ
+   */
+  downloadUrl?: string | null;
   category?: ('advanced-automation' | 'make-for-business') | null;
   /**
    * Check to set the ebook status to Active
@@ -807,6 +821,38 @@ export interface QuotationSubmission {
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "founders".
+ */
+export interface Founder {
+  id: string;
+  name: string;
+  image?: (string | null) | MediaFounder;
+  information?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-founders".
+ */
+export interface MediaFounder {
+  id: string;
+  alt: string;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -895,6 +941,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'quotation-submissions';
         value: string | QuotationSubmission;
+      } | null)
+    | ({
+        relationTo: 'founders';
+        value: string | Founder;
+      } | null)
+    | ({
+        relationTo: 'media-founders';
+        value: string | MediaFounder;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -966,7 +1020,6 @@ export interface AdminSelect<T extends boolean = true> {
  * via the `definition` "bootcamp-cards_select".
  */
 export interface BootcampCardsSelect<T extends boolean = true> {
-  id?: T;
   BootcampImage?: T;
   BootcampTitle?: T;
   BootcampDescription?: T;
@@ -979,6 +1032,7 @@ export interface BootcampCardsSelect<T extends boolean = true> {
   imageBadgeText?: T;
   classType?: T;
   link?: T;
+  price?: T;
   cardStatus?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1313,6 +1367,8 @@ export interface EbooksSelect<T extends boolean = true> {
         bulletPoint?: T;
         id?: T;
       };
+  ebookpage?: T;
+  downloadUrl?: T;
   category?: T;
   isActive?: T;
   updatedAt?: T;
@@ -1359,6 +1415,36 @@ export interface QuotationSubmissionsSelect<T extends boolean = true> {
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "founders_select".
+ */
+export interface FoundersSelect<T extends boolean = true> {
+  name?: T;
+  image?: T;
+  information?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-founders_select".
+ */
+export interface MediaFoundersSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

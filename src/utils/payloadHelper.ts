@@ -156,5 +156,6 @@ export function transformToBootcampCardData(
       typeof card.link === "object" && card.link?.slug
         ? `/bootcamps/${card.link.slug}`
         : "#",
+    price: card.price || 0,
   };
 }

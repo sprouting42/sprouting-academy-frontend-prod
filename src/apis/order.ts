@@ -2,8 +2,11 @@ import { interceptedApiFetch } from "@/utils/api-interceptor";
 
 import type { ApiResponse } from "./auth";
 
+export type ProductType = "course" | "ebook" | "bootcamp";
+
 export type OrderItemRequest = {
-  courseId: string;
+  productId: string;
+  productType: ProductType;
 };
 
 export type CreateOrderRequest = {
@@ -13,8 +16,10 @@ export type CreateOrderRequest = {
 
 export type OrderItemResponse = {
   id: string;
-  courseId: string;
-  unitPrice: number;
+  productId: string;
+  productType: ProductType;
+  titleSnapshot: string;
+  unitPriceSnapshot: number;
   createdAt: string;
 };
 
@@ -48,5 +53,11 @@ export const orderApi = {
 
   getMyOrders: async (): Promise<ApiResponse<OrderResponse[]>> => {
     return interceptedApiFetch.get<ApiResponse<OrderResponse[]>>("order");
+  },
+
+  cancelOrder: async (orderId: string): Promise<ApiResponse<OrderResponse>> => {
+    return interceptedApiFetch.patch<ApiResponse<OrderResponse>>(
+      `order/${orderId}/cancel`,
+    );
   },
 };

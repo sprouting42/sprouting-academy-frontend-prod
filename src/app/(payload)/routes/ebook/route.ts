@@ -2,29 +2,36 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 
 import config from "@/payload/payload.config";
-import {
-  getPaginationParams,
-  type PaginationParams,
-} from "@/payload/utils/pagination";
+import { getPaginationParams } from "@/payload/utils/pagination";
 
 export const GET = async (request: NextRequest) => {
   try {
     const payload = await getPayload({ config });
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get("id");
+    const ebookId = searchParams.get("ebookId");
     const category = searchParams.get("category");
 
-    let pagination: PaginationParams;
-    try {
-      pagination = getPaginationParams(searchParams);
-    } catch {
-      return Response.json(
-        { success: false, error: "Invalid pagination parameters" },
-        { status: 400 },
-      );
+    if (!id && !ebookId) {
+      try {
+        getPaginationParams(searchParams);
+      } catch {
+        return Response.json(
+          { success: false, error: "Invalid pagination parameters" },
+          { status: 400 },
+        );
+      }
     }
 
-    const { limit, page } = pagination;
+    let limit = 10;
+    let page = 1;
+    if (!id && !ebookId) {
+      try {
+        const pagination = getPaginationParams(searchParams);
+        limit = pagination.limit;
+        page = pagination.page;
+      } catch {}
+    }
 
     if (id) {
       const ebook = await payload.findByID({
@@ -56,6 +63,43 @@ export const GET = async (request: NextRequest) => {
       return Response.json({
         success: true,
         data: ebook,
+      });
+    }
+
+    if (ebookId) {
+      const ebooks = await payload.find({
+        collection: "ebooks",
+        where: {
+          and: [
+            {
+              isActive: {
+                equals: true,
+              },
+            },
+            {
+              ebookId: {
+                equals: ebookId,
+              },
+            },
+          ],
+        },
+        limit: 1,
+        depth: 2,
+      });
+
+      if (!ebooks.docs || ebooks.docs.length === 0) {
+        return Response.json(
+          {
+            success: false,
+            error: "Ebook not found",
+          },
+          { status: 404 },
+        );
+      }
+
+      return Response.json({
+        success: true,
+        data: ebooks.docs[0],
       });
     }
 

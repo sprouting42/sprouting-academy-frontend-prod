@@ -8,15 +8,18 @@ import { toast } from "sonner";
 import { authApi, isApiSuccessResponse } from "@/apis/auth";
 import { enrollmentApi, EnrollmentResponse } from "@/apis/enrollment";
 import { CourseCard } from "@/components/card/courseCard";
+import { EbookCard } from "@/components/card/ebookCard";
 import { EnrolledCourseCard } from "@/components/card/enrolledCourseCard";
 import { ProfileCard } from "@/components/card/profileCard";
 import { Button } from "@/components/common/button";
+import { LibraryTab, LibraryTabs } from "@/components/common/libraryTabs";
 import { ProfileSidebar } from "@/components/layout/profileSidebar";
 import { EditProfileModal } from "@/components/modal/editProfileModal";
 import { CourseData, fetchCourses } from "@/data/courses";
-import { PagePath } from "@/enum";
+import { fetchEbooksByEbookIds } from "@/data/ebookPayload";
+import { ItemType, PagePath } from "@/enum";
+import { useAddCourseToCart } from "@/hooks/useAddCourseToCart";
 import { authKeys, useGetMe } from "@/hooks/useAuth";
-import { useAddItemToCart } from "@/hooks/useCart";
 import { type ProfileEditFormData } from "@/schemas/profile.schema";
 import { formatThaiDateShort } from "@/utils/dateFormatter";
 
@@ -32,6 +35,15 @@ interface EnrolledCourse {
 }
 
 const COURSE_DATE_PREFIX = "เรียนวันที่ ";
+
+interface UserEbook {
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  pages: number;
+  downloadUrl: string | null;
+}
 
 const formatCourseDate = (dateString: string): string | undefined => {
   const parsedDate = new Date(dateString);
@@ -82,13 +94,15 @@ export default function ProfilePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: user, isLoading } = useGetMe();
-  const { mutate: addItemToCart, isPending: isAddingToCart } =
-    useAddItemToCart();
+  const { addCourseToCart, isPending: isAddingToCart } = useAddCourseToCart();
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [courses, setCourses] = useState<CourseData[]>([]);
+  const [userEbooks, setUserEbooks] = useState<UserEbook[]>([]);
   const [isLoadingCourses, setIsLoadingCourses] = useState(true);
+  const [isLoadingEbooks, setIsLoadingEbooks] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [activeLibraryTab, setActiveLibraryTab] = useState<LibraryTab>("ebook");
 
   const handleProfileUpdate = useCallback(
     async (data: ProfileEditFormData & { avatarFile?: File | null }) => {
@@ -193,6 +207,35 @@ export default function ProfilePage() {
             .filter((course): course is EnrolledCourse => course !== null);
 
           setEnrolledCourses(mappedCourses);
+
+          const ebookEnrollments = enrollments.filter(
+            (enrollment) => enrollment.productType === ItemType.EBOOK,
+          );
+
+          if (ebookEnrollments.length > 0) {
+            setIsLoadingEbooks(true);
+            try {
+              const ebookIds = ebookEnrollments.map(
+                (enrollment) => enrollment.productId,
+              );
+              const ebooks = await fetchEbooksByEbookIds(ebookIds);
+
+              const mappedEbooks: UserEbook[] = ebooks.map((ebook) => ({
+                id: ebook.id,
+                title: ebook.title,
+                description: ebook.description,
+                coverImage: ebook.coverImage?.src || "/e-book.png",
+                pages: ebook.ebookpage || 0,
+                downloadUrl: ebook.downloadUrl || null,
+              }));
+
+              setUserEbooks(mappedEbooks);
+            } catch (error) {
+              const { getApiErrorMessage } = await import("@/utils/api-error");
+              const message = await getApiErrorMessage(error);
+              toast.error(message || "เกิดข้อผิดพลาดในการโหลดข้อมูล ebook");
+            }
+          }
         } else {
           const errorMessage =
             enrollmentResponse.errorMessage ||
@@ -205,6 +248,7 @@ export default function ProfilePage() {
         toast.error(message || "เกิดข้อผิดพลาดในการโหลดข้อมูลการลงทะเบียน");
       } finally {
         setIsLoadingCourses(false);
+        setIsLoadingEbooks(false);
       }
     };
 
@@ -342,20 +386,7 @@ export default function ProfilePage() {
                           date={course.dateStart || ""}
                           totalTime={course.totalTime || ""}
                           classType={course.classType || ""}
-                          onButtonClick={() => {
-                            const priceNum =
-                              parseFloat(
-                                (course.price || "0").replace(/[^0-9.]/g, ""),
-                              ) || 0;
-                            addItemToCart({
-                              courseId: course.id,
-                              courseName: course.title,
-                              price: priceNum,
-                              date: course.dateStart || "",
-                              totalTime: course.totalTime || "",
-                              classType: course.classType || "",
-                            });
-                          }}
+                          onButtonClick={() => addCourseToCart(course)}
                           isButtonLoading={isAddingToCart}
                         />
                       </div>
@@ -366,6 +397,63 @@ export default function ProfilePage() {
                 <p className="font-prompt text-base text-center text-foreground/70">
                   ไม่มีคอร์สแนะนำในขณะนี้
                 </p>
+              )}
+            </section>
+
+            <section className="flex flex-col gap-6 max-w-7xl w-full">
+              <h2 className="font-bold font-prompt leading-normal lg:leading-relaxed lg:text-2xl md:leading-relaxed md:text-xl text-lg text-secondary">
+                Library
+              </h2>
+
+              <LibraryTabs
+                activeTab={activeLibraryTab}
+                onTabChange={setActiveLibraryTab}
+                videoCount={0}
+                ebookCount={userEbooks.length}
+              />
+
+              {activeLibraryTab === "ebook" ? (
+                isLoadingEbooks ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin border-4 border-primary/30 border-t-primary h-10 rounded-full w-10" />
+                  </div>
+                ) : userEbooks.length > 0 ? (
+                  <div className="gap-8 grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 w-full">
+                    {userEbooks.map((ebook) => (
+                      <EbookCard
+                        key={ebook.id}
+                        id={ebook.id}
+                        title={ebook.title}
+                        description={ebook.description}
+                        coverImage={ebook.coverImage}
+                        pages={ebook.pages}
+                        alt={ebook.title}
+                        onDownload={() => {
+                          if (ebook.downloadUrl) {
+                            window.open(ebook.downloadUrl, "_blank");
+                            toast.success("กำลังดาวน์โหลด", {
+                              description: `${ebook.title}`,
+                            });
+                          } else {
+                            toast.error("ไม่พบลิงก์ดาวน์โหลด", {
+                              description: "กรุณาติดต่อทีมงาน",
+                            });
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="font-prompt text-base text-center text-foreground/70">
+                    ยังไม่มี ebook ที่ซื้อแล้ว
+                  </p>
+                )
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="font-prompt text-base text-center text-foreground/70">
+                    ยังไม่มีวิดีโอในขณะนี้
+                  </p>
+                </div>
               )}
             </section>
           </div>

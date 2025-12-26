@@ -7,6 +7,8 @@ export type EnrollmentResponse = {
   userId: string;
   course: string;
   paymentId: string | null;
+  productType: string;
+  productId: string;
   createdAt: string;
   updatedAt: string;
   videoProgress?: {

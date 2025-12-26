@@ -7,19 +7,19 @@ import { FeatureHighlightCard } from "@/components/card/featureHighlightCard";
 import { InstructorDetail } from "@/components/card/instructorDetail";
 import { Hero } from "@/components/hero";
 import { aboutUsFeatures } from "@/data/aboutus-features";
-import { InstructorData } from "@/data/instructors";
+import { FounderData } from "@/data/founders";
 import { PagePath } from "@/enum";
 
 interface AboutUsProps {
-  instructors: InstructorData[];
+  founders: FounderData[];
 }
 
-export default function AboutUs({ instructors }: AboutUsProps) {
+export default function AboutUs({ founders }: AboutUsProps) {
   const featuresRef = useRef(null);
-  const instructorsRef = useRef(null);
+  const foundersRef = useRef(null);
 
   const featuresInView = useInView(featuresRef, { once: true });
-  const instructorsInView = useInView(instructorsRef, { once: true });
+  const foundersInView = useInView(foundersRef, { once: true });
 
   return (
     <div className="flex flex-col gap-16 lg:gap-24">
@@ -29,9 +29,9 @@ export default function AboutUs({ instructors }: AboutUsProps) {
         showFirstButtonIcon={false}
         className="md:pt-40 pt-32 px-4"
         content={{
-          title: "เพราะเราเชื่อว่าทักษะที่แท้จริง ต้องเกิดจากการลงมือทํา",
+          title: "เพราะเราเชื่อว่าทักษะที่แท้จริง ต้องเกิดจากการลงมือทำ",
           description:
-            'Sprouting Tech มุ่งมั่นสร้างนักพัฒนาและผู้เชี่ยวชาญ AI รุ่นใหม่ ที่ไม่ได้แค่ "มีความรู้" แต่ต้อง "พร้อมทํางานจริง" ในโลกเทคโนโลยีที่เปลี่ยนแปลงตลอดเวลา',
+            'Sprouting Tech มุ่งมั่นสร้างนักพัฒนาและผู้เชี่ยวชาญ AI รุ่นใหม่ ที่ไม่ได้แค่ "มีความรู้" แต่ต้อง "พร้อมทำงานจริง" ในโลกเทคโนโลยีที่เปลี่ยนแปลงตลอดเวลา',
           buttonItems: [
             {
               id: "ai-automation",
@@ -79,9 +79,9 @@ export default function AboutUs({ instructors }: AboutUsProps) {
       </motion.section>
 
       <motion.section
-        ref={instructorsRef}
+        ref={foundersRef}
         initial="hidden"
-        animate={instructorsInView ? "visible" : "hidden"}
+        animate={foundersInView ? "visible" : "hidden"}
         variants={{
           visible: { transition: { staggerChildren: 0.3 } },
         }}
@@ -90,7 +90,7 @@ export default function AboutUs({ instructors }: AboutUsProps) {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={
-            instructorsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            foundersInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
           }
           transition={{ duration: 0.5 }}
           className="font-bold font-prompt lg:text-3xl text-3xl text-center text-secondary"
@@ -98,19 +98,19 @@ export default function AboutUs({ instructors }: AboutUsProps) {
           ผู้ก่อตั้ง
         </motion.h2>
         <div className="flex flex-col gap-8 max-w-304 w-full">
-          {instructors[0] && (
+          {founders[0] && (
             <motion.div
-              key={instructors[0].id}
+              key={founders[0].id}
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
               }}
             >
               <InstructorDetail
-                instructorImage={instructors[0].instructorImage}
-                instructorName={instructors[0].instructorName}
-                instructorDescription={instructors[0].instructorDescription}
-                instructorHighlight={instructors[0].instructorHighlight}
+                instructorImage={founders[0].founderImage}
+                instructorName={founders[0].founderName}
+                instructorDescription={founders[0].founderDescription}
+                instructorHighlight={founders[0].founderHighlight}
               />
             </motion.div>
           )}

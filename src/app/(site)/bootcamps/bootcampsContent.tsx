@@ -5,15 +5,18 @@ import { GearIcon } from "@phosphor-icons/react/dist/csr/Gear";
 import { HammerIcon } from "@phosphor-icons/react/dist/csr/Hammer";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react/dist/csr/MagnifyingGlass";
 import { motion, useInView } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 import { CourseCard } from "@/components/card/courseCard";
 import { WhyUsCard } from "@/components/card/whyUsCard";
 import { Button } from "@/components/common/button";
 import { Popup } from "@/components/common/popup";
+import { MentorFormModal } from "@/components/modal";
 import { whyUsData } from "@/data/bootcamp-whyuscard";
 import type { BootcampCardData } from "@/data/bootcampCard";
 import type { PopupImage } from "@/data/popup";
+import { useModal } from "@/hooks/useModal";
 
 interface BootcampsContentProps {
   bootcampsData: BootcampCardData[];
@@ -24,6 +27,8 @@ export function BootcampsContent({
   bootcampsData,
   popupImages,
 }: BootcampsContentProps) {
+  const router = useRouter();
+  const { openModal, openModalButton, closeModalButton } = useModal();
   const heroRef = useRef(null);
   const whyUsRef = useRef(null);
   const coursesRef = useRef(null);
@@ -105,7 +110,7 @@ export function BootcampsContent({
             variant="primaryGradientBorder"
             text="ปรึกษา Mentors ฟรี"
             shape="rounded"
-            disabled
+            onClick={openModalButton}
           />
         </motion.div>
 
@@ -188,15 +193,18 @@ export function BootcampsContent({
                   bulletPoints={bootcamp.bulletPoints}
                   imageBadgeText={bootcamp.imageBadgeText}
                   classType={bootcamp.classType}
-                  textButton={bootcamp.textButton}
-                  link={bootcamp.link}
+                  textButton="ดูรายละเอียด"
                   showAccordion={false}
+                  onButtonClick={() => router.push(bootcamp.link)}
                 />
               </motion.div>
             ))
           )}
         </motion.div>
       </motion.div>
+
+      {/* Mentor Form Modal */}
+      <MentorFormModal open={openModal} onClose={closeModalButton} />
     </>
   );
 }

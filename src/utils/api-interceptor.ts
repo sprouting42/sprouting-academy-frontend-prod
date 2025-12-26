@@ -3,10 +3,23 @@ import { isHTTPError } from "ky";
 import { getRefreshToken, removeAuthToken, setAuthTokens } from "@/utils/auth";
 import { backendFetch } from "@/utils/ky";
 
+interface RefreshTokenResponse {
+  isSuccessful: boolean;
+  responseContent?: {
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+    tokenType: string;
+  };
+}
+
+const HTTP_UNAUTHORIZED = 401;
+const REFRESH_ENDPOINT = "auth/refresh";
+
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
-const refreshAccessToken = async (): Promise<string> => {
+export const refreshAccessToken = async (): Promise<string> => {
   if (refreshPromise) {
     return refreshPromise;
   }
@@ -16,17 +29,12 @@ const refreshAccessToken = async (): Promise<string> => {
     throw new Error("No refresh token available");
   }
 
-  refreshPromise = (async () => {
+  refreshPromise = (async (): Promise<string> => {
     try {
-      const response = await backendFetch.post<{
-        isSuccessful: boolean;
-        responseContent?: {
-          accessToken: string;
-          refreshToken: string;
-          expiresIn: number;
-          tokenType: string;
-        };
-      }>("/auth/refresh", { refreshToken });
+      const response = await backendFetch.post<RefreshTokenResponse>(
+        REFRESH_ENDPOINT,
+        { refreshToken },
+      );
 
       if (response.isSuccessful && response.responseContent) {
         const { accessToken, refreshToken: newRefreshToken } =
@@ -52,13 +60,20 @@ const handleUnauthorizedError = async <TArgs extends unknown[]>(
   args: TArgs,
   originalError: unknown,
 ): Promise<never> => {
+  if (isRefreshing) {
+    throw originalError;
+  }
+
   isRefreshing = true;
 
   try {
     await refreshAccessToken();
     return await originalMethod(path, ...args);
-  } catch {
+  } catch (refreshError) {
     removeAuthToken();
+    if (refreshError instanceof Error) {
+      throw refreshError;
+    }
     throw originalError;
   } finally {
     isRefreshing = false;
@@ -73,7 +88,7 @@ const createInterceptedMethod = <TArgs extends unknown[]>(
     } catch (error) {
       if (
         isHTTPError(error) &&
-        error.response.status === 401 &&
+        error.response.status === HTTP_UNAUTHORIZED &&
         !isRefreshing
       ) {
         return handleUnauthorizedError(originalMethod, path, args, error);

@@ -14,6 +14,7 @@ export interface BootcampCardData {
   classType: string;
   textButton: string;
   link: string;
+  price: number;
 }
 
 interface BootcampCardApiResponse {

@@ -16,7 +16,7 @@ import type { CourseData } from "@/data/courses";
 import type { InstructorData } from "@/data/instructors";
 import { testimonials } from "@/data/testimonials";
 import { PagePath } from "@/enum";
-import { useAddItemToCart } from "@/hooks/useCart";
+import { useAddCourseToCart } from "@/hooks/useAddCourseToCart";
 
 interface HomeContentProps {
   courses: CourseData[];
@@ -29,7 +29,7 @@ export function HomeContent({
   instructors,
   bootcamps,
 }: HomeContentProps) {
-  const { mutate: addItemToCart, isPending } = useAddItemToCart();
+  const { addCourseToCart, isPending } = useAddCourseToCart();
 
   const whyUsRef = useRef(null);
   const bootcampRef = useRef(null);
@@ -48,13 +48,12 @@ export function HomeContent({
       {/* Hero Section */}
       <Hero
         content={{
-          title: "อัปสกิลแห่งอนาคต: AI Automation",
-          subTitle: "และ Web Development",
-          description: "ลดเวลางานด้วย AI หรือเปลี่ยนอาชีพด้วย Bootcamp",
+          title: "อัปสกิลแห่งอนาคต",
+          subTitle: ["Ai automation", "Web developmemt", "Soft skill"],
           buttonItems: [
             {
               id: "ai-automation",
-              text: "ดูคอร์ส AI Automation",
+              text: "ดูคอร์สทั้งหมด",
               link: PagePath.COURSES,
             },
             {
@@ -90,11 +89,10 @@ export function HomeContent({
           className="flex flex-col gap-4 items-center text-center"
         >
           <h2 className="[html[data-theme='dark']_&]:bg-clip-text [html[data-theme='dark']_&]:bg-linear-to-r [html[data-theme='dark']_&]:from-secondary [html[data-theme='dark']_&]:text-transparent [html[data-theme='dark']_&]:to-primary font-bold font-prompt lg:text-3xl text-3xl text-primary">
-            เปลี่ยนอาชีพด้วยหลักสูตร Bootcamp ที่เข้มข้น
+            เปลี่ยนอาชีพด้วยหลักสูตร Bootcamp
           </h2>
           <p className="font-prompt lg:text-base text-foreground text-lg">
-            หลักสูตร 3-6 เดือน พร้อมฝึกงานจริง เน้นการลงมือทำ (Workshop-Based)
-            เพื่อความพร้อมในการทำงาน 100%
+            เรียนอย่างเข้มข้น พร้อมฝึกงานจริง
           </p>
         </motion.div>
         <div className="flex flex-col gap-8 items-center justify-center md:flex-row md:items-stretch">
@@ -185,19 +183,7 @@ export function HomeContent({
                 date={course.dateStart || ""}
                 totalTime={course.totalTime || ""}
                 classType={course.classType || ""}
-                onButtonClick={() => {
-                  const priceNum =
-                    parseFloat((course.price || "0").replace(/[^0-9.]/g, "")) ||
-                    0;
-                  addItemToCart({
-                    courseId: course.id,
-                    courseName: course.title,
-                    price: priceNum,
-                    date: course.dateStart || "",
-                    totalTime: course.totalTime || "",
-                    classType: course.classType || "",
-                  });
-                }}
+                onButtonClick={() => addCourseToCart(course)}
                 isButtonLoading={isPending}
                 courseDetail={{
                   courseBenefit: course.courseBenefit,
@@ -252,9 +238,8 @@ export function HomeContent({
           transition={{ duration: 0.5, delay: 0.1 }}
           className="font-prompt lg:text-base max-w-3xl text-center text-foreground text-lg"
         >
-          เราไม่ได้สอนแค่เทคนิคหรือจับมือทำ
-          แต่เราช่วยคุณสร้างวิธีคิดและการพัฒนาผ่านการสอนสดๆ
-          เพื่อให้คุณเข้าใจและสามารถนำกลับไปใช้งานจริงเองได้
+          เราสอนแบบลงลึก ทั้งทักษะ เทคนิค และขั้นตอนการทำงานจริง
+          ผ่านการสอนสดที่ทำให้คุณเข้าใจและทำตามได้ทันที
         </motion.p>
         <div className="flex flex-col flex-wrap gap-6 items-center justify-center lg:flex-row lg:gap-8">
           <motion.div

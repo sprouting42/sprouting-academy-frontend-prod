@@ -7,6 +7,7 @@ export * from "./carousel";
 export * from "./gradientBorderWrapper";
 export * from "./input";
 export * from "./label";
+export * from "./libraryTabs";
 export * from "./link";
 export * from "./modal";
 export * from "./popup";

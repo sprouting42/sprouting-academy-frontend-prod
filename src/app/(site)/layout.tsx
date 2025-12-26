@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { type ReactNode, Suspense } from "react";
 
+import { AuthInitializer } from "@/components/auth/AuthInitializer";
 import { DarkVeilClient } from "@/components/layout/darkVeilClient";
 import { LayoutWrapper } from "@/components/layout/layout-wrapper";
 import { AnalyticsPageViewTracker } from "@/lib/analyticsPageViewTracker";
@@ -14,6 +15,7 @@ export default function SiteLayout({
 }>) {
   return (
     <QueryProvider>
+      <AuthInitializer />
       <div className="min-h-screen overflow-hidden relative">
         <Suspense fallback={null}>
           <AnalyticsPageViewTracker />

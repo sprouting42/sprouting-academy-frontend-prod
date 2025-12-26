@@ -11,7 +11,7 @@ import { Carousel } from "@/components/common";
 import { Popup } from "@/components/common/popup";
 import type { PopupImage } from "@/data/popup";
 import { PagePath } from "@/enum/menu";
-import { useAddItemToCart } from "@/hooks/useCart";
+import { useAddCourseToCart } from "@/hooks/useAddCourseToCart";
 import { MediaCourse } from "@/payload/payload-types";
 
 export interface CourseCardProps {
@@ -39,6 +39,7 @@ export interface CourseDetailProps {
 
 export interface CourseData extends CourseCardProps, CourseDetailProps {
   id: string;
+  dateOptions?: string[];
 }
 
 export function Courses({
@@ -59,7 +60,7 @@ export function Courses({
   const coursesInView = useInView(coursesRef, { once: true });
   const buttonInView = useInView(buttonRef, { once: true });
 
-  const { mutate: addItemToCart, isPending } = useAddItemToCart();
+  const { addCourseToCart, isPending } = useAddCourseToCart();
 
   return (
     <>
@@ -151,19 +152,7 @@ export function Courses({
               totalTime: course.totalTime,
               classType: course.classType || "LIVE Online",
               showAccordion: true,
-              onButtonClick: () => {
-                const priceNum =
-                  parseFloat((course.price || "0").replace(/[^0-9.]/g, "")) ||
-                  0;
-                addItemToCart({
-                  courseId: course.id,
-                  courseName: course.title,
-                  price: priceNum,
-                  date: course.dateStart || "",
-                  totalTime: course.totalTime || "",
-                  classType: course.classType || "LIVE Online",
-                });
-              },
+              onButtonClick: () => addCourseToCart(course),
               isButtonLoading: isPending,
             };
 

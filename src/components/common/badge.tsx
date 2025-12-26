@@ -17,6 +17,7 @@ interface BadgeProps {
   shape?: "square" | "rounded";
   icon?: ReactNode;
   className?: string;
+  textClassName?: string;
 }
 
 export const Badge = ({
@@ -27,8 +28,9 @@ export const Badge = ({
   shape = "rounded",
   icon,
   className,
+  textClassName,
 }: BadgeProps) => {
-  const baseClasses = "flex items-start";
+  const baseClasses = "flex items-start text-center";
 
   const variantClasses = {
     primary: "w-fit bg-primary text-white font-normal font-prompt",
@@ -70,7 +72,7 @@ export const Badge = ({
       >
         {icon}
         {subtitle && <span className="font-semibold!">{subtitle} </span>}
-        <span className="font-normal!">{text}</span>
+        <span className={cn("font-normal!", textClassName)}>{text}</span>
       </div>
     </div>
   );

@@ -14,7 +14,12 @@ import {
 import { PagePath } from "@/enum";
 import { useCartStore } from "@/store/cartStore";
 import { getApiErrorMessage } from "@/utils/api-error";
-import { isAuthenticated, removeAuthToken, setAuthTokens } from "@/utils/auth";
+import {
+  hasAuthCredentials,
+  isAuthenticated,
+  removeAuthToken,
+  setAuthTokens,
+} from "@/utils/auth";
 
 import { cartKeys, syncCartOnLogin } from "./useCart";
 
@@ -69,7 +74,9 @@ export const useVerifyOtp = () => {
         await syncCartOnLogin(localItems, clearCart);
         queryClient.invalidateQueries({ queryKey: cartKeys.all });
       } catch (error) {
-        console.error("Failed to sync cart on login:", error);
+        if (error instanceof Error && process.env.NODE_ENV === "development") {
+          console.error("Failed to sync cart on login:", error);
+        }
       }
 
       queryClient.invalidateQueries({ queryKey: authKeys.me() });
@@ -146,7 +153,9 @@ export const useGetMe = () => {
       }
       throw new Error("Failed to get user");
     },
-    enabled: typeof window !== "undefined" && isAuthenticated(),
+    enabled:
+      typeof window !== "undefined" &&
+      (isAuthenticated() || hasAuthCredentials()),
     retry: (failureCount, error) => {
       if (isHTTPError(error) && error.response.status === 401) {
         return false;

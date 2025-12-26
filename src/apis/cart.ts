@@ -1,19 +1,31 @@
 import { ApiResponse, isApiSuccessResponse } from "@/apis/auth";
+import { ItemType } from "@/enum/itemType";
 import { interceptedApiFetch } from "@/utils/api-interceptor";
 
 export type AddItemRequest = {
-  courseId: string;
+  productId: string;
+  productType: "course" | "ebook" | "bootcamp";
 };
 
 export type CartItemDetail = {
   id: string;
-  courseId: string;
-  courseTitle: string;
-  courseDate?: string | null;
+  productId: string;
+  productType: ItemType;
+  title: string;
   price: number;
+  imageUrl?: string | null;
+  courseDate?: string | null;
   classType?: string | null;
   totalTimesCourse?: number | null;
   totalClass?: number | null;
+  earlyBirdPrice?: number;
+  isEarlyBird?: boolean;
+  availableDates?: string[];
+  pageCount?: number;
+  startDate?: string | null;
+  duration?: string | null;
+  schedule?: string | null;
+  features?: string[];
 };
 
 export type CartResponse = {

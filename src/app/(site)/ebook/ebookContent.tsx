@@ -7,6 +7,9 @@ import { useRef } from "react";
 import { CourseCard } from "@/components/card/courseCard";
 import { Carousel } from "@/components/common/carousel";
 import type { EbookBanner, EbookPayload } from "@/data/ebookPayload";
+import { ItemType } from "@/enum/itemType";
+import { useAddItemToCart } from "@/hooks/useCart";
+import { parsePriceString } from "@/utils/priceFormatter";
 
 interface EbookContentProps {
   advancedAutomationEbooks: EbookPayload[];
@@ -26,6 +29,19 @@ export function EbookContent({
   const heroInView = useInView(heroRef, { once: true });
   const advancedInView = useInView(advancedSectionRef, { once: true });
   const businessInView = useInView(businessSectionRef, { once: true });
+
+  const { mutate: addItemToCart, isPending } = useAddItemToCart();
+
+  const handleAddEbookToCart = (ebook: EbookPayload) => {
+    addItemToCart({
+      itemType: ItemType.EBOOK,
+      ebookId: ebook.id,
+      ebookName: ebook.title,
+      price: parsePriceString(ebook.price),
+      imageUrl: ebook.coverImage?.src,
+      pageCount: 342, // Mock page count - replace when available from API
+    });
+  };
 
   return (
     <div className="flex justify-center w-full">
@@ -134,11 +150,11 @@ export function EbookContent({
                   description={ebook.description}
                   price={ebook.price}
                   imageBadgeText={ebook.imageBadgeText || ""}
-                  textButton={ebook.textButton}
-                  link={ebook.link}
+                  textButton={ebook.textButton || "เพิ่มลงตะกร้า"}
                   bulletPoints={ebook.bulletPoints}
                   cardVariant="ebook"
-                  disabled
+                  onButtonClick={() => handleAddEbookToCart(ebook)}
+                  isButtonLoading={isPending}
                 />
               </motion.div>
             ))}
@@ -188,11 +204,11 @@ export function EbookContent({
                   description={ebook.description}
                   price={ebook.price}
                   imageBadgeText={ebook.imageBadgeText || ""}
-                  textButton={ebook.textButton}
-                  link={ebook.link}
+                  textButton={ebook.textButton || "เพิ่มลงตะกร้า"}
                   bulletPoints={ebook.bulletPoints}
                   cardVariant="ebook"
-                  disabled
+                  onButtonClick={() => handleAddEbookToCart(ebook)}
+                  isButtonLoading={isPending}
                 />
               </motion.div>
             ))}

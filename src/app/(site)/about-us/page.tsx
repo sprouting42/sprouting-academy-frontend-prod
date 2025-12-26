@@ -1,9 +1,9 @@
-import { fetchInstructors } from "@/data/instructors";
+import { fetchFounders } from "@/data/founders";
 
 import AboutUs from "./aboutUs";
 
 export default async function AboutUsPage() {
-  const instructors = await fetchInstructors();
+  const founders = await fetchFounders();
 
-  return <AboutUs instructors={instructors} />;
+  return <AboutUs founders={founders} />;
 }

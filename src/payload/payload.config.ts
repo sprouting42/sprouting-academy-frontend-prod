@@ -14,14 +14,17 @@ import CourseDetail from "./collections/CourseDetail.ts";
 import CoursePlanner from "./collections/CoursePlanner.ts";
 import Courses from "./collections/Courses.ts";
 import Ebook from "./collections/EbookPayload.ts";
+import Founder from "./collections/Founder.ts";
 import Instructors from "./collections/Instructors.ts";
 import MediaBanner from "./collections/MediaBanner.ts";
 import MediaBootcamp from "./collections/MediaBootcamp.ts";
 import MediaCourse from "./collections/MediaCourse.ts";
 import MediaEbook from "./collections/MediaEbook.ts";
+import MediaFounders from "./collections/MediaFounders.ts";
 import MediaInstructors from "./collections/MediaInstructors.ts";
 import MediaPopup from "./collections/MediaPopup.ts";
 import QuotationSubmissions from "./collections/QuotationSubmissions.ts";
+
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
@@ -49,6 +52,8 @@ export default buildConfig({
     Ebook,
     MediaEbook,
     QuotationSubmissions,
+    Founder,
+    MediaFounders,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
@@ -77,6 +82,7 @@ export default buildConfig({
         "media-bootcamp": { prefix: "bootcamp" },
         "media-popup": { prefix: "popup" },
         "media-ebook": { prefix: "ebook" },
+        "media-founders": { prefix: "founders" },
       },
       bucket: process.env.S3_BUCKET || "",
       config: {

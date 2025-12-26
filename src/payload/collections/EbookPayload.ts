@@ -49,11 +49,11 @@ const Ebook: CollectionConfig = {
     },
     {
       name: "price",
-      type: "text",
-      required: true,
+      type: "number",
+      required: false,
       label: "Price",
       admin: {
-        description: "ราคาของ ebook (เช่น 1,000 บาท)",
+        description: "ราคาของ ebook",
       },
     },
     {
@@ -99,6 +99,29 @@ const Ebook: CollectionConfig = {
           required: true,
         },
       ],
+    },
+    {
+      name: "ebookpage",
+      type: "number",
+      required: false,
+      label: "Ebook Page",
+      admin: {
+        description: "จำนวนหน้าของ ebook",
+      },
+    },
+    {
+      name: "downloadUrl",
+      type: "text",
+      required: false,
+      label: "Download URL",
+      admin: {
+        description:
+          "ลิงก์ดาวน์โหลด ebook จาก Google Drive หรือแหล่งอื่น\n" +
+          "สำหรับ Google Drive:\n" +
+          "1. ตั้งค่าไฟล์เป็น 'Anyone with the link' (ไม่ใช่ restrict)\n" +
+          "2. ใส่ share link (https://drive.google.com/file/d/FILE_ID/view?usp=sharing)\n" +
+          "3. ระบบจะแปลงเป็น direct download link อัตโนมัติ",
+      },
     },
     {
       name: "category",

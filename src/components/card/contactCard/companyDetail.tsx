@@ -20,9 +20,9 @@ export default function CompanyDetail() {
               ที่อยู่: 309/137 โกลเด้น วัลเลย์, ศรีราชา, ชลบุรี 20110
             </p>
             <p className="font-normal mb-3 text-base">
-              อีเมล: sproutingacademy@gmail.com
+              อีเมล: learn@spt-acad.com
             </p>
-            <p className="font-normal text-base">เบอร์โทรศัพท์: 033138804</p>
+            <p className="font-normal text-base">เบอร์โทรศัพท์: 061-024-5495</p>
 
             <div className="flex flex-row gap-4 items-center justify-center py-8">
               {socialLinks.map((social) => (

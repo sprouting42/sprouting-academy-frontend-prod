@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { Button } from "../common";
-import { CartDrawer } from "../drawer/cartDrawer";
+import { CartDrawer } from "../drawer";
 
 export const ButtonCart = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);

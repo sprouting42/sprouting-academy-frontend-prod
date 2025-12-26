@@ -12,10 +12,11 @@ import { isValidEmail } from "@/utils/validation";
 
 // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
 // import { PropmtPayment } from "./promtPayment";
-import { CardPayment } from "./cardPayment";
+// TODO: [OMISE-001] Enable credit card payment when backend API is ready
+// import { CardPayment } from "./cardPayment";
 import { CourseSummary } from "./courseSummary";
 import { DirectPayment } from "./directPayment";
-// import { SummaryPaymentCard } from "./summaryPaymentCard";
+import { SummaryPaymentCard } from "./summaryPaymentCard";
 import { PaymentCardProps } from "./types";
 
 export const PaymentCard = ({
@@ -24,7 +25,7 @@ export const PaymentCard = ({
   titleIcon,
   dropdownOptions,
   courses,
-  // summaryItems,
+  summaryItems,
   price,
   directPayment,
   // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
@@ -37,7 +38,8 @@ export const PaymentCard = ({
   onPaymentError,
 }: PaymentCardProps) => {
   const [selectedValue, setSelectedValue] = useState<string>("");
-  const cardPaymentSubmitRef = useRef<(() => void) | null>(null);
+  // TODO: [OMISE-001] Enable credit card payment when backend API is ready
+  // const cardPaymentSubmitRef = useRef<(() => void) | null>(null);
   const directPaymentSubmitRef = useRef<(() => void) | null>(null);
   // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
   // const promptPaySubmitRef = useRef<(() => void) | null>(null);
@@ -100,12 +102,14 @@ export const PaymentCard = ({
       return;
     }
 
+    // TODO: [OMISE-001] Enable credit card payment when backend API is ready
+    // if (
+    //   selectedValue === paymentMethodLabels.card &&
+    //   cardPaymentSubmitRef.current
+    // ) {
+    //   cardPaymentSubmitRef.current();
+    // } else
     if (
-      selectedValue === paymentMethodLabels.card &&
-      cardPaymentSubmitRef.current
-    ) {
-      cardPaymentSubmitRef.current();
-    } else if (
       selectedValue === paymentMethodLabels.directTransfer &&
       directPaymentSubmitRef.current
     ) {
@@ -129,10 +133,11 @@ export const PaymentCard = ({
     [handlePaymentSuccess],
   );
 
-  const handleCardPaymentSuccess = useCallback(
-    (chargeId: string) => handlePaymentSuccess(chargeId, "card"),
-    [handlePaymentSuccess],
-  );
+  // TODO: [OMISE-001] Enable credit card payment when backend API is ready
+  // const handleCardPaymentSuccess = useCallback(
+  //   (chargeId: string) => handlePaymentSuccess(chargeId, "card"),
+  //   [handlePaymentSuccess],
+  // );
 
   // TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready
   // Implementation needed:
@@ -151,14 +156,7 @@ export const PaymentCard = ({
         <>
           <Label text={cardTitle} className="font-medium text-xl" />
 
-          <CourseSummary
-            titleText={titleText}
-            titleIcon={titleIcon}
-            courses={courses || []}
-            price={price}
-          />
-
-          {/* {summaryItems && summaryItems.length > 0 ? (
+          {summaryItems && summaryItems.length > 0 ? (
             <SummaryPaymentCard
               titleText={titleText}
               titleIcon={titleIcon}
@@ -171,7 +169,7 @@ export const PaymentCard = ({
               courses={courses || []}
               price={price}
             />
-          )} */}
+          )}
 
           <div className="flex flex-col gap-1 items-start w-full">
             <Dropdown
@@ -198,14 +196,15 @@ export const PaymentCard = ({
               onSubmitRef={directPaymentSubmitRef}
             />
           )}
-          {selectedValue === paymentMethodLabels.card && (
+          {/* TODO: [OMISE-001] Enable credit card payment when backend API is ready */}
+          {/* {selectedValue === paymentMethodLabels.card && (
             <CardPayment
               orderId={orderId}
               onPaymentSuccess={handleCardPaymentSuccess}
               onPaymentError={handlePaymentError}
               onSubmitRef={cardPaymentSubmitRef}
             />
-          )}
+          )} */}
           {/* TODO: [PROMPTPAY-001] Enable PromptPay when backend API is ready */}
           {/* {selectedValue === paymentMethodLabels.promptPay && (
             <PropmtPayment

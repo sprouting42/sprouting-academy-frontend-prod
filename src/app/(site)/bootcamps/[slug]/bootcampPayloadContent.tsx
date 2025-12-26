@@ -10,9 +10,14 @@ import { ToolStackCard } from "@/components/card/toolStackCard";
 import { TwoColumnCard } from "@/components/card/twoColumnCard";
 import { BulletList, Button, Carousel } from "@/components/common";
 import { HeroImage } from "@/components/hero";
+import { ItemType } from "@/enum/itemType";
+import { useAddItemToCart } from "@/hooks/useCart";
 import type { BootcampPage } from "@/payload/payload-types";
 
 import { useBootcampPayloadContent } from "./useBootcampPayloadContent";
+
+// Mock price for bootcamp (will be replaced with real data when backend is ready)
+const MOCK_BOOTCAMP_PRICE = 30000;
 
 interface BootcampPayloadContentProps {
   bootcamp: BootcampPage;
@@ -22,6 +27,30 @@ export function BootcampPayloadContent({
   bootcamp,
 }: BootcampPayloadContentProps) {
   const { refs, inViews, data } = useBootcampPayloadContent(bootcamp);
+  const { mutate: addItemToCart, isPending } = useAddItemToCart();
+
+  const handleAddToCart = () => {
+    // Get bootcamp cover image URL
+    const bootcampCoverImage = bootcamp.hero.bootcampCoverImage;
+    const coverImageUrl =
+      typeof bootcampCoverImage?.value === "object" &&
+      bootcampCoverImage?.value !== null
+        ? (bootcampCoverImage.value as { url?: string }).url
+        : undefined;
+
+    addItemToCart({
+      itemType: ItemType.BOOTCAMP,
+      bootcampId: bootcamp.id,
+      bootcampName: bootcamp.hero.title,
+      price: MOCK_BOOTCAMP_PRICE,
+      startDate: "Feb 5, 2026",
+      duration: "16 Weeks program",
+      imageUrl: coverImageUrl,
+      schedule: "Mon, Wed, Fri • 6:00 PM - 9:00 PM",
+      features: ["Live Sessions", "Career Support", "Certificate"],
+    });
+  };
+
   const {
     heroRef,
     whyStudyRef,
@@ -213,12 +242,21 @@ export function BootcampPayloadContent({
         initial={{ opacity: 0, y: 30 }}
         animate={buttonInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.6 }}
+        className="flex flex-col gap-4 items-center md:flex-row"
       >
+        <Button
+          text={isPending ? "กำลังเพิ่ม..." : "เพิ่มลงตะกร้า"}
+          shape="rounded"
+          className="h-14 w-52"
+          onClick={handleAddToCart}
+          disabled={isPending}
+        />
         {bootcamp.hero.buttonItems && bootcamp.hero.buttonItems.length > 0 && (
           <Link href={bootcamp.hero.buttonItems[0].link}>
             <Button
               text={bootcamp.hero.buttonItems[0].text}
               shape="rounded"
+              variant="secondaryGradientBorder"
               className="h-14 w-52"
             />
           </Link>

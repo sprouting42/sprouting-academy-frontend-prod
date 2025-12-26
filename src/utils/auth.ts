@@ -4,27 +4,47 @@ const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
 const TOKEN_EXPIRY_KEY = "tokenExpiry";
 
+const JWT_PAYLOAD_INDEX = 1;
+const BASE64_URL_REPLACE_REGEX = /-/g;
+const BASE64_REPLACE_REGEX = /_/g;
+const HEX_PADDING = 2;
+
 const decodeJWT = (token: string): { exp?: number } | null => {
   try {
-    const base64Url = token.split(".")[1];
-    if (!base64Url) return null;
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const parts = token.split(".");
+    const base64Url = parts[JWT_PAYLOAD_INDEX];
+    if (!base64Url) {
+      return null;
+    }
+
+    const base64 = base64Url
+      .replace(BASE64_URL_REPLACE_REGEX, "+")
+      .replace(BASE64_REPLACE_REGEX, "/");
+
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split("")
-        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .map(
+          (c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-HEX_PADDING)}`,
+        )
         .join(""),
     );
-    return JSON.parse(jsonPayload);
+
+    return JSON.parse(jsonPayload) as { exp?: number };
   } catch {
     return null;
   }
 };
 
+const MILLISECONDS_PER_SECOND = 1000;
+
 const getTokenExpiry = (token: string | null): number | null => {
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
+
   const decoded = decodeJWT(token);
-  return decoded?.exp ? decoded.exp * 1000 : null;
+  return decoded?.exp ? decoded.exp * MILLISECONDS_PER_SECOND : null;
 };
 
 export const isAuthenticated = (): boolean => {
@@ -38,6 +58,18 @@ export const isAuthenticated = (): boolean => {
   }
 
   return true;
+};
+
+export const hasAuthCredentials = (): boolean => {
+  if (!isBrowser) {
+    return false;
+  }
+
+  if (isAuthenticated()) {
+    return true;
+  }
+
+  return getRefreshToken() !== null;
 };
 
 export const isTokenExpiringSoon = (bufferSeconds = 300): boolean => {

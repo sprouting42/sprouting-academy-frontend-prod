@@ -76,7 +76,7 @@ export const ProfileCard = ({
                   size="sm"
                   shape="rounded"
                   onClick={onEditClick}
-                  className="md:text-sm py-1.5 text-xs"
+                  className="md:text-sm text-xs"
                 />
               </div>
 

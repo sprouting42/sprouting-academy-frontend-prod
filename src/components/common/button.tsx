@@ -16,7 +16,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "profileButton"
     | "textButton"
     | "menuItemDanger"
-    | "lightButton";
+    | "lightButton"
+    | "tabButton";
   size?: "sm" | "md" | "lg";
   shape?: "square" | "rounded" | "circle";
   icon?: ReactNode;
@@ -42,6 +43,7 @@ export const Button = ({
   const isTextButton = variant === "textButton";
   const isMenuItemDanger = variant === "menuItemDanger";
   const isProfileButton = variant === "profileButton";
+  const isTabButton = variant === "tabButton";
 
   const baseButtonClasses =
     "font-prompt flex items-center justify-center gap-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
@@ -124,6 +126,12 @@ export const Button = ({
         interactiveStates,
       ),
     },
+    tabButton: {
+      inner: cn(
+        "flex-1 flex items-center justify-center gap-3 py-2.5 border-b transition-all bg-transparent font-normal",
+        "enabled:hover:opacity-80",
+      ),
+    },
   };
 
   const sizeClasses = {
@@ -175,6 +183,7 @@ export const Button = ({
   const getSizeClass = () => {
     if (isIconOnly) return iconSizeClasses[size];
     if (isTextButton) return textButtonSizeClasses[size];
+    if (isTabButton) return "";
     if (!isProfileButton && !isMenuItemDanger) return sizeClasses[size];
     return "";
   };
@@ -196,11 +205,13 @@ export const Button = ({
         !isProfileButton &&
           !isTextButton &&
           !isMenuItemDanger &&
+          !isTabButton &&
           baseButtonClasses,
         inner,
         !isProfileButton &&
           !isTextButton &&
           !isMenuItemDanger &&
+          !isTabButton &&
           shapeClasses[shape],
         getSizeClass(),
         isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
@@ -213,7 +224,13 @@ export const Button = ({
     </button>
   );
 
-  if (!wrapper || isProfileButton || isTextButton || isMenuItemDanger) {
+  if (
+    !wrapper ||
+    isProfileButton ||
+    isTextButton ||
+    isMenuItemDanger ||
+    isTabButton
+  ) {
     return buttonElement;
   }
 

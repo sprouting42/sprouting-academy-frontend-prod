@@ -25,11 +25,30 @@
     --secondary: rgb(19, 180, 153);
     --error: rgb(233, 41, 40);
     --premium: rgb(22, 161, 73);
+    --cart-background: rgba(26, 26, 26, 1);
     --course-date-badge: rgb(255, 114, 116);
     --course-date-dot: rgb(255, 132, 132);
     --facebook-color: rgb(24, 119, 242);
     --primary-light: rgba(0, 110, 136, 0.25);
     --secondary-light: rgba(19, 180, 153, 0.12);
+
+    /* Badge colors */
+    --badge-course-bg: rgba(43, 127, 255, 0.1);
+    --badge-course-text: rgb(81, 162, 255);
+    --badge-ebook-bg: rgba(0, 188, 125, 0.1);
+    --badge-ebook-text: rgb(0, 188, 125);
+    --badge-bootcamp-bg: rgba(173, 70, 255, 0.1);
+    --badge-bootcamp-text: rgb(194, 122, 255);
+    --badge-bootcamp-feature-bg: rgba(173, 70, 255, 0.2);
+    --badge-bootcamp-feature-text: rgb(218, 178, 255);
+
+    /* Product icon colors */
+    --product-course-icon-color: rgb(81, 162, 255);
+    --product-course-icon-bg: rgba(30, 69, 136, 0.57);
+    --product-ebook-icon-color: rgb(0, 212, 146);
+    --product-ebook-icon-bg: rgba(17, 77, 58, 0.57);
+    --product-bootcamp-icon-color: rgb(194, 122, 255);
+    --product-bootcamp-icon-bg: rgb(60, 29, 86);
     --secondary-alpha-0: rgba(19, 180, 153, 0);
     --secondary-alpha-2: rgba(19, 180, 153, 0.02);
     --secondary-alpha-50: rgba(19, 180, 153, 0.5);
@@ -70,6 +89,24 @@
     --facebook-color: rgb(24, 119, 242);
     --primary-light: rgba(0, 110, 136, 0.1);
     --secondary-light: rgba(19, 180, 153, 0.1);
+
+    /* Badge colors */
+    --badge-course-bg: rgba(43, 127, 255, 0.1);
+    --badge-course-text: rgb(43, 127, 255);
+    --badge-ebook-bg: rgba(0, 188, 125, 0.1);
+    --badge-ebook-text: rgb(0, 150, 100);
+    --badge-bootcamp-bg: rgba(173, 70, 255, 0.1);
+    --badge-bootcamp-text: rgb(140, 50, 200);
+    --badge-bootcamp-feature-bg: rgba(173, 70, 255, 0.15);
+    --badge-bootcamp-feature-text: rgb(140, 70, 200);
+
+    /* Product icon colors */
+    --product-course-icon-color: rgb(81, 162, 255);
+    --product-course-icon-bg: rgba(30, 69, 136, 0.57);
+    --product-ebook-icon-color: rgb(0, 212, 146);
+    --product-ebook-icon-bg: rgba(17, 77, 58, 0.57);
+    --product-bootcamp-icon-color: rgb(194, 122, 255);
+    --product-bootcamp-icon-bg: rgb(60, 29, 86);
     --secondary-alpha-0: rgba(19, 180, 153, 0);
     --secondary-alpha-2: rgba(19, 180, 153, 0.05);
     --secondary-alpha-50: rgba(19, 180, 153, 0.5);
@@ -91,11 +128,30 @@
   --color-secondary: var(--secondary);
   --color-error: var(--error);
   --color-premium: var(--premium);
+  --color-cart-background: var(--cart-background);
   --color-course-date-badge: var(--course-date-badge);
   --color-course-date-dot: var(--course-date-dot);
   --color-facebook: var(--facebook-color);
   --color-primary-light: var(--primary-light);
   --color-secondary-light: var(--secondary-light);
+
+  /* Badge colors */
+  --color-badge-course-bg: var(--badge-course-bg);
+  --color-badge-course-text: var(--badge-course-text);
+  --color-badge-ebook-bg: var(--badge-ebook-bg);
+  --color-badge-ebook-text: var(--badge-ebook-text);
+  --color-badge-bootcamp-bg: var(--badge-bootcamp-bg);
+  --color-badge-bootcamp-text: var(--badge-bootcamp-text);
+  --color-badge-bootcamp-feature-bg: var(--badge-bootcamp-feature-bg);
+  --color-badge-bootcamp-feature-text: var(--badge-bootcamp-feature-text);
+
+  /* Product icon colors */
+  --color-product-course-icon: var(--product-course-icon-color);
+  --color-product-course-icon-bg: var(--product-course-icon-bg);
+  --color-product-ebook-icon: var(--product-ebook-icon-color);
+  --color-product-ebook-icon-bg: var(--product-ebook-icon-bg);
+  --color-product-bootcamp-icon: var(--product-bootcamp-icon-color);
+  --color-product-bootcamp-icon-bg: var(--product-bootcamp-icon-bg);
   --color-secondary-alpha-0: var(--secondary-alpha-0);
   --color-secondary-alpha-2: var(--secondary-alpha-2);
   --color-secondary-alpha-50: var(--secondary-alpha-50);

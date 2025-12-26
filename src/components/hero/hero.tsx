@@ -9,7 +9,7 @@ import { Button } from "../common";
 interface HeroProps {
   content?: {
     title?: string;
-    subTitle?: string;
+    subTitle?: string | string[];
     description?: string;
     buttonItems?: Array<{ id: string; text: string; link: string }>;
   };
@@ -18,6 +18,19 @@ interface HeroProps {
   className?: string;
   showFirstButtonIcon?: boolean;
 }
+
+const renderSubTitle = (subTitle: string | string[]) => {
+  const subTitleArray =
+    typeof subTitle === "string" ? subTitle.split(" | ") : subTitle;
+  return subTitleArray.map((item, index, array) => (
+    <span key={item}>
+      {item}
+      {index < array.length - 1 && (
+        <span className="font-normal mx-4 opacity-70 text-primary">|</span>
+      )}
+    </span>
+  ));
+};
 
 export const Hero = ({
   content,
@@ -91,7 +104,7 @@ export const Hero = ({
               }}
               className={largeTitleClasses}
             >
-              {content.subTitle}
+              {renderSubTitle(content.subTitle)}
             </motion.h1>
           )}
           {content?.description && (

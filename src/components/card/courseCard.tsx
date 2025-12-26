@@ -93,6 +93,8 @@ export const CourseCard = ({
               link={link}
               isEbook={isEbook}
               disabled={disabled}
+              onButtonClick={onButtonClick}
+              isButtonLoading={isButtonLoading}
             />
           ) : (
             <>
@@ -277,6 +279,8 @@ const CardContent = ({
   link,
   isEbook,
   disabled,
+  onButtonClick,
+  isButtonLoading,
 }: {
   coverImage: MediaCourse | string;
   alt: string;
@@ -290,6 +294,8 @@ const CardContent = ({
   link?: string;
   isEbook?: boolean;
   disabled?: boolean;
+  onButtonClick?: () => void;
+  isButtonLoading?: boolean;
 }) => {
   const imageUrl =
     typeof coverImage === "string" ? coverImage : coverImage?.url || "";
@@ -372,12 +378,13 @@ const CardContent = ({
             </Link>
           ) : (
             <Button
-              text={textButton || ""}
+              text={isButtonLoading ? "กำลังเพิ่ม..." : textButton || ""}
               variant="squareButton"
               size="md"
               shape="square"
               className="w-full"
-              disabled={disabled}
+              disabled={disabled || isButtonLoading}
+              onClick={onButtonClick}
             />
           )}
         </div>

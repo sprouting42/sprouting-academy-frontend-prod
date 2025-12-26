@@ -1,3 +1,4 @@
+import { convertGoogleDriveToDirectDownload } from "@/utils/googleDrive";
 import { cmsFetch } from "@/utils/ky";
 
 interface MediaEbook {
@@ -14,7 +15,7 @@ interface EbookDoc {
   ebookId: string;
   title: string;
   description: string;
-  price: string;
+  price?: string | number | null;
   imageBadgeText?: string;
   textButton?: string;
   link?: string;
@@ -30,6 +31,8 @@ interface EbookDoc {
   };
   createdAt: string;
   updatedAt: string;
+  ebookpage?: number | null;
+  downloadUrl?: string | null;
 }
 
 interface EbookApiResponse {
@@ -94,6 +97,8 @@ export interface EbookPayload {
     alt: string;
     id: string;
   };
+  ebookpage: number;
+  downloadUrl?: string | null;
 }
 
 function isMediaEbook(value: unknown): value is MediaEbook {
@@ -133,12 +138,17 @@ export async function fetchEbookPayload(
     ebookId: doc.ebookId,
     title: doc.title,
     description: doc.description,
-    price: doc.price,
+    price:
+      typeof doc.price === "number" ? doc.price.toString() : doc.price || "",
     imageBadgeText: doc.imageBadgeText,
     textButton: doc.textButton,
     link: doc.link,
     bulletPoints: doc.bulletPoints?.map((bp) => bp.bulletPoint) || [],
     category: doc.category,
+    ebookpage: doc.ebookpage || 0,
+    downloadUrl: doc.downloadUrl
+      ? convertGoogleDriveToDirectDownload(doc.downloadUrl)
+      : null,
     coverImage: getCoverImageData(doc.coverImage),
   }));
 }
@@ -156,4 +166,55 @@ export async function fetchEbookBanner(): Promise<EbookBanner[]> {
       alt: banner.alt || undefined,
       id: banner.id,
     }));
+}
+
+interface SingleEbookApiResponse {
+  success: boolean;
+  data: EbookDoc;
+}
+
+export async function fetchEbookByEbookId(
+  ebookId: string,
+): Promise<EbookPayload | null> {
+  try {
+    const response = await cmsFetch.get<SingleEbookApiResponse>(
+      `routes/ebook?ebookId=${encodeURIComponent(ebookId)}`,
+    );
+
+    if (!response.success || !response.data) {
+      return null;
+    }
+
+    const doc = response.data;
+    return {
+      id: doc.id,
+      ebookId: doc.ebookId,
+      title: doc.title,
+      description: doc.description,
+      price:
+        typeof doc.price === "number" ? doc.price.toString() : doc.price || "",
+      imageBadgeText: doc.imageBadgeText,
+      textButton: doc.textButton,
+      link: doc.link,
+      bulletPoints: doc.bulletPoints?.map((bp) => bp.bulletPoint) || [],
+      category: doc.category,
+      ebookpage: doc.ebookpage || 0,
+      downloadUrl: doc.downloadUrl
+        ? convertGoogleDriveToDirectDownload(doc.downloadUrl)
+        : null,
+      coverImage: getCoverImageData(doc.coverImage),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchEbooksByEbookIds(
+  ebookIds: string[],
+): Promise<EbookPayload[]> {
+  const allEbooks = await Promise.all(
+    ebookIds.map((ebookId) => fetchEbookByEbookId(ebookId)),
+  );
+
+  return allEbooks.filter((ebook): ebook is EbookPayload => ebook !== null);
 }
