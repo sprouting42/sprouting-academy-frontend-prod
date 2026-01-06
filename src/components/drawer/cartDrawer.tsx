@@ -46,7 +46,7 @@ export const CartDrawer = ({ isOpen, onClose, className }: CartDrawerProps) => {
     applyCoupon,
     clearCoupon,
   } = useCoupon();
-  const { totalPrice, discountPercent, discountAmount, finalPrice } =
+  const { totalPrice, discountAmount, finalPrice, selectedCourseCount } =
     useCartPricing(cartData, checkedItems, courses, couponDiscount);
   const { hasInvalidCourseDate } = useCourseDateValidation(
     courses,
@@ -105,7 +105,7 @@ export const CartDrawer = ({ isOpen, onClose, className }: CartDrawerProps) => {
           {cartData.length > 0 && (
             <CartSummary
               totalPrice={totalPrice}
-              discountPercent={discountPercent}
+              selectedCourseCount={selectedCourseCount}
               discountAmount={discountAmount}
               couponDiscount={couponDiscount}
               courses={courses}

@@ -25,6 +25,7 @@ export interface SummaryPaymentCardProps {
   titleText?: string;
   titleIcon?: ReactNode;
   items: SummaryItem[];
+  price?: string; // ราคาที่ format แล้ว (เช่น "9,600 บาท")
   className?: string;
 }
 
@@ -40,9 +41,10 @@ export const SummaryPaymentCard = ({
   titleText,
   titleIcon,
   items,
+  price,
   className,
 }: SummaryPaymentCardProps) => {
-  const { sections, totalPrice } = useMemo(() => {
+  const { sections, displayPrice } = useMemo(() => {
     const grouped: Record<ProductType, SummaryItem[]> = {
       course: [],
       ebook: [],
@@ -69,9 +71,14 @@ export const SummaryPaymentCard = ({
     });
 
     const total = items.reduce((sum, item) => sum + item.price, 0);
+    const finalPrice = price || formatPrice(total);
 
-    return { sections: productSections, totalPrice: total };
-  }, [items]);
+    return {
+      sections: productSections,
+      totalPrice: total,
+      displayPrice: finalPrice,
+    };
+  }, [items, price]);
 
   if (items.length === 0) {
     return (
@@ -140,7 +147,7 @@ export const SummaryPaymentCard = ({
                 ราคารวม:
               </span>
               <span className="font-prompt font-semibold text-2xl text-secondary">
-                {formatPrice(totalPrice)}
+                {displayPrice}
               </span>
             </div>
           </>

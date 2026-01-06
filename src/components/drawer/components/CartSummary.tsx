@@ -6,7 +6,7 @@ import { CouponInput } from "./CouponInput";
 
 interface CartSummaryProps {
   totalPrice: number;
-  discountPercent: number;
+  selectedCourseCount: number;
   discountAmount: number;
   couponDiscount: number;
   courses: CartItem[];
@@ -19,11 +19,9 @@ interface CartSummaryProps {
 
 export const CartSummary = ({
   totalPrice,
-  discountPercent,
+  selectedCourseCount,
   discountAmount,
   couponDiscount,
-  courses,
-  checkedItems,
   couponCode,
   onCouponCodeChange,
   onApplyCoupon,
@@ -42,19 +40,18 @@ export const CartSummary = ({
       </div>
 
       {/* Course discount info */}
-      {discountPercent > 0 && (
+      {discountAmount > 0 && (
         <div className="flex flex-col gap-1">
           <div className="flex justify-between">
             <span className="font-prompt text-foreground/70 text-sm">
-              {CART_DRAWER_MESSAGES.COURSE_PACKAGE_DISCOUNT} ({discountPercent}
-              %)
+              {CART_DRAWER_MESSAGES.COURSE_PACKAGE_DISCOUNT}
             </span>
             <span className="font-prompt text-secondary text-sm">
               -{formatPrice(discountAmount)} บาท
             </span>
           </div>
           <p className="font-prompt text-secondary text-sm">
-            {discountPercent === 10
+            {selectedCourseCount === 2
               ? CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_10
               : CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_20}
           </p>
@@ -62,12 +59,11 @@ export const CartSummary = ({
       )}
 
       {/* Suggest discount */}
-      {discountPercent === 0 &&
-        courses.filter((c) => checkedItems[c.id]).length === 1 && (
-          <p className="font-prompt text-secondary text-sm">
-            {CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_0}
-          </p>
-        )}
+      {selectedCourseCount === 1 && (
+        <p className="font-prompt text-secondary text-sm">
+          {CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_0}
+        </p>
+      )}
 
       {/* Coupon section */}
       <CouponInput

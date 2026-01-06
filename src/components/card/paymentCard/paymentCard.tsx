@@ -161,6 +161,7 @@ export const PaymentCard = ({
               titleText={titleText}
               titleIcon={titleIcon}
               items={summaryItems}
+              price={price}
             />
           ) : (
             <CourseSummary

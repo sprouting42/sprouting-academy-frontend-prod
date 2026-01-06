@@ -15,14 +15,14 @@ export const groupCartItemsByType = (items: CartItem[]) => {
   );
 };
 
-export const calculateDiscountPercent = (
+export const calculateDiscountAmount = (
   selectedCourseCount: number,
 ): number => {
   if (selectedCourseCount >= DISCOUNT_RULES.THREE_COURSES.threshold) {
-    return DISCOUNT_RULES.THREE_COURSES.percent;
+    return DISCOUNT_RULES.THREE_COURSES.amount;
   }
   if (selectedCourseCount >= DISCOUNT_RULES.TWO_COURSES.threshold) {
-    return DISCOUNT_RULES.TWO_COURSES.percent;
+    return DISCOUNT_RULES.TWO_COURSES.amount;
   }
   return 0;
 };

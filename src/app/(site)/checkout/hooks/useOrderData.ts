@@ -16,7 +16,8 @@ export const useOrderData = (orderId: string | null) => {
       }
 
       if (isApiSuccessResponse(response)) {
-        return response.responseContent;
+        const orderData = response.responseContent;
+        return orderData;
       }
 
       throw new Error("Failed to get order");

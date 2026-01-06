@@ -87,14 +87,20 @@ const CheckoutPage = () => {
   // Formatted price
   const formattedPrice = useMemo(() => {
     if (orderData && orderData.totalAmount !== undefined) {
-      return formatPrice(orderData.totalAmount);
+      const price = formatPrice(orderData.totalAmount);
+
+      return price;
     }
     if (selectedCartItems && selectedCartItems.length > 0) {
       const total = calculateTotalPrice(selectedCartItems);
-      return formatPrice(total);
+      const price = formatPrice(total);
+
+      return price;
     }
-    return formatPrice(0);
-  }, [orderData, selectedCartItems]);
+    const defaultPrice = formatPrice(0);
+
+    return defaultPrice;
+  }, [orderData, selectedCartItems, orderId]);
 
   // Loading state
   const isLoading = !isMounted || isCartLoading || isUserLoading;

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import type { CartItem, CourseCartItem } from "@/store/cartStore";
 
-import { calculateDiscountPercent } from "../utils/cartDrawerHelpers";
+import { calculateDiscountAmount } from "../utils/cartDrawerHelpers";
 
 export const useCartPricing = (
   cartItems: CartItem[],
@@ -23,10 +23,6 @@ export const useCartPricing = (
     return courses.filter((item) => checkedItems[item.id]).length;
   }, [courses, checkedItems]);
 
-  const discountPercent = useMemo(() => {
-    return calculateDiscountPercent(selectedCourseCount);
-  }, [selectedCourseCount]);
-
   const courseTotalPrice = useMemo(() => {
     return courses.reduce((total, item) => {
       if (checkedItems[item.id]) {
@@ -36,10 +32,9 @@ export const useCartPricing = (
     }, 0);
   }, [courses, checkedItems]);
 
-  const discountAmount = useMemo(
-    () => Math.floor((courseTotalPrice * discountPercent) / 100),
-    [courseTotalPrice, discountPercent],
-  );
+  const discountAmount = useMemo(() => {
+    return calculateDiscountAmount(selectedCourseCount);
+  }, [selectedCourseCount]);
 
   const finalPrice = useMemo(
     () => Math.max(0, totalPrice - discountAmount - couponDiscount),
@@ -48,7 +43,6 @@ export const useCartPricing = (
 
   return {
     totalPrice,
-    discountPercent,
     discountAmount,
     finalPrice,
     selectedCourseCount,
