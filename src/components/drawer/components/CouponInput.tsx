@@ -33,7 +33,7 @@ export const CouponInput = ({
           {CART_DRAWER_MESSAGES.COUPON_LABEL}
         </span>
         <div className="flex gap-4">
-          <div className="bg-[rgba(15,15,15,1)] border border-foreground/20 flex flex-1 gap-2 px-4 py-2.5 rounded-sm w-102">
+          <div className="[html[data-theme='light']_&]:bg-foreground/5 bg-[rgba(15,15,15,1)] border border-foreground/20 flex flex-1 gap-2 px-4 py-2.5 rounded-sm w-102">
             <TagIcon
               size={16}
               weight="duotone"
@@ -50,7 +50,7 @@ export const CouponInput = ({
           <button
             type="button"
             onClick={onApplyCoupon}
-            className="bg-[rgba(30,41,59,1)] font-medium font-prompt hover:bg-[rgba(40,51,69,1)] px-6 py-2.5 rounded-sm shrink-0 text-foreground text-sm transition-colors"
+            className="[html[data-theme='light']_&]:bg-foreground [html[data-theme='light']_&]:hover:bg-foreground/90 [html[data-theme='light']_&]:text-background bg-[rgba(30,41,59,1)] font-medium font-prompt hover:bg-[rgba(40,51,69,1)] px-6 py-2.5 rounded-sm shrink-0 text-foreground text-sm transition-colors"
           >
             {CART_DRAWER_MESSAGES.APPLY}
           </button>

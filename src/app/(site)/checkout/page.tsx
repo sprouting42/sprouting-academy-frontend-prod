@@ -110,6 +110,7 @@ const CheckoutPage = () => {
   }
 
   if (
+    !isModalOpen &&
     !isCartLoading &&
     (!selectedCartItems || selectedCartItems.length === 0)
   ) {

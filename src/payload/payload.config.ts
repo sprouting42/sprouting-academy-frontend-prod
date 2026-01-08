@@ -23,6 +23,7 @@ import MediaEbook from "./collections/MediaEbook.ts";
 import MediaFounders from "./collections/MediaFounders.ts";
 import MediaInstructors from "./collections/MediaInstructors.ts";
 import MediaPopup from "./collections/MediaPopup.ts";
+import MentorFormSubmission from "./collections/MentorFormSubmission.ts";
 import QuotationSubmissions from "./collections/QuotationSubmissions.ts";
 
 const filename = fileURLToPath(import.meta.url);
@@ -54,6 +55,7 @@ export default buildConfig({
     QuotationSubmissions,
     Founder,
     MediaFounders,
+    MentorFormSubmission,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",

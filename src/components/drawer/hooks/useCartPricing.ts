@@ -2,8 +2,6 @@ import { useMemo } from "react";
 
 import type { CartItem, CourseCartItem } from "@/store/cartStore";
 
-import { calculateDiscountAmount } from "../utils/cartDrawerHelpers";
-
 export const useCartPricing = (
   cartItems: CartItem[],
   checkedItems: Record<string, boolean>,
@@ -32,18 +30,14 @@ export const useCartPricing = (
     }, 0);
   }, [courses, checkedItems]);
 
-  const discountAmount = useMemo(() => {
-    return calculateDiscountAmount(selectedCourseCount);
-  }, [selectedCourseCount]);
-
   const finalPrice = useMemo(
-    () => Math.max(0, totalPrice - discountAmount - couponDiscount),
-    [totalPrice, discountAmount, couponDiscount],
+    () => Math.max(0, totalPrice - couponDiscount),
+    [totalPrice, couponDiscount],
   );
 
   return {
     totalPrice,
-    discountAmount,
+
     finalPrice,
     selectedCourseCount,
     courseTotalPrice,

@@ -13,6 +13,7 @@ export interface PaymentConfirmData {
   itemName: string;
   orderNumber: string;
   dateTime: string;
+  title?: string;
 }
 
 interface PaymentConfirmProps {
@@ -29,7 +30,7 @@ export const PaymentConfirm = ({
   data,
 }: PaymentConfirmProps) => {
   const router = useRouter();
-  const { amount, userName, itemName, orderNumber, dateTime } = data;
+  const { amount, userName, itemName, orderNumber, dateTime, title } = data;
   const formatAmount = (value: number) => {
     return new Intl.NumberFormat("th-TH").format(value);
   };
@@ -64,7 +65,7 @@ export const PaymentConfirm = ({
       <div className="flex flex-col gap-6 w-full">
         <div className="flex items-center justify-center relative">
           <h2 className="font-medium font-prompt text-2xl text-center text-secondary">
-            ชำระเงินสำเร็จ
+            {title || "ชำระเงินสำเร็จ"}
           </h2>
           <button
             onClick={onClose}

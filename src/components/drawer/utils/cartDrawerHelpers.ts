@@ -1,8 +1,6 @@
 import { ItemType } from "@/enum/itemType";
 import type { CartItem } from "@/store/cartStore";
 
-import { DISCOUNT_RULES } from "./cartDrawerConstants";
-
 export const groupCartItemsByType = (items: CartItem[]) => {
   return items.reduce(
     (acc, item) => {
@@ -13,18 +11,6 @@ export const groupCartItemsByType = (items: CartItem[]) => {
     },
     {} as Record<ItemType, CartItem[]>,
   );
-};
-
-export const calculateDiscountAmount = (
-  selectedCourseCount: number,
-): number => {
-  if (selectedCourseCount >= DISCOUNT_RULES.THREE_COURSES.threshold) {
-    return DISCOUNT_RULES.THREE_COURSES.amount;
-  }
-  if (selectedCourseCount >= DISCOUNT_RULES.TWO_COURSES.threshold) {
-    return DISCOUNT_RULES.TWO_COURSES.amount;
-  }
-  return 0;
 };
 
 export const formatPrice = (amount: number): string => {

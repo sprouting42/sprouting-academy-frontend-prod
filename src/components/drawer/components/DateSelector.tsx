@@ -61,7 +61,7 @@ export const DateSelector = ({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "flex items-center justify-between w-full px-4 py-2 rounded-xl",
-            "bg-[rgba(15,15,15,1)] border border-foreground/10",
+            "bg-[rgba(15,15,15,1)] [html[data-theme='light']_&]:bg-foreground/5 border border-foreground/10",
             "font-prompt text-sm text-left transition-colors",
             hasError && "border-error",
           )}
@@ -79,7 +79,7 @@ export const DateSelector = ({
         </button>
 
         {isOpen && (
-          <div className="absolute bg-cart-background border border-foreground/20 mt-1 overflow-hidden rounded-xl shadow-lg w-full z-50">
+          <div className="[html[data-theme='light']_&]:bg-white absolute bg-[rgba(26,26,26,1)] border border-foreground/20 mt-1 overflow-hidden rounded-xl shadow-lg w-full z-50">
             {options.map((option) => (
               <button
                 key={option}

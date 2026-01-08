@@ -7,7 +7,6 @@ import { CouponInput } from "./CouponInput";
 interface CartSummaryProps {
   totalPrice: number;
   selectedCourseCount: number;
-  discountAmount: number;
   couponDiscount: number;
   courses: CartItem[];
   checkedItems: Record<string, boolean>;
@@ -19,8 +18,6 @@ interface CartSummaryProps {
 
 export const CartSummary = ({
   totalPrice,
-  selectedCourseCount,
-  discountAmount,
   couponDiscount,
   couponCode,
   onCouponCodeChange,
@@ -38,32 +35,6 @@ export const CartSummary = ({
           {formatPrice(totalPrice)} บาท
         </span>
       </div>
-
-      {/* Course discount info */}
-      {discountAmount > 0 && (
-        <div className="flex flex-col gap-1">
-          <div className="flex justify-between">
-            <span className="font-prompt text-foreground/70 text-sm">
-              {CART_DRAWER_MESSAGES.COURSE_PACKAGE_DISCOUNT}
-            </span>
-            <span className="font-prompt text-secondary text-sm">
-              -{formatPrice(discountAmount)} บาท
-            </span>
-          </div>
-          <p className="font-prompt text-secondary text-sm">
-            {selectedCourseCount === 2
-              ? CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_10
-              : CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_20}
-          </p>
-        </div>
-      )}
-
-      {/* Suggest discount */}
-      {selectedCourseCount === 1 && (
-        <p className="font-prompt text-secondary text-sm">
-          {CART_DRAWER_MESSAGES.DISCOUNT_SUGGESTION_0}
-        </p>
-      )}
 
       {/* Coupon section */}
       <CouponInput

@@ -85,6 +85,7 @@ export interface Config {
     'quotation-submissions': QuotationSubmission;
     founders: Founder;
     'media-founders': MediaFounder;
+    'mentor-form-submissions': MentorFormSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -110,6 +111,7 @@ export interface Config {
     'quotation-submissions': QuotationSubmissionsSelect<false> | QuotationSubmissionsSelect<true>;
     founders: FoundersSelect<false> | FoundersSelect<true>;
     'media-founders': MediaFoundersSelect<false> | MediaFoundersSelect<true>;
+    'mentor-form-submissions': MentorFormSubmissionsSelect<false> | MentorFormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -855,6 +857,25 @@ export interface MediaFounder {
   focalY?: number | null;
 }
 /**
+ * ข้อมูลการสมัครเป็น Mentor
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mentor-form-submissions".
+ */
+export interface MentorFormSubmission {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  status?: ('pending' | 'contacted' | 'completed') | null;
+  /**
+   * บันทึกสำหรับการติดตาม
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -949,6 +970,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media-founders';
         value: string | MediaFounder;
+      } | null)
+    | ({
+        relationTo: 'mentor-form-submissions';
+        value: string | MentorFormSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1445,6 +1470,19 @@ export interface MediaFoundersSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mentor-form-submissions_select".
+ */
+export interface MentorFormSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  message?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

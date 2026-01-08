@@ -1,5 +1,5 @@
 import type { CreateOrderRequest } from "@/apis/order";
-import type { ProductType } from "@/enum/itemType";
+import { ProductType } from "@/enum/itemType";
 import type { CartItem } from "@/store/cartStore";
 
 import { PAYMENT_METHODS } from "./checkoutConstants";

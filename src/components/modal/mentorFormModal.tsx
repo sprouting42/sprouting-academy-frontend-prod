@@ -5,7 +5,7 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { submitContactForm } from "@/apis/contact";
+import { submitMentorForm } from "@/apis/mentor";
 import { Button } from "@/components/common/button";
 import { Input, Textarea } from "@/components/common/input";
 import { Modal } from "@/components/common/modal";
@@ -31,7 +31,7 @@ export const MentorFormModal = ({
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
       try {
-        await submitContactForm({
+        await submitMentorForm({
           name: value.name,
           email: value.email,
           message: value.message || "",

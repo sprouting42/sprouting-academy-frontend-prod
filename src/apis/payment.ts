@@ -164,26 +164,26 @@ export type DiscordNotificationRequest = {
   paymentType: string;
 };
 
-export const notificationApi = {
-  sendDiscordNotification: async (
-    payload: DiscordNotificationRequest,
-  ): Promise<void> => {
-    const WEBHOOK_URL =
-      process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL ||
-      "https://n8n-autometion.onrender.com/webhook/Notificate-Course-Academy-Automation-3c13a4d3-8eaf-4f54-bb1b-a1c38cf7d82b";
+// export const notificationApi = {
+//   sendDiscordNotification: async (
+//     payload: DiscordNotificationRequest,
+//   ): Promise<void> => {
+//     const WEBHOOK_URL =
+//       process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL ||
+//       "https://n8n-autometion.onrender.com/webhook/Notificate-Course-Academy-Automation-3c13a4d3-8eaf-4f54-bb1b-a1c38cf7d82b";
 
-    try {
-      const ky = (await import("ky")).default;
-      await ky.post(WEBHOOK_URL, {
-        json: payload,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error("Failed to send Discord notification:", error);
-      }
-    }
-  },
-};
+//     try {
+//       const ky = (await import("ky")).default;
+//       await ky.post(WEBHOOK_URL, {
+//         json: payload,
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       });
+//     } catch (error) {
+//       if (process.env.NODE_ENV === "development") {
+//         console.error("Failed to send Discord notification:", error);
+//       }
+//     }
+//   },
+// };
